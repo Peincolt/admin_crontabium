@@ -4,6 +4,10 @@
 # Put parameters here that don't need to change on each machine where the app is deployed
 # https://symfony.com/doc/current/best_practices/configuration.html#application-related-configuration
 parameters:
+    #Variable pour la première API    
+    base_url: 'https://swgoh.gg/api/'
+
+    #Variable pour la deuxieme API
     user: 'peincolt'
     mdp: 'Fpct47y1!'
     grant_type: 'password'
@@ -35,4 +39,7 @@ services:
     # please note that last definitions always *replace* previous ones
     App\Service\Api\Swgoh:
         arguments: ['%user%','%mdp%','%grant_type%','%client_id%','%client_secret%','%url_login%','%url_player%']
+
+    App\Service\Api\SwgohGg:
+        arguments: ['%base_url%']
 

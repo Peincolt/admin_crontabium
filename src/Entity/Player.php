@@ -2,6 +2,8 @@
 
 namespace App\Entity;
 
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
@@ -55,6 +57,22 @@ class Player
      * @ORM\Column(type="integer")
      */
     private $gear_given;
+
+    /**
+     * @ORM\OneToMany(targetEntity="App\Entity\CharacterPlayer", mappedBy="player")
+     */
+    private $characters;
+
+    /**
+     * @ORM\OneToMany(targetEntity="App\Entity\ShipPlayer", mappedBy="player")
+     */
+    private $ships;
+
+    public function __construct()
+    {
+        $this->characters = new ArrayCollection();
+        $this->ships = new ArrayCollection();
+    }
 
     public function getId(): ?int
     {
@@ -153,6 +171,68 @@ class Player
     public function setGearGiven(int $gear_given): self
     {
         $this->gear_given = $gear_given;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection|CharacterPlayer[]
+     */
+    public function getCharacters(): Collection
+    {
+        return $this->characters;
+    }
+
+    public function addCharacter(CharacterPlayer $character): self
+    {
+        if (!$this->characters->contains($character)) {
+            $this->characters[] = $character;
+            $character->setPlayer($this);
+        }
+
+        return $this;
+    }
+
+    public function removeCharacter(CharacterPlayer $character): self
+    {
+        if ($this->characters->contains($character)) {
+            $this->characters->removeElement($character);
+            // set the owning side to null (unless already changed)
+            if ($character->getPlayer() === $this) {
+                $character->setPlayer(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection|ShipPlayer[]
+     */
+    public function getShips(): Collection
+    {
+        return $this->ships;
+    }
+
+    public function addShip(ShipPlayer $ship): self
+    {
+        if (!$this->ships->contains($ship)) {
+            $this->ships[] = $ship;
+            $ship->setPlayer($this);
+        }
+
+        return $this;
+    }
+
+    public function removeShip(ShipPlayer $ship): self
+    {
+        if ($this->ships->contains($ship)) {
+            $this->ships->removeElement($ship);
+            // set the owning side to null (unless already changed)
+            if ($ship->getPlayer() === $this) {
+                $ship->setPlayer(null);
+            }
+        }
 
         return $this;
     }
