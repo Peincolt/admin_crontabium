@@ -2,18 +2,19 @@
 
 namespace App\Controller;
 
-use App\Service\Api\Swgoh;
-use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use App\Service\Entity\PlayerHelper;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 
 class AdminController extends AbstractController
 {
     /**
      * @Route("/admin", name="admin")
      */
-    public function index(Swgoh $swgoh)
+    public function index(PlayerHelper $playerHelper)
     {
-        var_dump($swgoh->login());
+        $dataPlayer = $playerHelper->createPlayer('246639295',false,false);
+        var_dump($dataPlayer);
         die('ok');
         return $this->render('admin/index.html.twig', [
             'controller_name' => 'AdminController',
