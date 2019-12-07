@@ -5,9 +5,9 @@ namespace App\Entity;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
- * @ORM\Entity(repositoryClass="App\Repository\CharacterPlayerRepository")
+ * @ORM\Entity(repositoryClass="App\Repository\HeroPlayerRepository")
  */
-class CharacterPlayer
+class HeroPlayer
 {
     /**
      * @ORM\Id()
@@ -15,21 +15,6 @@ class CharacterPlayer
      * @ORM\Column(type="integer")
      */
     private $id;
-
-    /**
-     * @ORM\Column(type="string", length=255)
-     */
-    private $id_swgoh;
-
-    /**
-     * @ORM\Column(type="string", length=255)
-     */
-    private $international_name;
-
-    /**
-     * @ORM\Column(type="string", length=255)
-     */
-    private $name;
 
     /**
      * @ORM\Column(type="smallint")
@@ -61,45 +46,14 @@ class CharacterPlayer
      */
     private $player;
 
+    /**
+     * @ORM\ManyToOne(targetEntity="App\Entity\Hero", inversedBy="heroPlayers")
+     */
+    private $hero;
+
     public function getId(): ?int
     {
         return $this->id;
-    }
-
-    public function getIdSwgoh(): ?string
-    {
-        return $this->id_swgoh;
-    }
-
-    public function setIdSwgoh(string $id_swgoh): self
-    {
-        $this->id_swgoh = $id_swgoh;
-
-        return $this;
-    }
-
-    public function getInternationalName(): ?string
-    {
-        return $this->international_name;
-    }
-
-    public function setInternationalName(string $international_name): self
-    {
-        $this->international_name = $international_name;
-
-        return $this;
-    }
-
-    public function getName(): ?string
-    {
-        return $this->name;
-    }
-
-    public function setName(string $name): self
-    {
-        $this->name = $name;
-
-        return $this;
     }
 
     public function getNumberStars(): ?int
@@ -170,6 +124,18 @@ class CharacterPlayer
     public function setPlayer(?Player $player): self
     {
         $this->player = $player;
+
+        return $this;
+    }
+
+    public function getHero(): ?Hero
+    {
+        return $this->hero;
+    }
+
+    public function setHero(?Hero $hero): self
+    {
+        $this->hero = $hero;
 
         return $this;
     }

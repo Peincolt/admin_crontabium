@@ -19,9 +19,9 @@ class Player
     private $id;
 
     /**
-     * @ORM\Column(type="string", length=255)
+     * @ORM\Column(type="datetime", length=255)
      */
-    private $id_swgoh;
+    private $last_updated;
 
     /**
      * @ORM\Column(type="integer")
@@ -59,7 +59,7 @@ class Player
     private $gear_given;
 
     /**
-     * @ORM\OneToMany(targetEntity="App\Entity\CharacterPlayer", mappedBy="player")
+     * @ORM\OneToMany(targetEntity="App\Entity\HeroPlayer", mappedBy="player")
      */
     private $characters;
 
@@ -79,14 +79,14 @@ class Player
         return $this->id;
     }
 
-    public function getIdSwgoh(): ?string
+    public function getLastUpdated(): ?\DateTimeInterface
     {
-        return $this->id_swgoh;
+        return $this->last_updated;
     }
 
-    public function setIdSwgoh(string $id_swgoh): self
+    public function setLastUpdated(\DateTimeInterface $last_updated): self
     {
-        $this->id_swgoh = $id_swgoh;
+        $this->last_updated = $last_updated;
 
         return $this;
     }
@@ -176,14 +176,14 @@ class Player
     }
 
     /**
-     * @return Collection|CharacterPlayer[]
+     * @return Collection|HeroPlayer[]
      */
     public function getCharacters(): Collection
     {
         return $this->characters;
     }
 
-    public function addCharacter(CharacterPlayer $character): self
+    public function addCharacter(HeroPlayer $character): self
     {
         if (!$this->characters->contains($character)) {
             $this->characters[] = $character;
@@ -193,7 +193,7 @@ class Player
         return $this;
     }
 
-    public function removeCharacter(CharacterPlayer $character): self
+    public function removeCharacter(HeroPlayer $character): self
     {
         if ($this->characters->contains($character)) {
             $this->characters->removeElement($character);

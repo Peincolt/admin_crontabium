@@ -13,19 +13,30 @@ class Edit {
         $arrayReturn = array();
 
         switch ($entityName) {
+
             case 'player':
-                $arrayReturn['IdSwgoh'] = $data[0]['id'];
-                $arrayReturn['AllyCode'] = $data[0]['allyCode'];
-                $arrayReturn['Name'] = $data[0]['name'];
-                $arrayReturn['Level'] = $data[0]['level'];
-                $arrayReturn['GalacticalPuissance'] = $data[0]['stats'][0]['value'];
-                $arrayReturn['CharactersGalacticalPuissance'] = $data[0]['stats'][1]['value'];
-                $arrayReturn['ShipsGalacticalPuissance'] = $data[0]['stats'][2]['value'];
-                $arrayReturn['GearGiven'] = $data[0]['stats'][11]['value'];
+                $date = \DateTime::createFromFormat('Y-m-d H:i:s.u',preg_replace("#[a-zA-Z]+#",'',$data['data']['last_updated']));
+                $arrayReturn['LastUpdated'] = new \DateTime($date->format('Y-m-d H:i'));
+                $arrayReturn['AllyCode'] = $data['data']['ally_code'];
+                $arrayReturn['Name'] = $data['data']['name'];
+                $arrayReturn['Level'] = $data['data']['level'];
+                $arrayReturn['GalacticalPuissance'] = $data['data']['galactic_power'];
+                $arrayReturn['CharactersGalacticalPuissance'] = $data['data']['character_galactic_power'];
+                $arrayReturn['ShipsGalacticalPuissance'] = $data['data']['ship_galactic_power'];
+                $arrayReturn['GearGiven'] = $data['data']['guild_exchange_donations'];
                 return $arrayReturn;
             break;
+
             case 'character':
+                $arrayReturn['BaseId'] = $data['base_id'];
+                $arrayReturn['Name'] = $data['name'];
+                $arrayReturn['NumberStars'] = $data['rarity'];
+                $arrayReturn['Level'] = $data['level'];
+                $arrayReturn['GearLevel'] = $data['gear_level'];
+                $arrayReturn['GalacticalPuissance'] = $data['power'];
+                $arrayReturn['RelicLevel'] = $data['relic_tier']; 
             break;
+
             case 'ship' :
             break;
         }

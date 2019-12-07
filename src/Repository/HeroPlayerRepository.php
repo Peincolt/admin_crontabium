@@ -2,25 +2,25 @@
 
 namespace App\Repository;
 
-use App\Entity\CharacterPlayer;
+use App\Entity\HeroPlayer;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Common\Persistence\ManagerRegistry;
 
 /**
- * @method Character|null find($id, $lockMode = null, $lockVersion = null)
- * @method Character|null findOneBy(array $criteria, array $orderBy = null)
- * @method Character[]    findAll()
- * @method Character[]    findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null)
+ * @method Hero|null find($id, $lockMode = null, $lockVersion = null)
+ * @method Hero|null findOneBy(array $criteria, array $orderBy = null)
+ * @method Hero[]    findAll()
+ * @method Hero[]    findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null)
  */
-class CharacterPlayerRepository extends ServiceEntityRepository
+class HeroPlayerRepository extends ServiceEntityRepository
 {
     public function __construct(ManagerRegistry $registry)
     {
-        parent::__construct($registry, CharacterPlayer::class);
+        parent::__construct($registry, HeroPlayer::class);
     }
 
     // /**
-    //  * @return Character[] Returns an array of Character objects
+    //  * @return Hero[] Returns an array of Hero objects
     //  */
     /*
     public function findByExampleField($value)
@@ -37,7 +37,7 @@ class CharacterPlayerRepository extends ServiceEntityRepository
     */
 
     /*
-    public function findOneBySomeField($value): ?Character
+    public function findOneBySomeField($value): ?Hero
     {
         return $this->createQueryBuilder('c')
             ->andWhere('c.exampleField = :val')

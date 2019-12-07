@@ -6,6 +6,7 @@
 parameters:
     #Variable pour la première API    
     base_url: 'https://swgoh.gg/api/'
+    guild_id: 7303
 
     #Variable pour la deuxieme API
     user: 'peincolt'

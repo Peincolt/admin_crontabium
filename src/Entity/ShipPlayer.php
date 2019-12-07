@@ -19,21 +19,6 @@ class ShipPlayer
     /**
      * @ORM\Column(type="string", length=255)
      */
-    private $id_swgoh;
-
-    /**
-     * @ORM\Column(type="string", length=255)
-     */
-    private $international_name;
-
-    /**
-     * @ORM\Column(type="string", length=255)
-     */
-    private $name;
-
-    /**
-     * @ORM\Column(type="string", length=255)
-     */
     private $number_stars;
 
     /**
@@ -51,45 +36,14 @@ class ShipPlayer
      */
     private $player;
 
+    /**
+     * @ORM\ManyToOne(targetEntity="App\Entity\Ship", inversedBy="shipPlayers")
+     */
+    private $ship;
+
     public function getId(): ?int
     {
         return $this->id;
-    }
-
-    public function getIdSwgoh(): ?string
-    {
-        return $this->id_swgoh;
-    }
-
-    public function setIdSwgoh(string $id_swgoh): self
-    {
-        $this->id_swgoh = $id_swgoh;
-
-        return $this;
-    }
-
-    public function getInternationalName(): ?string
-    {
-        return $this->international_name;
-    }
-
-    public function setInternationalName(string $international_name): self
-    {
-        $this->international_name = $international_name;
-
-        return $this;
-    }
-
-    public function getName(): ?string
-    {
-        return $this->name;
-    }
-
-    public function setName(string $name): self
-    {
-        $this->name = $name;
-
-        return $this;
     }
 
     public function getNumberStars(): ?string
@@ -136,6 +90,18 @@ class ShipPlayer
     public function setPlayer(?Player $player): self
     {
         $this->player = $player;
+
+        return $this;
+    }
+
+    public function getShip(): ?Ship
+    {
+        return $this->ship;
+    }
+
+    public function setShip(?Ship $ship): self
+    {
+        $this->ship = $ship;
 
         return $this;
     }
