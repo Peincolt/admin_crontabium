@@ -6,22 +6,21 @@ use Doctrine\ORM\EntityManagerInterface;
 use App\Entity\Player;
 use App\Service\Api\SwgohGg;
 use App\Service\Data\Edit;
-use App\Service\Entity\HeroShipPlayerHelper;
+use App\Service\Entity\PlayerUnit;
 
 class PlayerHelper {
     
     private $swgoh;
     private $editData;
     private $entityManager;
-    private $heroShipPlayerHelper;
-    private $shipPlayerHelper;
+    private $playerUnit;
 
-    public function __construct(SwgohGg $swgoh, Edit $editData, EntityManagerInterface $entityManager, HeroShipPlayerHelper $heroShipPlayerHelper) 
+    public function __construct(SwgohGg $swgoh, Edit $editData, EntityManagerInterface $entityManager, PlayerUnit $playerUnit) 
     {
         $this->swgoh = $swgoh;
         $this->editData = $editData;
         $this->entityManager = $entityManager;
-        $this->heroShipPlayerHelper = $heroShipPlayerHelper;
+        $this->playerUnit = $playerUnit;
     }
 
     public function createPlayer(int $allyCode, bool $characters = false, bool $ships = false)
@@ -42,20 +41,18 @@ class PlayerHelper {
             if ($characters || $ships) {
                 foreach($playerDatas['units'] as $key => $value)
                 {
-                    switch ($value['combat_type']) {
+                    switch ($value['data']['combat_type']) {
                         case 1:
                             if ($characters) {
-                                $this->heroShipPlayerHelper->createPlayerHero($value,$player);
+                                $retour = $this->playerUnit->createPlayerHero($value['data'],$player);
                             }
                         break;
                         case 2:
                             if ($ships) {
-                                $this->heroShipPlayerHelper->createPlayerShip($value,$player);
+                                $retour = $this->playerUnit->createPlayerShip($value['data'],$player);
                             }
                         break;
                     }
-                    var_dump($value);
-                    die('ok');
                 }
             }
 

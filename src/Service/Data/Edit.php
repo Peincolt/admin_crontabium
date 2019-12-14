@@ -35,6 +35,20 @@ class Edit {
                 $arrayReturn['Name'] = $data['name'];
                 $arrayReturn['Categories'] = $data['categories'];
             break;
+
+            case 'player_ship':
+                $arrayReturn['NumberStars'] = $data['rarity'];
+                $arrayReturn['Level'] = $data['level'];
+                $arrayReturn['GalacticalPuissance'] = $data['power'];
+            break;
+
+            case 'player_hero':
+                $arrayReturn['NumberStars'] = $data['rarity'];
+                $arrayReturn['Level'] = $data['level'];
+                $arrayReturn['GearLevel'] = $data['gear_level'];
+                $arrayReturn['GalacticalPuissance'] = $data['power'];
+                $arrayReturn['RelicLevel'] = $data['relic_tier'];
+            break;
         }
 
         return $arrayReturn;
