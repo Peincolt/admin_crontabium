@@ -33,6 +33,16 @@ class Ship
      */
     private $shipPlayers;
 
+    /**
+     * @ORM\Column(type="smallint")
+     */
+    private $id_swgoh;
+
+    /**
+     * @ORM\Column(type="json")
+     */
+    private $categories = [];
+
     public function __construct()
     {
         $this->shipPlayers = new ArrayCollection();
@@ -94,6 +104,30 @@ class Ship
                 $shipPlayer->setShip(null);
             }
         }
+
+        return $this;
+    }
+
+    public function getIdSwgoh(): ?int
+    {
+        return $this->id_swgoh;
+    }
+
+    public function setIdSwgoh(int $id_swgoh): self
+    {
+        $this->id_swgoh = $id_swgoh;
+
+        return $this;
+    }
+
+    public function getCategories(): ?array
+    {
+        return $this->categories;
+    }
+
+    public function setCategories(array $categories): self
+    {
+        $this->categories = $categories;
 
         return $this;
     }

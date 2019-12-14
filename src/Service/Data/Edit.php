@@ -2,10 +2,6 @@
 
 namespace App\Service\Data;
 
-use App\Entity\Player;
-use Doctrine\ORM\EntityManager;
-use Doctrine\ORM\EntityManagerInterface;
-
 class Edit {
 
     public function matchEntityField($entityName, $data)
@@ -24,23 +20,36 @@ class Edit {
                 $arrayReturn['CharactersGalacticalPuissance'] = $data['data']['character_galactic_power'];
                 $arrayReturn['ShipsGalacticalPuissance'] = $data['data']['ship_galactic_power'];
                 $arrayReturn['GearGiven'] = $data['data']['guild_exchange_donations'];
-                return $arrayReturn;
             break;
 
-            case 'character':
+            case 'characters':
                 $arrayReturn['BaseId'] = $data['base_id'];
                 $arrayReturn['Name'] = $data['name'];
-                $arrayReturn['NumberStars'] = $data['rarity'];
-                $arrayReturn['Level'] = $data['level'];
-                $arrayReturn['GearLevel'] = $data['gear_level'];
-                $arrayReturn['GalacticalPuissance'] = $data['power'];
-                $arrayReturn['RelicLevel'] = $data['relic_tier']; 
+                $arrayReturn['IdSwgoh'] = $data['pk'];
+                $arrayReturn['Categories'] = $data['categories'];
             break;
 
-            case 'ship' :
+            case 'ships' :
+                $arrayReturn['BaseId'] = $data['base_id'];
+                $arrayReturn['IdSwgoh'] = 0;
+                $arrayReturn['Name'] = $data['name'];
+                $arrayReturn['Categories'] = $data['categories'];
             break;
         }
 
+        return $arrayReturn;
     }
 
+    public function convertTypeToEntityName($type)
+    {
+        switch ($type) {
+            case 'characters':
+                return 'Hero';
+            break;
+
+            case 'ships':
+                return 'Ship';
+            break;
+        }
+    }
 }
