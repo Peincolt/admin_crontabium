@@ -68,6 +68,11 @@ class Player
      */
     private $ships;
 
+    /**
+     * @ORM\ManyToOne(targetEntity="App\Entity\Guild", inversedBy="players")
+     */
+    private $guild;
+
     public function __construct()
     {
         $this->characters = new ArrayCollection();
@@ -233,6 +238,18 @@ class Player
                 $ship->setPlayer(null);
             }
         }
+
+        return $this;
+    }
+
+    public function getGuild(): ?Guild
+    {
+        return $this->guild;
+    }
+
+    public function setGuild(?Guild $guild): self
+    {
+        $this->guild = $guild;
 
         return $this;
     }

@@ -19,9 +19,22 @@ class Helper {
 
         switch ($entityName) {
 
+            case 'guild':
+                $arrayReturn['Name'] = $data['name'];
+                $arrayReturn['Members'] = $data['member_count'];
+                $arrayReturn['IdSwgoh'] = $data['id'];
+                $arrayReturn['GalacticalPuissance'] = $data['galactic_power'];
+            break;
+
             case 'player':
-                $date = \DateTime::createFromFormat('Y-m-d H:i:s.u',preg_replace("#[a-zA-Z]+#",'',$data['data']['last_updated']));
-                $arrayReturn['LastUpdated'] = new \DateTime($date->format('Y-m-d H:i'));
+                if (preg_match("#^[0-9]+$#",$data['data']['last_updated'])) {
+                    $date = new \DateTime();
+                    $date->setTimestamp($data['data']['last_updated']);
+                    $arrayReturn['LastUpdated'] = $date;
+                } else {
+                    $date = \DateTime::createFromFormat('Y-m-d H:i:s.u',preg_replace("#[a-zA-Z]+#",'',$data['data']['last_updated']));
+                    $arrayReturn['LastUpdated'] = new \DateTime($date->format('Y-m-d H:i'));
+                }
                 $arrayReturn['AllyCode'] = $data['data']['ally_code'];
                 $arrayReturn['Name'] = $data['data']['name'];
                 $arrayReturn['Level'] = $data['data']['level'];

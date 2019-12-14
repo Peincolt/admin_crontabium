@@ -19,7 +19,18 @@ class SwgohGg {
         $this->baseUrl = $baseUrl;
     }
 
-    public function fetchPlayer($allyCode)
+    public function fetchGuild(string $id)
+    {
+        try {
+            return $this->client->request("GET",$this->baseUrl."guild/".$id)->toArray();
+        } catch (Exception $e) {
+            $arrayReturn['error_code'] = $e->getCode();
+            $arrayReturn['error_message'] = $e->getMessage();
+            return $arrayReturn;
+        }
+    }
+
+    public function fetchPlayer(string $allyCode)
     {
         try {
             return $this->client->request("GET",$this->baseUrl."player/".$allyCode)->toArray();
@@ -57,7 +68,7 @@ class SwgohGg {
         return $this->fetchHeroOrShip('characters',$listId);
     }
 
-    public function fetchShip($listId)
+    public function fetchShips($listId)
     {
         return $this->fetchHeroOrShip('ships',$listId);
     }

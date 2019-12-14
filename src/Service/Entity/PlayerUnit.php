@@ -5,6 +5,7 @@ namespace App\Service\Entity;
 use App\Entity\Player;
 use App\Service\Data\Helper;
 use Doctrine\ORM\EntityManagerInterface;
+use Exception;
 
 class PlayerUnit 
 {
@@ -20,25 +21,30 @@ class PlayerUnit
 
     public function createPlayerUnit(array $data, Player $player, string $type)
     {
-        $baseUnitEntityName = "\App\Entity\\".ucfirst($type);
-        $entityName = $baseUnitEntityName."Player";
-        $fonctionName = 'set'.ucfirst($type);
-        if ($baseUnit = $this->dataHelper->getDatabaseData($baseUnitEntityName, array('base_id' => $data['base_id']))) {
-            if (!$playerUnit = $this->dataHelper->getDatabaseData($entityName, array('player' => $player, $type => $baseUnit))) {
-                $playerUnit = new $entityName;
+        try {
+            $baseUnitEntityName = "\App\Entity\\".ucfirst($type);
+            $entityName = $baseUnitEntityName."Player";
+            $fonctionName = 'set'.ucfirst($type);
+            if ($baseUnit = $this->dataHelper->getDatabaseData($baseUnitEntityName, array('base_id' => $data['base_id']))) {
+                if (!$playerUnit = $this->dataHelper->getDatabaseData($entityName, array('player' => $player, $type => $baseUnit))) {
+                    $playerUnit = new $entityName;
+                }
+                $entityField = $this->dataHelper->matchEntityField('player_'.$type,$data);
+                foreach($entityField as $key => $value) {
+                    $function = 'set'.$key;
+                    $playerUnit->$function($value);
+                }
+                $playerUnit->setPlayer($player);
+                $playerUnit->$fonctionName($baseUnit);
+                $this->entityManagerInterface->persist($playerUnit);
+                $this->entityManagerInterface->flush();
+                return array('message' => 'Unit is on the database', 'code' => 200);
             }
-            $entityField = $this->dataHelper->matchEntityField('player_'.$type,$data);
-            foreach($entityField as $key => $value) {
-                $function = 'set'.$key;
-                $playerUnit->$function($value);
-            }
-            $playerUnit->setPlayer($player);
-            $playerUnit->$fonctionName($baseUnit);
-            $this->entityManagerInterface->persist($playerUnit);
-            $this->entityManagerInterface->flush();
-            return $playerUnit;
+        } catch (Exception $e) {
+            $arrayReturn['error_message'] = $e->getMessage();
+            $arrayReturn['error_code'] = $e->getCode();
+            return $arrayReturn;
         }
-        return null;
     }
 
     public function createPlayerShip(array $data, Player $player)
