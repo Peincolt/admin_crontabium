@@ -5,20 +5,20 @@ namespace App\Service\Entity;
 use Doctrine\ORM\EntityManagerInterface;
 use App\Entity\Player;
 use App\Service\Api\SwgohGg;
-use App\Service\Data\Edit;
+use App\Service\Data\Helper;
 use App\Service\Entity\PlayerUnit;
 
 class PlayerHelper {
     
     private $swgoh;
-    private $editData;
+    private $dataHelper;
     private $entityManager;
     private $playerUnit;
 
-    public function __construct(SwgohGg $swgoh, Edit $editData, EntityManagerInterface $entityManager, PlayerUnit $playerUnit) 
+    public function __construct(SwgohGg $swgoh, Helper $dataHelper, EntityManagerInterface $entityManager, PlayerUnit $playerUnit) 
     {
         $this->swgoh = $swgoh;
-        $this->editData = $editData;
+        $this->dataHelper = $dataHelper;
         $this->entityManager = $entityManager;
         $this->playerUnit = $playerUnit;
     }
@@ -27,8 +27,8 @@ class PlayerHelper {
     {
         $playerDatas = $this->swgoh->fetchPlayer($allyCode);
         if (!isset($playerDatas['error_message'])) {
-            $entityField = $this->editData->matchEntityField('player',$playerDatas);
-            if (!($player = $this->isPlayerIsOnTheGuild($allyCode))) {
+            $entityField = $this->dataHelper->matchEntityField('player',$playerDatas);
+            if (!($player = $this->dataHelper->getDatabaseData("\App\Entity\Player",array('ally_code' => $allyCode)))) {
                 $player = new Player();
             }
             foreach($entityField as $key => $value) {
@@ -60,10 +60,5 @@ class PlayerHelper {
         }
         
         return $playerDatas;
-    }
-
-    public function isPlayerIsOnTheGuild(int $allyCode)
-    {
-        return $this->entityManager->getRepository(Player::class)->findOneBy(['ally_code' => $allyCode]);
     }
 }

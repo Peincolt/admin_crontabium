@@ -2,7 +2,16 @@
 
 namespace App\Service\Data;
 
-class Edit {
+use Doctrine\ORM\EntityManagerInterface;
+
+class Helper {
+
+    private $entityManagerInterface;
+
+    public function __construct(EntityManagerInterface $entityManagerInterface)
+    {
+        $this->entityManagerInterface = $entityManagerInterface;
+    }
 
     public function matchEntityField($entityName, $data)
     {
@@ -65,5 +74,12 @@ class Edit {
                 return 'Ship';
             break;
         }
+    }
+
+    public function getDatabaseData(string $entityName, array $data)
+    {
+        return $this->entityManagerInterface
+        ->getRepository($entityName)
+        ->findOneBy($data);
     }
 }

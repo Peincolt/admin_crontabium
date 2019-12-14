@@ -3,32 +3,32 @@
 namespace App\Service\Entity;
 
 use App\Service\Api\SwgohGg;
-use App\Service\Data\Edit;
+use App\Service\Data\Helper;
 use Doctrine\ORM\EntityManagerInterface;
 
-class HeroShipHelper {
+class Unit {
 
     private $entityManagerInterface;
     private $swgohGg;
-    private $editData;
+    private $dataHelper;
 
-    public function __construct(EntityManagerInterface $entityManagerInterface, SwgohGg $swgohGg, Edit $editData)
+    public function __construct(EntityManagerInterface $entityManagerInterface, SwgohGg $swgohGg, Helper $dataHelper)
     {
         $this->entityManagerInterface = $entityManagerInterface;
         $this->swgohGg = $swgohGg;
-        $this->editData = $editData;
+        $this->dataHelper = $dataHelper;
     }
 
-    public function updateHeroesOrShips($type,$listId = false) 
+    public function updateUnit($type,$listId = false) 
     {
-        $entityName = "\App\Entity\\".$this->editData->convertTypeToEntityName($type);
+        $entityName = "\App\Entity\\".$this->dataHelper->convertTypeToEntityName($type);
         $data = $this->swgohGg->fetchHeroOrShip($type,$listId);
         if (!isset($data['error_message'])) {
             foreach($data as $key => $value) {
-                if (!($hero = $this->isHeroOrShipExist($entityName,$data[$key]['base_id']))) {
+                if (!($hero = $this->dataHelper->getDatabaseData($entityName,array('base_id' => $data[$key]['base_id'])))) {
                     $hero = new $entityName;
                 }
-                $entityField = $this->editData->matchEntityField($type,$data[$key]);
+                $entityField = $this->dataHelper->matchEntityField($type,$data[$key]);
                 foreach($entityField as $key => $value) {
                     $function = 'set'.$key;
                     $hero->$function($value);
@@ -40,12 +40,4 @@ class HeroShipHelper {
             return $data;
         }
     }
-
-    public function isHeroOrShipExist(string $entityName, string $idBase)
-    {
-        return $this->entityManagerInterface
-            ->getRepository($entityName)
-            ->findOneBy(['base_id' => $idBase]);
-    }
-    
 }

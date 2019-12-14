@@ -3,19 +3,19 @@
 namespace App\Service\Entity;
 
 use App\Entity\Player;
-use App\Service\Data\Edit;
+use App\Service\Data\Helper;
 use Doctrine\ORM\EntityManagerInterface;
 
 class PlayerUnit 
 {
 
     private $entityManagerInterface;
-    private $editData;
+    private $dataHelper;
 
-    public function __construct(EntityManagerInterface $entityManagerInterface, Edit $editData)
+    public function __construct(EntityManagerInterface $entityManagerInterface, Helper $dataHelper)
     {
         $this->entityManagerInterface = $entityManagerInterface;
-        $this->editData = $editData;
+        $this->dataHelper = $dataHelper;
     }
 
     public function createPlayerUnit(array $data, Player $player, string $type)
@@ -23,11 +23,11 @@ class PlayerUnit
         $baseUnitEntityName = "\App\Entity\\".ucfirst($type);
         $entityName = $baseUnitEntityName."Player";
         $fonctionName = 'set'.ucfirst($type);
-        if ($baseUnit = $this->getUnit($baseUnitEntityName, array('base_id' => $data['base_id']))) {
-            if (!$playerUnit = $this->getUnit($entityName, array('player' => $player, $type => $baseUnit))) {
+        if ($baseUnit = $this->dataHelper->getDatabaseData($baseUnitEntityName, array('base_id' => $data['base_id']))) {
+            if (!$playerUnit = $this->dataHelper->getDatabaseData($entityName, array('player' => $player, $type => $baseUnit))) {
                 $playerUnit = new $entityName;
             }
-            $entityField = $this->editData->matchEntityField('player_'.$type,$data);
+            $entityField = $this->dataHelper->matchEntityField('player_'.$type,$data);
             foreach($entityField as $key => $value) {
                 $function = 'set'.$key;
                 $playerUnit->$function($value);
@@ -49,12 +49,5 @@ class PlayerUnit
     public function createPlayerHero(array $data, Player $player)
     {
         return $this->createPlayerUnit($data,$player,'hero');
-    }
-
-    public function getUnit(string $entityName, array $data)
-    {
-        return $this->entityManagerInterface
-            ->getRepository($entityName)
-            ->findOneBy($data);
     }
 }
