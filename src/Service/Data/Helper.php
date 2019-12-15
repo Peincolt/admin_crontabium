@@ -95,4 +95,22 @@ class Helper {
         ->getRepository($entityName)
         ->findOneBy($data);
     }
+
+    public function getNumbers(array $ids = null, string $type)
+    {
+        $arrayReturn = array();
+        if ($ids) {
+            foreach ($ids as $id) {
+                if (!preg_match("#[0-9]+#",$id)) {
+                    $arrayReturn['wrong_id'][] = $id;
+                } else {
+                    $this->getDatabaseData("\App\Entity\\".$type,array('id_swgoh' => $id))->getName();
+                    $arrayReturn['names'][] = $this->getDatabaseData("\App\Entity\\".$type,array('id_swgoh' => $id))->getName();
+                    $arrayReturn['ids'][] = $id;
+                }
+            }
+            return $arrayReturn;
+        }
+        return $ids;
+    }
 }
