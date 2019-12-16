@@ -48,7 +48,7 @@ class GuildCommand extends Command
                 ]);
             $arrayOption = array();
             if ($input->getArgument('players')) {
-                $output->writeln(['You choose to synchronize player\'s data',]);
+                $output->writeln(['You choose to synchronize player\'s data']);
                 $arrayOption['players'] = true;
                 if ($input->getArgument('players-characters')) {
                     $output->writeln(['You choose to synchronize player\'s heroes']);
@@ -58,6 +58,8 @@ class GuildCommand extends Command
                     $output->writeln(['You choose to synchronize player\'s ships']);
                     $arrayOption['players_ships'] = true;
                 }
+            } else {
+                $output->writeln(['No options are found']);
             }
             $output->writeln([
                 '===========================',

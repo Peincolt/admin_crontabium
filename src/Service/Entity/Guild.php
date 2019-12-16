@@ -23,7 +23,7 @@ class Guild
         $this->entityManagerInterface = $entityManagerInterface;
     }
 
-    public function updateGuild(string $idGuild, array $options)
+    public function updateGuild(string $idGuild, array $options = null)
     {
         try {
             $dataGuild = $this->swgohGg->fetchGuild($idGuild);
@@ -43,15 +43,15 @@ class Guild
                 $this->entityManagerInterface->persist($guild);
                 $this->entityManagerInterface->flush();
         
-                if ($options['players']) {
+                if (isset($options['players'])) {
         
-                    if ($options['players_heroes']) {
+                    if (isset($options['players_heroes'])) {
                         $heros = true;
                     } else {
                         $heros = false;
                     }
         
-                    if ($options['players_ships']) {
+                    if (isset($options['players_ships'])) {
                         $ships = true;
                     } else {
                         $ships = false;
