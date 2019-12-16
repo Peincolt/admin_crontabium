@@ -34,8 +34,8 @@ class Unit {
                     $hero->$function($value);
                 }
                 $this->entityManagerInterface->persist($hero);
+                $this->entityManagerInterface->flush();
             }
-            $this->entityManagerInterface->flush();
         } else {
             return $data;
         }
