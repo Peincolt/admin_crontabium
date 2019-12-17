@@ -2,21 +2,11 @@
 
 namespace App\Controller;
 
-use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 
 class SecurityController extends AbstractController
 {
-    /**
-     * @Route("/security", name="security")
-     */
-    public function index()
-    {
-        return $this->render('security/index.html.twig', [
-            'controller_name' => 'SecurityController',
-        ]);
-    }
-
     /**
      * @Route("/login", name="security_login")
      */
@@ -26,10 +16,7 @@ class SecurityController extends AbstractController
     }
 
     /**
-     * @Route("/demand-access", name="security_demand_access")
+     * @Route("/logout", name="security_logout")
      */
-    public function userDemand()
-    {
-        return $this->render('security/user.demand.html.twig');
-    }
+    public function logout(){}
 }

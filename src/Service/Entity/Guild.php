@@ -74,4 +74,18 @@ class Guild
             return $arrayReturn;
         }
     }
+
+    public function getFormGuild()
+    {
+        $arrayReturn = array();
+        $guilds = $this->entityManagerInterface
+            ->getRepository('App\Entity\Guild')
+            ->findAll();
+
+        foreach($guilds as $guild) {
+            $arrayReturn[$guild->getName()] = $guild->getId();
+        }
+
+        return $arrayReturn;
+    }
 }
