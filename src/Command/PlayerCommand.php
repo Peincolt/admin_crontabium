@@ -2,9 +2,10 @@
 
 namespace App\Command;
 
-use App\Service\Data\Helper as DataHelper;
 use App\Service\Entity\PlayerHelper;
+use App\Service\Data\Helper as DataHelper;
 use Symfony\Component\Console\Command\Command;
+use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
@@ -12,7 +13,7 @@ use Symfony\Component\Console\Output\OutputInterface;
 class PlayerCommand extends Command 
 {
 
-    protected static $defaultName = 'app:synchro-unit';
+    protected static $defaultName = 'app:synchro-player';
     private $playerHelper;
     private $dataHelper;
 
@@ -27,109 +28,83 @@ class PlayerCommand extends Command
     {
         $this->setDescription('Synchronize player data with swgoh.gg api')
             ->setHelp('This command can be use if you want to synchronize Star Wars Galaxy Of Heroes player from swgoh.gg api ')
-            ->addArgument('id', InputArgument::REQUIRED, 'The ally code (put all the numbers together)')
+            ->addArgument('player-id', InputArgument::REQUIRED, 'The ally code (put all the numbers together)')
             /* Arguments when the user wants to synchronize hero or ships */
-            ->addArgument('player-heroes', InputArgument::IS_ARRAY | InputArgument::OPTIONAL, 'Do you want to synchronize player heroes ?')
-            ->addArgument('player-ships', InputArgument::OPTIONAL, 'Do you want to synchronize player ships ?')
-            ->addArgument('ids', InputArgument::IS_ARRAY | InputArgument::OPTIONAL, 'Put all the ids of the ships/heroes of the player you want to synchronize');
+            ->addOption('player-guild', null, InputOption::VALUE_REQUIRED, 'Put the id of the player guild')
+            ->addOption('player-heroes', null, InputOption::VALUE_NONE, 'Do you want to synchronize player heroes ?')
+            ->addOption('player-ships', null, InputOption::VALUE_NONE, 'Do you want to synchronize player ships ?');
     }
 
     protected function execute(InputInterface $input, OutputInterface $output)
     {
+        $isNew = false;
+        $ships = false;
+        $heroes = false;
+
         $output->writeln([
             'Start of the command',
             '==========================='
         ]);
 
-        switch (ucfirst($input->getArgument('data-name'))) {
-            case 'Hero':
-                $type = 'Hero';
-                $entityName = 'characters';
-                $output->writeln([
-                    'You choose to synchronize heroes'
-                ]);
-            break;
+        if ($player = $this->dataHelper->getDatabaseData('App\Entity\Player'
+            ,array('ally_code' => $input->getArgument('player-id')))
+        ) {
+            $output->writeln([
+                'You choose to synchronize '.$player->getName(),
+            ]);
+            $guild = $player->getGuild();
 
-            case 'Ship':
-                $type = 'Ship';
-                $entityName = 'ships';
-                $output->writeln([
-                    'You choose to synchronize ships'
-                ]);
-            break;
-            
-            default:
-                $output->writeln([
-                    'With this command, you can synchronize Hero or Ship. Type Hero or Ship after the command name',
-                    '===========================',
-                    'End of the command'
-                ]);
-                return 500;
-            break;
-        }
-
-        if ($array = $this->dataHelper->getNumbers($input->getArgument('unit-ids'),$type)) {
-            if (isset($array['wrong_ids'])) {
-                $output->writeln([
-                    'You tried to update some heroes but the following ids doesn\'t match'
-                ]);
-                $output->writeln($array['wrong_ids']);
-            }
-
-            if (isset($array['names'])) {
-                $output->writeln([
-                    'You decided to update these '.$type.' : '
-                ]);
-                $output->writeln($array['names']);
-                $output->writeln([
-                    '===========================',
-                    'The synchronization will start',
-                ]);
-                $result = $this->unit->updateUnit($entityName,$array['ids']);
-                if (!isset($result['error_message'])) {
+        } else {
+            $output->writeln([
+                'We don\'t find the player in the database. We will create him',
+            ]);
+            $isNew = true;
+            if ($input->getOption('player-guild')) {
+                $guild = $this->dataHelper->getDatabaseData('App\Entity\Guild',array('id_swgoh' => $input->getOption('player-guild')));
+                if ($guild) {
                     $output->writeln([
-                        '===========================',
-                        'The synchronization is over and everything is fine',
+                        'We will attach the player to the guild '.$guild->getName()
                     ]);
-                    return 200;
                 } else {
                     $output->writeln([
+                        'The guild doesn\'t exist in the database. We can\'t create the user if the guild is not create',
                         '===========================',
-                        'The synchronization stopped because we encounter an error',
-                        'There is the message : ',
-                        $result['error_message']
+                        'End of the command'
                     ]);
                     return 404;
                 }
             }
+        }
 
+        if ($input->getOption('player-heroes')) {
+            $heroes = true;
+            $output->writeln([
+                'You decided to synchronize player heroes'
+            ]);
+        }
+
+        if ($input->getOption('player-ships')) {
+            $ships = true;
+            $output->writeln([
+                'You decided to synchronize player ships'
+            ]);
+        }
+
+        $result = $this->playerHelper->createPlayer($input->getArgument('player-id'),$heroes,$ships,null,$guild);
+        if (isset($result['error_message'])) {
             $output->writeln([
                 '===========================',
-                'We can\'t synchronize '.$type.' because you put wrong informations',
+                'The synchronization stopped because we encounter an error',
+                'There is the message : ',
+                $result['error_message']
             ]);
             return 404;
         } else {
             $output->writeln([
-                'You choose to synchronize all '.$type.'s',
                 '===========================',
-                'The synchronization will start',
+                'The synchronization is over and everything is fine',
             ]);
-            $result = $this->unit->updateUnit($entityName,false);
-            if (isset($result['error_message'])) {
-                $output->writeln([
-                    '===========================',
-                    'The synchronization stopped because we encounter an error',
-                    'There is the message : ',
-                    $result['error_message']
-                ]);
-                return 404;
-            } else {
-                $output->writeln([
-                    '===========================',
-                    'The synchronization is over and everything is fine',
-                ]);
-                return 200;
-            }
+            return 200;
         }
     }
 
