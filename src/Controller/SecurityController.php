@@ -17,8 +17,19 @@ class SecurityController extends AbstractController
         ]);
     }
 
+    /**
+     * @Route("/login", name="security_login")
+     */
     public function login()
     {
         return $this->render('security/login.html.twig');
+    }
+
+    /**
+     * @Route("/demand-access", name="security_demand_access")
+     */
+    public function userDemand()
+    {
+        return $this->render('security/user.demand.html.twig');
     }
 }

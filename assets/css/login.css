@@ -1,0 +1,87 @@
+/* FONTS */
+@import url('https://fonts.googleapis.com/css?family=Odibee+Sans&display=swap');
+@import url('https://fonts.googleapis.com/css?family=Varela+Round&display=swap');
+
+body {
+    background-color: rgb(242,242,242);
+    font-family: 'Varela Round', sans-serif;
+}
+
+
+.container {
+    width: 100%;  
+    min-height: 100vh;
+    display: -webkit-box;
+    display: -webkit-flex;
+    display: -moz-box;
+    display: -ms-flexbox;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    align-items: center;
+    padding: 15px;
+    background: #f2f2f2; 
+}
+
+.content {
+    width: 390px;
+    background: #fff;
+    border-radius: 10px;
+    overflow: hidden;
+    padding: 77px 55px 33px 55px;
+  
+    box-shadow: 0 5px 10px 0px rgba(0, 0, 0, 0.1);
+    -moz-box-shadow: 0 5px 10px 0px rgba(0, 0, 0, 0.1);
+    -webkit-box-shadow: 0 5px 10px 0px rgba(0, 0, 0, 0.1);
+    -o-box-shadow: 0 5px 10px 0px rgba(0, 0, 0, 0.1);
+    -ms-box-shadow: 0 5px 10px 0px rgba(0, 0, 0, 0.1);
+}
+
+.image-header {
+    display: block;
+    margin: 0 auto;
+}
+
+.title {
+    display: block;
+    text-align: center;
+    margin-top: 30px;
+    font-size: 45px;
+    color: #333333;
+    line-height: 1.2;
+    font-family: 'Odibee Sans', cursive;
+}
+
+.form-group {
+    margin-top: 20px;
+}
+
+.form-control {
+    width: 100%;
+    border-top : 0;
+    border-right: 0;
+    border-left: 0;
+    border-bottom: 2px solid gray;
+    margin-top: 5px;
+}
+
+.form-control:focus {
+    outline: none;
+}
+
+.btn {
+    width: 100px;
+    height: 25px;
+    display: block;
+    margin: 0 auto;
+    color:white;
+    background-color: rgb(26, 25, 25);
+    border: black;
+    border-width: 5px;
+    border-radius: 2px;
+}
+
+.create-account, .form-group a {
+    text-align: center;
+    font-size: 12px;
+}

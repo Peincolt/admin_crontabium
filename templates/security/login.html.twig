@@ -1,56 +1,35 @@
-<div class="login-registration-forms" id="login-registration-forms">
-    <div class="symbol-republic">
-        <img src="{{ asset('build/images/Logo-jedi-order.png') }}">
-        <blockquote style="display:block" class="blockquote">"There is no ignorance, there is knowledge"<br/><cite>Jedi Code</cite></blockquote>
-    </div>
-    <div class="forms">
-        <div id="login-bar">
-            <div id="login-registration-button">
-                <a href="#login" id="login-popin" class="orange-border"> Connection </a>
-                <a href="#registration" id="registration-popin"> Create account </a>
+<html>
+    <head>
+        <meta charset="UTF-8">
+        <title>Login</title>
+        {{ encore_entry_link_tags('login') }}
+    </head>
+    <body>
+        <div class="container">
+            <div class="content">
+                <div class = "header">
+                    <img src="{{ asset('build/images/Logo-jedi-order.png') }}" class="image-header">
+                    <span class="title"> Crontabium </span>
+                </div>
+                <div class="login">
+                    <form action="{{ path('security_login') }}" method="post">
+                        <div class="form-group">
+                        <label for="username">Username</label><br/>
+                            <input required name="_username" type="text" class="form-control input-form">
+                        </div>
+                        <div class="form-group">
+                        <label for="password">Password</label><br/>
+                            <input required name="_password" type="password" class="form-control input-form">
+                        </div>
+                        <div class="form-group">
+                            <input type="submit" name="submit" value="Submit" id="submit-login" class="btn btn-primary">
+                        </div>
+                        <div class="form-group">
+                            <p class="create-account"> You don't have an account ? Click <a href="">here</a> to create one </p>
+                        </div>
+                    </form>
+                </div>
             </div>
         </div>
-        <div class="login">
-            <p id="message-connection"> Log in with your account </p>
-            <form action="{{ path('security_login') }}" method="post">
-                <div class="form-group">
-                <label for="username">Username</label>
-                    <input placeholder="Username" required name="_username" type="text" class="form-control input-form">
-                </div>
-                <div class="form-group">
-                <label for="password">Password</label>
-                    <input placeholder="Password" required name="_password" type="password" class="form-control input-form">
-                </div>
-                <div class="form-group">
-                    <input type="submit" name="submit" value="Submit" id="submit-login" class="btn btn-primary">
-                </div>
-                <div class="form-group">
-                    <a href="{{ path('security_forgot_password') }}" id="link-reset-password" style="display:block;text-align:center"><b>Forgot my password</b></a>
-                </div>
-            </form>
-        </div>
-        <div class="registration">
-            <p id="message-connection"> Create an account </p>
-            <form name="registration" method="post" action="{{ path('security_registration') }}">
-                <div class="form-group">
-                    <label for="registration_email" class="required">Email</label>
-                    <input type="email" id="registration_email" name="registration[email]" required="required" placeholder="Enter your email" class="form-control input-form" />
-                </div>
-                <div class="form-group">
-                    <label for="registration_username" class="required">Username</label>
-                    <input type="text" id="registration_username" name="registration[username]" required="required" maxlength="255" placeholder="Enter your username" class="form-control input-form" />
-                </div>
-                <div class="form-group">
-                    <label for="registration_password_first" class="required">Password</label>
-                    <input type="password" id="registration_password_first" name="registration[password][first]" required="required" placeholder="Enter your password" class="form-control input-form" />
-                </div>
-                <div class="form-group">
-                    <label for="registration_password_second" class="required">Repeat Password</label>
-                    <input type="password" id="registration_password_second" name="registration[password][second]" required="required" placeholder="Confirm your password" class="form-control input-form" />
-                </div>
-                <input type="submit" name="submit" value="Submit" class="btn btn-primary" id="submit-registration">
-                <input type="hidden" id="registration__token" name="registration[_token]" value="{{ csrf_token('registration') }}" />
-            </form>
-        </div>
-    </div>
-</div>
+    </body>
+</html>
