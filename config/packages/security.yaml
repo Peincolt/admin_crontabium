@@ -1,5 +1,10 @@
 security:
     # https://symfony.com/doc/current/security.html#where-do-users-come-from-user-providers
+    encoders:
+        App\Entity\User:
+            algorithm : auto
+    role_hierarchy:
+        ROLE_ADMIN: ROLE_USER
     providers:
         in_memory: { memory: null }
     firewalls:
@@ -7,7 +12,18 @@ security:
             pattern: ^/(_(profiler|wdt)|css|images|js)/
             security: false
         main:
-            anonymous: lazy
+            anonymous: true
+
+            provider : connection
+
+            form_login :
+                login_path : security_login
+                check_path : security_login
+
+            logout :
+                path : security_logout
+                target : home
+
 
             # activate different ways to authenticate
             # https://symfony.com/doc/current/security.html#firewalls-authentication
