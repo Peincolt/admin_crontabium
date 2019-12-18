@@ -1,35 +1,30 @@
-<html>
-    <head>
-        <meta charset="UTF-8">
-        <title>Login</title>
-        {{ encore_entry_link_tags('login') }}
-    </head>
-    <body>
-        <div class="container">
-            <div class="content">
-                <div class = "header">
-                    <img src="{{ asset('build/images/Logo-jedi-order.png') }}" class="image-header">
-                    <span class="title"> Crontabium </span>
-                </div>
-                <div class="login">
-                    <form action="{{ path('security_login') }}" method="post">
-                        <div class="form-group">
-                        <label for="username">Username</label><br/>
-                            <input required name="_username" type="text" class="form-control input-form">
-                        </div>
-                        <div class="form-group">
-                        <label for="password">Password</label><br/>
-                            <input required name="_password" type="password" class="form-control input-form">
-                        </div>
-                        <div class="form-group">
-                            <input type="submit" name="submit" value="Submit" id="submit-login" class="btn btn-primary">
-                        </div>
-                        <div class="form-group">
-                            <p class="create-account"> You don't have an account ? Click <a href="">here</a> to create one </p>
-                        </div>
-                    </form>
-                </div>
-            </div>
+{% extends 'base.anonymous.html.twig' %}
+{% block title %}Login{% endblock %}
+{% block body %}
+<div class="container">
+    <div class="content">
+        <div class = "header">
+            <img src="{{ asset('build/images/Logo-jedi-order.png') }}" class="image-header">
+            <span class="title"> Crontabium </span>
         </div>
-    </body>
-</html>
+        <div class="login">
+            <form action="{{ path('security_login') }}" method="post">
+                <div class="form-group">
+                <label for="username">Username</label><br/>
+                    <input required name="_username" type="text" class="form-control input-form">
+                </div>
+                <div class="form-group">
+                <label for="password">Password</label><br/>
+                    <input required name="_password" type="password" class="form-control input-form">
+                </div>
+                <div class="form-group">
+                    <input type="submit" name="submit" value="Submit" id="submit-login" class="btn btn-primary">
+                </div>
+                <div class="form-group">
+                    <p class="create-account"> You don't have an account ? Click <a href="{{ path('security_demand_access') }}">here</a> to create one </p>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}
