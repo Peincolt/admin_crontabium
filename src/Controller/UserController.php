@@ -22,7 +22,6 @@ class UserController extends AbstractController
     /**
      * @Route("/user/create", name="security_creation_user")
      * @Route("/user/update/{id}", name="security_update_iser")
-     * @Route("/user-demand/transform/{id}", name="security_transform_demand")
      */
     public function createUser(Request $request, User $user = null)
     {
