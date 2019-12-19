@@ -7,23 +7,19 @@ use App\Entity\User;
 use Doctrine\ORM\EntityManagerInterface;
 use App\Service\Data\Helper as DataHelper;
 use App\Entity\UserDemand as UserDemandEntity;
-use Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface;
 
 class UserDemand
 {
 
     private $dataHelper;
     private $entityManagerInterface;
-    private $passwordEncoder;
 
     public function __construct(DataHelper $dataHelper,
-        EntityManagerInterface $entityManagerInterface,
-        UserPasswordEncoderInterface $passwordEncoder
+        EntityManagerInterface $entityManagerInterface
     )
     {
         $this->dataHelper = $dataHelper;
         $this->entityManagerInterface = $entityManagerInterface;
-        $this->passwordEncoder = $passwordEncoder;
     }
 
     public function createUserDemand(UserDemandEntity $user)
@@ -61,11 +57,10 @@ class UserDemand
         try {
             foreach($ids as $id) {
                 $demand = $this->dataHelper->getDatabaseData("App\Entity\UserDemand",array('id' => $id));
-                $guild = $this->dataHelper->getDatabaseData("App\Entity\Guild",array('id' => $demand->getGuild()));
                 $user = new User();
                 $user->setUsername($demand->getUsername())
-                    ->setPassword($this->passwordEncoder
-                        ->encodePassword($user,$demand->getPassword()))
+                    ->setPassword($this->dataHelper
+                        ->hashPassword($user,$demand->getPassword()))
                     ->setEmail($demand->getEmail())
                     ->setRoles(array('ROLE_'.$demand->getRole()));
                 $this->entityManagerInterface->persist($user);
@@ -78,10 +73,5 @@ class UserDemand
             $arrayReturn['error_code'] = 404;
             return $arrayReturn;
         }
-    }
-
-    public function hashPassword(User $user, $password)
-    {
-        return $this->passwordEncoder->encodePassword($user, $password);
     }
 }

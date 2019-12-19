@@ -2,15 +2,20 @@
 
 namespace App\Service\Data;
 
+use App\Entity\User;
 use Doctrine\ORM\EntityManagerInterface;
+use Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface;
 
 class Helper {
 
     private $entityManagerInterface;
+    private $passwordEncoder;
 
-    public function __construct(EntityManagerInterface $entityManagerInterface)
+    public function __construct(EntityManagerInterface $entityManagerInterface,
+        UserPasswordEncoderInterface $passwordEncoder)
     {
         $this->entityManagerInterface = $entityManagerInterface;
+        $this->passwordEncoder = $passwordEncoder;
     }
 
     public function matchEntityField($entityName, $data)
@@ -121,5 +126,10 @@ class Helper {
         $lowercase = preg_match("#[a-z]+#",$password);
         $specialChar = preg_match("#\W+#",$password);
         return ($uppercase && $digit && $lowercase && $specialChar);
+    }
+
+    public function hashPassword(User $user, $password)
+    {
+        return $this->passwordEncoder->encodePassword($user, $password);
     }
 }

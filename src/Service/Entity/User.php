@@ -2,30 +2,39 @@
 
 namespace App\Service\Entity;
 
+use Exception;
+use App\Entity\User as UserEntity;
 use Doctrine\ORM\EntityManagerInterface;
-use App\Entity\UserDemand;
+use App\Service\Data\Helper as DataHelper;
 
 class User 
 {
 
     private $entityManagerInterface;
+    private $dataHelper;
 
-    public function __construct(EntityManagerInterface $entityManagerInterface)
+    public function __construct(EntityManagerInterface $entityManagerInterface, DataHelper $dataHelper)
     {
         $this->entityManagerInterface = $entityManagerInterface;
+        $this->dataHelper = $dataHelper;
     }
 
-    public function createUser (User $user)
+    public function updateUser(UserEntity $user)
     {
-        return $this->updateAccount($user,'User');
-    }
+        if (!$this->dataHelper->isPasswordCorrect($user->getPassword())) {
+            $arrayReturn['error_message'] = 'Your password must contains at least 8 characters composed of 1 digit, 1 capital letter and 1 special char';
+            $arrayReturn['error_forms']['password'] = 'Your password must contains at least 8 characters composed of 1 digit, 1 capital letter and 1 special char';
+            return $arrayReturn;
+        }
 
-    public function isPasswordCorrect(string $password)
-    {
-        $uppercase = preg_match("#[A-Z]+#",$password);
-        $digit = preg_match("#[0-9]+#",$password);
-        $lowercase = preg_match("#[a-z]+#",$password);
-        $specialChar = preg_match("#\W+#",$password);
-        return ($uppercase && $digit && $lowercase && $specialChar);
+        $user->setPassword($this->dataHelper->hashPassword($user, $user->getPassword()));
+
+        try {
+            $this->entityManagerInterface->persist($user);
+            $this->entityManagerInterface->flush();
+            return 200;
+        } catch (Exception $e) {
+            $arrayReturn['error_message'] = 'An error occured while we\'re saving your demand. Please try later or contact an admin if the error persists';
+        }
     }
 }
