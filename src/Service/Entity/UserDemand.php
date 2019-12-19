@@ -2,21 +2,28 @@
 
 namespace App\Service\Entity;
 
+use Exception;
+use App\Entity\User;
+use Doctrine\ORM\EntityManagerInterface;
 use App\Service\Data\Helper as DataHelper;
 use App\Entity\UserDemand as UserDemandEntity;
-use Doctrine\ORM\EntityManagerInterface;
-use Exception;
+use Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface;
 
 class UserDemand
 {
 
     private $dataHelper;
     private $entityManagerInterface;
+    private $passwordEncoder;
 
-    public function __construct(DataHelper $dataHelper, EntityManagerInterface $entityManagerInterface)
+    public function __construct(DataHelper $dataHelper,
+        EntityManagerInterface $entityManagerInterface,
+        UserPasswordEncoderInterface $passwordEncoder
+    )
     {
         $this->dataHelper = $dataHelper;
         $this->entityManagerInterface = $entityManagerInterface;
+        $this->passwordEncoder = $passwordEncoder;
     }
 
     public function createUserDemand(UserDemandEntity $user)
@@ -49,8 +56,30 @@ class UserDemand
         }
     }
 
-    public function transformDemandToAccount(int $idDemand)
+    public function transformDemandToAccount(array $ids)
     {
+        try {
+            foreach($ids as $id) {
+                $demand = $this->dataHelper->getDatabaseData("App\Entity\UserDemand",array('id' => $id));
+                $user = new User();
+                $user->setUsername($demand->getUsername())
+                    ->setPassword($this->passwordEncoder
+                        ->encodePassword($user,$demand->getPassword()))
+                    ->setEmail($demand->getEmail())
+                    ->setRoles(array('ROLE_'.$demand->getRoles()));
+                $this->entityManagerInterface->persist($user);
+                $this->entityManagerInterface->flush();
+            }
+            return 200;
+        } catch (Exception $e) {
+            $arrayReturn['error_message'] = $e->getMessage();
+            $arrayReturn['error_code'] = 404;
+            return $arrayReturn;
+        }
+    }
 
+    public function hashPassword(User $user, $password)
+    {
+        return $this->passwordEncoder->encodePassword($user, $password);
     }
 }
