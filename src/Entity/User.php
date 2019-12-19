@@ -47,11 +47,6 @@ class User implements UserInterface
      */
     private $roles = [];
 
-    /**
-     * @ORM\ManyToOne(targetEntity="App\Entity\Guild", inversedBy="users")
-     */
-    private $guild;
-
     public function getId(): ?int
     {
         return $this->id;
@@ -103,18 +98,6 @@ class User implements UserInterface
     public function setRoles(array $roles): self
     {
         $this->roles = $roles;
-
-        return $this;
-    }
-
-    public function getGuild(): ?Guild
-    {
-        return $this->guild;
-    }
-
-    public function setGuild(?Guild $guild): self
-    {
-        $this->guild = $guild;
 
         return $this;
     }

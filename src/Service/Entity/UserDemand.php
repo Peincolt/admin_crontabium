@@ -61,13 +61,15 @@ class UserDemand
         try {
             foreach($ids as $id) {
                 $demand = $this->dataHelper->getDatabaseData("App\Entity\UserDemand",array('id' => $id));
+                $guild = $this->dataHelper->getDatabaseData("App\Entity\Guild",array('id' => $demand->getGuild()));
                 $user = new User();
                 $user->setUsername($demand->getUsername())
                     ->setPassword($this->passwordEncoder
                         ->encodePassword($user,$demand->getPassword()))
                     ->setEmail($demand->getEmail())
-                    ->setRoles(array('ROLE_'.$demand->getRoles()));
+                    ->setRoles(array('ROLE_'.$demand->getRole()));
                 $this->entityManagerInterface->persist($user);
+                $this->entityManagerInterface->remove($demand);
                 $this->entityManagerInterface->flush();
             }
             return 200;

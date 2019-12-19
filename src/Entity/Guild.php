@@ -43,11 +43,6 @@ class Guild
      */
     private $players;
 
-    /**
-     * @ORM\OneToMany(targetEntity="App\Entity\User", mappedBy="guild_id")
-     */
-    private $users;
-
     public function __construct()
     {
         $this->players = new ArrayCollection();
@@ -144,28 +139,5 @@ class Guild
     public function getUsers(): Collection
     {
         return $this->users;
-    }
-
-    public function addUser(User $user): self
-    {
-        if (!$this->users->contains($user)) {
-            $this->users[] = $user;
-            $user->setGuildId($this);
-        }
-
-        return $this;
-    }
-
-    public function removeUser(User $user): self
-    {
-        if ($this->users->contains($user)) {
-            $this->users->removeElement($user);
-            // set the owning side to null (unless already changed)
-            if ($user->getGuildId() === $this) {
-                $user->setGuildId(null);
-            }
-        }
-
-        return $this;
     }
 }

@@ -64,6 +64,14 @@ class UserDemandController extends AbstractController
      */
     public function transformDemand(Request $request)
     {
-        return $this->userDemandHelper->transformDemandToAccount($request->query->get('ids'));
+        $ids = $request->request->get('ids');
+        if ($ids) {
+            $result = $this->userDemandHelper->transformDemandToAccount($ids);
+            if (isset($result['error_message'])) {
+                var_dump($result['error_message']);
+            }
+        }
+        die('oklm');
+        return 404;
     }
 }
