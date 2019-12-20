@@ -1,20 +1,49 @@
-{% extends 'base.html.twig' %}
-
-{% block title %}Hello UserDemandController!{% endblock %}
-
+{% form_theme formDemand 'Form/form_errors.html.twig' %}
+{% extends 'base.anonymous.html.twig' %}
+{% block title %}Demand access{% endblock %}
 {% block body %}
-<style>
-    .example-wrapper { margin: 1em auto; max-width: 800px; width: 95%; font: 18px/1.5 sans-serif; }
-    .example-wrapper code { background: #F5F5F5; padding: 2px 6px; }
-</style>
-
-<div class="example-wrapper">
-    <h1>Hello {{ controller_name }}! ✅</h1>
-
-    This friendly message is coming from:
-    <ul>
-        <li>Your controller at <code><a href="{{ 'C:/wamp64/www/admin_crontabium/src/Controller/UserDemandController.php'|file_link(0) }}">src/Controller/UserDemandController.php</a></code></li>
-        <li>Your template at <code><a href="{{ 'C:/wamp64/www/admin_crontabium/templates/user_demand/index.html.twig'|file_link(0) }}">templates/user_demand/index.html.twig</a></code></li>
-    </ul>
-</div>
+    <div class="container">
+        <div class = "content">
+            <div class="header">
+                <img src="{{ asset('build/images/Logo-jedi-order.png') }}" class="image-header">
+                <h1 class="title"> Demand your access </h1>
+                <p class="text-intro"> With this form, you can create a request to have an account in this platform </p>
+            </div>
+            {{ form_start(formDemand) }}
+            <div class="form-group">
+                {{ form_label(formDemand.email,null,{'label_attr' : {'class' : 'form-label'}}) }}
+                {{ form_errors(formDemand.email) }}
+                {{ form_widget(formDemand.email, {'attr' : {'class' : 'form-control input-form'}}) }}
+            </div>
+            <div class="form-group">
+                {{ form_label(formDemand.username,null,{'label_attr' : {'class' : 'form-label'}}) }}
+                {{ form_errors(formDemand.username) }}
+                {{ form_widget(formDemand.username, {'attr' : {'class' : 'form-control input-form'}}) }}
+            </div>
+            <div class="form-group">
+                {{ form_label(formDemand.password.first,null,{'label_attr' : {'class' : 'form-label'}}) }}
+                {{ form_errors(formDemand.password) }}
+                {{ form_widget(formDemand.password.first, {'attr' : {'class' : 'form-control input-form'}}) }}
+            </div>
+            <div class="form-group">
+                {{ form_label(formDemand.password.second,null,{'label_attr' : {'class' : 'form-label'}}) }}
+                {{ form_errors(formDemand.password.second) }}
+                {{ form_widget(formDemand.password.second, {'attr' : {'class' : 'form-control input-form'}}) }}
+            </div>
+            <div class="form-group">
+                {{ form_label(formDemand.guild,null,{'label_attr' : {'class' : 'form-label'}}) }}
+                {{ form_errors(formDemand.guild) }}
+                {{ form_widget(formDemand.guild, {'attr' : {'class' : 'form-control form-select'}}) }}
+            </div>
+            <div class="form-group">
+                {{ form_label(formDemand.role,'',{'label_attr' : {'class' : 'form-label'}}) }}
+                {{ form_errors(formDemand.role) }}
+                {{ form_widget(formDemand.role, {'attr' : {'class' : 'form-control form-select'}}) }}
+            </div>
+            <div class="form-group">
+                <input type="submit" name="submit" value="Submit" class="btn btn-submit">
+            </div>
+            {{ form_end(formDemand) }}
+        </div>
+    </div>  
 {% endblock %}

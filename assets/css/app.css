@@ -1,6 +1,13 @@
 @import url('https://fonts.googleapis.com/css?family=Odibee+Sans&display=swap');
 @import url('https://fonts.googleapis.com/css?family=Varela+Round&display=swap');
 
+.big-number {
+    display: inline-block;
+}
+
+.title {
+    text-align: center;
+}
 
 body {
     background-color: lightgray;

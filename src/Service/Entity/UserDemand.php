@@ -2,24 +2,28 @@
 
 namespace App\Service\Entity;
 
-use Exception;
-use App\Entity\User;
 use Doctrine\ORM\EntityManagerInterface;
+use Exception;
 use App\Service\Data\Helper as DataHelper;
 use App\Entity\UserDemand as UserDemandEntity;
+use App\Entity\User;
+use App\Service\Entity\Security as SecurityHelper;
 
 class UserDemand
 {
 
     private $dataHelper;
     private $entityManagerInterface;
+    private $securityHelper;
 
     public function __construct(DataHelper $dataHelper,
-        EntityManagerInterface $entityManagerInterface
+        EntityManagerInterface $entityManagerInterface,
+        SecurityHelper $securityHelper
     )
     {
         $this->dataHelper = $dataHelper;
         $this->entityManagerInterface = $entityManagerInterface;
+        $this->securityHelper = $securityHelper;
     }
 
     public function createUserDemand(UserDemandEntity $user)
@@ -35,7 +39,7 @@ class UserDemand
             return $arrayReturn;
         }
 
-        if (!$this->dataHelper->isPasswordCorrect($user->getPassword())) {
+        if (!$this->securityHelper->isPasswordCorrect($user->getPassword())) {
             $arrayReturn['error_message'] = 'Your password must contains at least 8 characters composed of 1 digit, 1 capital letter and 1 special char';
             $arrayReturn['error_forms']['password'] = 'Your password must contains at least 8 characters composed of 1 digit, 1 capital letter and 1 special char';
             return $arrayReturn;
@@ -59,10 +63,10 @@ class UserDemand
                 $demand = $this->dataHelper->getDatabaseData("App\Entity\UserDemand",array('id' => $id));
                 $user = new User();
                 $user->setUsername($demand->getUsername())
-                    ->setPassword($this->dataHelper
+                    ->setPassword($this->securityHelper
                         ->hashPassword($user,$demand->getPassword()))
                     ->setEmail($demand->getEmail())
-                    ->setRoles(array('ROLE_'.$demand->getRole()));
+                    ->setRoles('ROLE_'.$demand->getRole());
                 $this->entityManagerInterface->persist($user);
                 $this->entityManagerInterface->remove($demand);
                 $this->entityManagerInterface->flush();

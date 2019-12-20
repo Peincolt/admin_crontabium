@@ -88,4 +88,26 @@ class Guild
 
         return $arrayReturn;
     }
+
+    public function getHeroesGalacticalPower(EntityGuild $guild)
+    {
+        $galacticalPower = 0;
+        $players = $guild->getPlayers();
+        foreach ($players as $player) {
+            $galacticalPower+= intval($player->getCharactersGalacticalPuissance());
+        }
+        return $galacticalPower;
+    }
+
+    public function getShipsGalacticalPower(EntityGuild $guild)
+    {
+        $galacticalPower = 0;
+        $players = $guild->getPlayers();
+        foreach ($players as $player) {
+            $galacticalPower+= intval($player->getShipsGalacticalPuissance());
+        }
+        return $galacticalPower;
+    }
+
+
 }

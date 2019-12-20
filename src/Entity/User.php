@@ -90,7 +90,7 @@ class User implements UserInterface
 
     public function getRoles()
     {
-        $roles = $this->roles;
+        return $this->roles;
     }
 
     public function setRoles(string $roles): self
