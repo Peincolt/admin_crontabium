@@ -1,6 +1,34 @@
 @import url('https://fonts.googleapis.com/css?family=Odibee+Sans&display=swap');
 @import url('https://fonts.googleapis.com/css?family=Varela+Round&display=swap');
 
+@media (max-width: 991.8px){
+    .navbar-brand p {
+        display:contents;
+    }
+
+    #img-hp {
+        display: none;
+    }
+}
+
+@media (min-width: 992px){
+    .navbar-brand p {
+        display:none;
+    }
+
+    #img-hp {
+        display: block;
+    }
+}
+
+th {
+    cursor: pointer;
+}
+
+#img-hp {
+    text-align: center;
+}
+
 .numbers {
     margin-top: 50px;
     padding-left: 50px;

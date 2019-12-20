@@ -109,5 +109,25 @@ class Guild
         return $galacticalPower;
     }
 
+    public function getHeroesNumber(EntityGuild $guild)
+    {
+        $heroesNumber = 0;
+        $players = $guild->getPlayers();
+        foreach ($players as $player) {
+            $heroesNumber+= intval(count($player->getCharacters()));
+        }
+        return $heroesNumber;
+    }
+
+    public function getShipsNumber(EntityGuild $guild)
+    {
+        $shipsNumber = 0;
+        $players = $guild->getPlayers();
+        foreach ($players as $player) {
+            $shipsNumber+= intval(count($player->getShips()));
+        }
+        return $shipsNumber;
+    }
+
 
 }
