@@ -17,7 +17,7 @@ class PlayerController extends AbstractController
         $entityManager = $this->getDoctrine()->getManager();
         $guild = $entityManager->getRepository("App\Entity\Guild")->findOneBy(['id' => 1]);
         $players = $guild->getPlayers();
-        return $this->render('admin/players.html.twig', [
+        return $this->render('player/list.html.twig', [
             'guildMembers' => $guild->getMembers(),
             'players' => $players,
             'guildHeroesGp' => $guildHelper->getHeroesGalacticalPower($guild),
