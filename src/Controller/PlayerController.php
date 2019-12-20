@@ -10,7 +10,7 @@ use App\Entity\Player;
 class PlayerController extends AbstractController
 {
     /**
-     * @Route("/players", name="home")
+     * @Route("/players", name="players_list")
      */
     public function players(GuildHelper $guildHelper)
     {
