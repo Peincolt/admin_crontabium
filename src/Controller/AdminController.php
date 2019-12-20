@@ -2,9 +2,11 @@
 
 namespace App\Controller;
 
-use App\Service\Entity\PlayerHelper;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use App\Service\Entity\Guild;
+use App\Service\Entity\PlayerHelper;
+use App\Service\Entity\Guild as GuildHelper;
 
 class AdminController extends AbstractController
 {
@@ -13,11 +15,31 @@ class AdminController extends AbstractController
      */
     public function index(PlayerHelper $playerHelper)
     {
-        $dataPlayer = $playerHelper->createPlayer('246639295',false,false);
-        var_dump($dataPlayer);
-        die('ok');
+        $tab['form_error']['password'] = 'test';
+        $tab['form_error']['test'] = 'test2';
+        
+        foreach($tab['form_error'] as $key => $value) {
+            var_dump($key);
+            var_dump($value);
+        }
+
+        die('oklm');
+    }
+
+    /**
+     * @Route("/", name="home")
+     */
+    public function home(Guild $guildHelper)
+    {
+        $entityManager = $this->getDoctrine()->getManager();
+        $guild = $entityManager->getRepository("App\Entity\Guild")->findOneBy(['id' => 1]);
+
+        $players = $guild->getPlayers();
         return $this->render('admin/index.html.twig', [
-            'controller_name' => 'AdminController',
+            'guild' => $guild,
+            'players' => $players,
+            'guildHeroesGp' => $guildHelper->getHeroesGalacticalPower($guild),
+            'guildShipsGp' => $guildHelper->getShipsGalacticalPower($guild)
         ]);
     }
 }
