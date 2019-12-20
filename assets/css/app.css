@@ -1,14 +1,28 @@
 @import url('https://fonts.googleapis.com/css?family=Odibee+Sans&display=swap');
 @import url('https://fonts.googleapis.com/css?family=Varela+Round&display=swap');
 
+.numbers {
+    margin-top: 50px;
+    padding-left: 50px;
+}
+
 .big-number {
     display: inline-block;
+    text-align: center;
+    font-weight: bold;
+    width: 128px;
+    height:200px;
+    margin-right: 70px;
+    vertical-align: middle;
 }
 
 .title {
+    margin-top: 20px;
     text-align: center;
 }
 
-body {
-    background-color: lightgray;
+.h2 {
+    text-align: center;
+    margin-top: 50px;
+    margin-bottom: 50px;
 }
