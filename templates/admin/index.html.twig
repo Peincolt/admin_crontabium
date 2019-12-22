@@ -40,10 +40,10 @@
             </thead>
             {% for player in players %}
             <tr>
-                <td> {{ player.name }} </td>
-                <td> {{ player.galacticalPuissance | number_format('0',',',' ') }} </td>
-                <td> {{ player.charactersGalacticalPuissance | number_format('0',',',' ') }} </td>
-                <td> {{ player.shipsGalacticalPuissance | number_format('0',',',' ') }} </td>
+                <td><a href="{{ path('player_viewer',{'name':player.name}) }}"> {{ player.name }}</a></td>
+                <td><a href="{{ path('player_viewer',{'name':player.name}) }}"> {{ player.galacticalPuissance | number_format('0',',',' ') }}</a></td>
+                <td><a href="{{ path('player_viewer',{'name':player.name}) }}"> {{ player.charactersGalacticalPuissance | number_format('0',',',' ') }}</a></td>
+                <td><a href="{{ path('player_viewer',{'name':player.name}) }}"> {{ player.shipsGalacticalPuissance | number_format('0',',',' ') }}</a></td>
             </tr>
             {% endfor %}
         </table>

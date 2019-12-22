@@ -32,7 +32,7 @@ class PlayerController extends AbstractController
      */
     public function player(Player $player)
     {
-        $this->render('player/player.html.twig', [
+        return $this->render('player/player.html.twig', [
             'player' => $player,
             'playerHeroes' => $player->getCharacters(),
             'playerShips' => $player->getShips()
