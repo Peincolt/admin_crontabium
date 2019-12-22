@@ -1,0 +1,16 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}{{ type }}{% endblock %}
+{% block body %}
+{% set variable = 'units.'~name %}
+<h1 class="title"> There is some general informations about {{ type }} : </h1>
+<br/>
+<div class="content">
+    <div class="numbers-players">
+        <div class="big-number">
+            <img src="{{ asset('build/images/people.png') }}" class="img-big-number">
+            <br/>{{ variable | length }} {{ type }}
+        </div>
+    </div>
+</div>
+{% endblock %}
