@@ -5,7 +5,7 @@
 <h1 class="title"> There is some general informations about players : </h1>
 <br/>
 <div class="content">
-    <div class="numbers">
+    <div class="numbers-players">
         <div class="big-number">
             <img src="{{ asset('build/images/people.png') }}" class="img-big-number">
             <br/>{{ guildMembers }} player(s)
@@ -20,7 +20,6 @@
         </div>
         <br/>
         <br/>
-        <p> If you want more details about heroes or ships, you can go here </p>
     </div>
     <div class="list-players">
         <h2 class="h2"> Players informations </h2>
@@ -33,14 +32,16 @@
                     <th scope="col" id="th-3"> Ships Galactical Power </th>
                 </tr>
             </thead>
+            <tbody>
             {% for player in players %}
-            <tr>
-                <td> {{ player.name }} </td>
-                <td> {{ player.galacticalPuissance | number_format('0',',',' ') }} </td>
-                <td> {{ player.charactersGalacticalPuissance | number_format('0',',',' ') }} </td>
-                <td> {{ player.shipsGalacticalPuissance | number_format('0',',',' ') }} </td>
-            </tr>
+                <tr>
+                    <td><a href="{{ path('player_viewer',{'name':player.name}) }}"> {{ player.name }}</a></td>
+                    <td><a href="{{ path('player_viewer',{'name':player.name}) }}"> {{ player.galacticalPuissance | number_format('0',',',' ') }}</a></td>
+                    <td><a href="{{ path('player_viewer',{'name':player.name}) }}"> {{ player.charactersGalacticalPuissance | number_format('0',',',' ') }}</a></td>
+                    <td><a href="{{ path('player_viewer',{'name':player.name}) }}"> {{ player.shipsGalacticalPuissance | number_format('0',',',' ') }}</a></td>
+                </tr>
             {% endfor %}
+            </tbody>
         </table>
     </div>
 </div>

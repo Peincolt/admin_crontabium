@@ -34,6 +34,12 @@ th {
     padding-left: 50px;
 }
 
+.numbers-players {
+    margin : 25px auto;
+    width : 75%;
+    padding-left: 80px;
+}
+
 .big-number {
     display: inline-block;
     text-align: center;
@@ -53,4 +59,20 @@ th {
     text-align: center;
     margin-top: 50px;
     margin-bottom: 50px;
+}
+
+th {
+    text-align: center;
+}
+
+td {
+    padding: 0;
+    margin: 0;
+    text-align: center;
+}
+
+table tbody tr td a {
+    display: block;
+    width: 100%;
+    height: 100%;
 }

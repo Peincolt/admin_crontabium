@@ -28,10 +28,14 @@ class PlayerController extends AbstractController
     }
 
     /**
-     * @Route("/player/{id}", name="player_viewer")
+     * @Route("/player/{name}", name="player_viewer")
      */
     public function player(Player $player)
     {
-        
+        $this->render('player/player.html.twig', [
+            'player' => $player,
+            'playerHeroes' => $player->getCharacters(),
+            'playerShips' => $player->getShips()
+        ]);
     }
 }
