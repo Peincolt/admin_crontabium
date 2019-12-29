@@ -7,7 +7,11 @@
 <div class="content">
     <div class="numbers-players">
         <div class="big-number">
-            <img src="{{ asset('build/images/people.png') }}" class="img-big-number">
+        {% if type == 'heroes' %}
+            <img src="{{ asset('build/images/blaster.png') }}" class="img-big-number">
+        {% else %}
+            <img src="{{ asset('build/images/spaceship.png') }}" class="img-big-number">
+        {% endif %}
             <br/> {{ number }} {{ type }}
         </div>
     </div>
