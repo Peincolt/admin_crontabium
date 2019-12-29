@@ -12,16 +12,16 @@
         </div>
     </div>
     <div class="select-{{ type }}">
-        <h2> List of all {{ type }} in the guild </h2>
+        <h2 class="h2"> List of all {{ type }} in the guild </h2>
         <div class="form-group">
-            <select class="form-control">
+            <select class="form-control" id="selectUnit" name="{{ type }}">
                 {% for unit in units %}        
                 <option value="{{ unit.id }}">{{ unit.name }} ({% if app.request.pathinfo == '/heroes' %}{{ unit.heroPlayers | length }}{% else %}{{ unit.shipPlayers | length }}{% endif %})</option>
                 {% endfor %}
             </select>
         </div>
     </div>
-    <div class="list-{{ type }}">
+    <div id="list-ajax">
     </div>
 </div>
 {% endblock %}
