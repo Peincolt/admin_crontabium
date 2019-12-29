@@ -56,4 +56,11 @@ class PlayerUnit
     {
         return $this->createPlayerUnit($data,$player,'hero');
     }
+
+    public function getNumberUnit($type) {
+        $numberHeroes = $this->entityManagerInterface
+            ->getRepository('App\Entity\\'.$type.'Player')
+            ->findAll();
+        return count($numberHeroes);
+    }
 }

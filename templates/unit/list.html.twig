@@ -2,15 +2,26 @@
 
 {% block title %}{{ type }}{% endblock %}
 {% block body %}
-{% set variable = 'units.'~name %}
 <h1 class="title"> There is some general informations about {{ type }} : </h1>
 <br/>
 <div class="content">
     <div class="numbers-players">
         <div class="big-number">
             <img src="{{ asset('build/images/people.png') }}" class="img-big-number">
-            <br/>{{ variable | length }} {{ type }}
+            <br/> {{ number }} {{ type }}
         </div>
+    </div>
+    <div class="select-{{ type }}">
+        <h2> List of all {{ type }} in the guild </h2>
+        <div class="form-group">
+            <select class="form-control">
+                {% for unit in units %}        
+                <option value="{{ unit.id }}">{{ unit.name }} ({% if app.request.pathinfo == '/heroes' %}{{ unit.heroPlayers | length }}{% else %}{{ unit.shipPlayers | length }}{% endif %})</option>
+                {% endfor %}
+            </select>
+        </div>
+    </div>
+    <div class="list-{{ type }}">
     </div>
 </div>
 {% endblock %}
