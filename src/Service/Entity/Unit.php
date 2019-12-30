@@ -40,4 +40,20 @@ class Unit {
             return $data;
         }
     }
+
+    public function getEntityByRoute(string $route)
+    {
+        $arrayReturn = array();
+        $array = explode('_',$route);
+        if (count($array) > 2) {
+            $arrayReturn['name'] = ucfirst($array[2]);
+        } else {
+            $arrayReturn['name'] = ucfirst($array[1]);
+        }
+        $arrayReturn['namespace'] = "App\Entity\\".$arrayReturn['name'];
+        $arrayReturn['player_class_name'] = $arrayReturn['name'].'Player';
+        $arrayReturn['player_namespace_class'] = "App\Entity\\".$arrayReturn['player_class_name'];
+        $arrayReturn['function'] = 'get'.$arrayReturn['player_class_name'].'s';
+        return $arrayReturn;
+    }
 }

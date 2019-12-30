@@ -7,9 +7,16 @@ use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use App\Service\Entity\PlayerUnit;
+use App\Service\Entity\Unit as UnitHelper;
 
 class UnitController extends AbstractController
 {
+    private $unitHelper;
+
+    public function __construct(UnitHelper $unitHelper)
+    {
+        $this->unitHelper = $unitHelper;
+    }
     /**
      * @Route("/hero", name="hero")
      */
@@ -21,28 +28,24 @@ class UnitController extends AbstractController
     }
 
     /**
-     * @Route("/heroes", name="unit_heroes")
-     * @Route("/ships", name="unit_ships")
+     * @Route("/heroes", name="unit_list_hero")
+     * @Route("/ships", name="unit_list_ship")
      */
     public function units(Request $request, PlayerUnit $playerHelper)
     {
-        $array = explode('_',$request->attributes->get('_route'));
-        if (stristr("ships",$array[1])) {
-            $className = ucfirst(substr($array[1],0,strlen($array[1])-1));
-        } else {
-            $className = ucfirst(substr($array[1],0,strlen($array[1])-2));
-        }
-        $entityName = 'App\Entity\\'.$className;
-        $number = $playerHelper->getNumberUnit($className);
+        $entityInformation = $this->unitHelper
+            ->getEntityByRoute($request->attributes->get('_route'));
+
+        $number = $playerHelper->getNumberUnit($entityInformation['player_namespace_class']);
 
         $units = $this->getDoctrine()
         ->getManager()
-        ->getRepository($entityName)
+        ->getRepository($entityInformation['namespace'])
         ->findAll();
 
         return $this->render('unit/list.html.twig', [
             'units' => $units,
-            'type' => $array[1],
+            'type' => $entityInformation['name'],
             'number' => $number
         ]);
     }
@@ -51,26 +54,25 @@ class UnitController extends AbstractController
      * @Route("/hero/{id}", name="unit_hero")
      * @Route("/ship/{id}", name="unit_ship")
      */
-    public function unit(Request $request, $id)
+    public function unit(Request $request,$id)
     {
         $arrayReturn = array();
-        $array = explode('_',$request->attributes->get('_route'));
-        $entityName = ucfirst($array[1]);
-        $entityFullName = "App\Entity\\".$entityName;
-        $function = 'get'.$entityName.'Players';
+        $entityInformation = $this->unitHelper
+            ->getEntityByRoute($request->attributes->get('_route'));
+
         $unit = $this->getDoctrine()
-        ->getManager()
-        ->getRepository($entityFullName)
-        ->find($id);
+            ->getRepository($entityInformation['namespace'])
+            ->find($id);
         $arrayReturn['name'] = $unit->getName();
-        $unitPlayers = $unit->$function();
+        $functionName = $entityInformation['function'];
+        $unitPlayers = $unit->$functionName();
 
         for($i=0;$i<count($unitPlayers);$i++) {
             $arrayReturn['players'][$i]['player_name'] = $unitPlayers[$i]->getPlayer()->getName();
             $arrayReturn['players'][$i]['level'] = $unitPlayers[$i]->getLevel();
             $arrayReturn['players'][$i]['stars'] = $unitPlayers[$i]->getNumberStars();
             $arrayReturn['players'][$i]['galactical_puissance'] = $unitPlayers[$i]->getGalacticalPuissance();
-            if ($entityName == 'Hero') {
+            if ($entityInformation['name'] == 'Hero') {
                 $arrayReturn['players'][$i]['relic'] = $unitPlayers[$i]->getRelicLevel();
                 $arrayReturn['players'][$i]['gear_level'] = $unitPlayers[$i]->getGearLevel();
             }
@@ -79,8 +81,5 @@ class UnitController extends AbstractController
         $response = new JsonResponse($arrayReturn);
 
         return $response;
-        /*return $this->render('unit/list.html.twig', [
-            'unit' => $unit,
-        ]);*/
     }
 }

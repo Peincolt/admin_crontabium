@@ -19,7 +19,7 @@ console.log('Hello Webpack Encore! Edit me in assets/js/app.js');
 window.onload = function(){
     select = document.getElementById('selectUnit');
     id = select.value;
-    if (select.name == "ships") {
+    if (select.name == "Ship") {
         url = "/ship/";
         type = 'ship';
     } else {
@@ -38,7 +38,7 @@ document.getElementById('selectUnit').addEventListener('change',function(event){
 
     document.getElementById('list-ajax').innerHTML="";
 
-    if (this.name == "ships") {
+    if (this.name == "Ship") {
         url = "/ship/";
         type= 'ship';
     } else {
