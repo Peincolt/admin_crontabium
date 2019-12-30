@@ -43,9 +43,15 @@ class Ship
      */
     private $categories = [];
 
+    /**
+     * @ORM\ManyToMany(targetEntity="App\Entity\Squad", mappedBy="Ship")
+     */
+    private $squads;
+
     public function __construct()
     {
         $this->shipPlayers = new ArrayCollection();
+        $this->squads = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -128,6 +134,34 @@ class Ship
     public function setCategories(array $categories): self
     {
         $this->categories = $categories;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection|Squad[]
+     */
+    public function getSquads(): Collection
+    {
+        return $this->squads;
+    }
+
+    public function addSquad(Squad $squad): self
+    {
+        if (!$this->squads->contains($squad)) {
+            $this->squads[] = $squad;
+            $squad->addShip($this);
+        }
+
+        return $this;
+    }
+
+    public function removeSquad(Squad $squad): self
+    {
+        if ($this->squads->contains($squad)) {
+            $this->squads->removeElement($squad);
+            $squad->removeShip($this);
+        }
 
         return $this;
     }
