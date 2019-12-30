@@ -21,14 +21,16 @@ window.onload = function(){
     id = select.value;
     if (select.name == "ships") {
         url = "/ship/";
+        type = 'ship';
     } else {
         url = "/hero/";
+        type = 'hero';
     }
 
     url+=id;
 
     axios.post(url).then(response => {
-        constructList(response.data.name,response.data.players);
+        constructList(response.data.name,response.data.players,type);
     })
 }
 
@@ -38,18 +40,20 @@ document.getElementById('selectUnit').addEventListener('change',function(event){
 
     if (this.name == "ships") {
         url = "/ship/";
+        type= 'ship';
     } else {
         url = "/hero/";
+        type = 'hero';
     }
 
     url+=this.value;
 
     axios.post(url).then(response => {
-        constructList(response.data.name,response.data.players);
+        constructList(response.data.name,response.data.players,type);
     })
 });
 
-function constructList(name, data) {
+function constructList(name, data, type) {
     div = document.getElementById('list-ajax');
     title = document.createElement('h2');
     table = document.createElement('table');
@@ -75,6 +79,16 @@ function constructList(name, data) {
     trhead.appendChild(thName);
     trhead.appendChild(thLevel);
     trhead.appendChild(thRarity);
+
+    if (type == 'hero') {
+        thGearLevel = document.createElement('th');
+        thRelicLevel = document.createElement('th');
+        thGearLevel.appendChild(document.createTextNode('Gear level'));
+        thRelicLevel.appendChild(document.createTextNode('Relic level'));
+        trhead.appendChild(thGearLevel);
+        trhead.appendChild(thRelicLevel);
+    }
+
     trhead.appendChild(thGalacticalPower);
     table.appendChild(tbody);
 
@@ -93,6 +107,16 @@ function constructList(name, data) {
         tr.appendChild(tdName);
         tr.appendChild(tdLevel);
         tr.appendChild(tdRarity);
+
+        if (type == 'hero') {
+            tdGearLevel = document.createElement('td');
+            tdRelicLevel = document.createElement('td');
+            tdGearLevel.appendChild(document.createTextNode(data[i].gear_level));
+            tdRelicLevel.appendChild(document.createTextNode(data[i].relic));
+            tr.appendChild(tdGearLevel);
+            tr.appendChild(tdRelicLevel);
+        }
+
         tr.appendChild(tdGalacticalPower);
 
         tbody.appendChild(tr);
