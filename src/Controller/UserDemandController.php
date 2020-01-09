@@ -71,7 +71,6 @@ class UserDemandController extends AbstractController
                 var_dump($result['error_message']);
             }
         }
-        die('oklm');
         return 404;
     }
 }

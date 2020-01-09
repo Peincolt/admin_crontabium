@@ -22,8 +22,6 @@ class AdminController extends AbstractController
             var_dump($key);
             var_dump($value);
         }
-
-        die('oklm');
     }
 
     /**

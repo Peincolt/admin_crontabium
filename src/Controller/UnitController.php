@@ -2,20 +2,24 @@
 
 namespace App\Controller;
 
-use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\Routing\Annotation\Route;
-use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use Symfony\Component\HttpFoundation\JsonResponse;
 use App\Service\Entity\PlayerUnit;
 use App\Service\Entity\Unit as UnitHelper;
+use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\HttpFoundation\JsonResponse;
+use Symfony\Component\Cache\Adapter\FilesystemAdapter;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Contracts\Cache\ItemInterface;
 
 class UnitController extends AbstractController
 {
     private $unitHelper;
+    private $cache;
 
     public function __construct(UnitHelper $unitHelper)
     {
         $this->unitHelper = $unitHelper;
+        $this->cache = new FilesystemAdapter();
     }
     /**
      * @Route("/hero", name="hero")
@@ -81,5 +85,24 @@ class UnitController extends AbstractController
         $response = new JsonResponse($arrayReturn);
 
         return $response;
+    }
+
+    /**
+     * @Route("/get/{type}", name="unit_api_get")
+     */
+    public function getUnitsByType($type)
+    {
+        $data = $this->unitHelper->getUnits($type);
+        return new JsonResponse($data);
+    }
+
+    /**
+     * @Route("/units", name="unit_api_get_all")
+     */
+    public function getAllUnits()
+    {
+        $item = new ItemInterface();
+        $data = $this->cache->get('units',$this->unitHelper->getAllUnits($item));
+        return new JsonResponse($data);
     }
 }

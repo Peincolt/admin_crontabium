@@ -1,0 +1,24 @@
+{% extends 'base.html.twig' %}
+{% block title %}Squads{% endblock %}
+{% block body %}
+<h2 class="h2"> Squad list </h2>
+{% for squad in squads %}
+<div class="contain-tab">
+    <table class="tab">
+        <thead>
+            <th colspan="5" class="th"><a href="{{ path('squad_modification',{'id':squad.id}) }}">{{ squad.name }}</a></th>
+        </thead>
+        <tbody>
+            <tr>
+            {% for hero in squad.hero %}
+            <td class="td"><a href="{{ path('squad_modification',{'id':squad.id}) }}">{{ hero.name }}</a></td>
+            {% endfor %}
+            {% for ship in squad.ship %}
+            <td class="td"><a href="{{ path('squad_modification',{'id':squad.id}) }}">{{ ship.name}}</a></td>
+            {% endfor %}
+            </tr>
+        </tbody>
+    </table>
+</div>
+{% endfor %}
+{% endblock %}

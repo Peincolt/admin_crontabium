@@ -5,6 +5,7 @@ namespace App\Service\Entity;
 use App\Service\Api\SwgohGg;
 use App\Service\Data\Helper;
 use Doctrine\ORM\EntityManagerInterface;
+use Symfony\Contracts\Cache\ItemInterface;
 
 class Unit {
 
@@ -55,5 +56,66 @@ class Unit {
         $arrayReturn['player_namespace_class'] = "App\Entity\\".$arrayReturn['player_class_name'];
         $arrayReturn['function'] = 'get'.$arrayReturn['player_class_name'].'s';
         return $arrayReturn;
+    }
+
+    public function getUnits($type)
+    {
+        $arrayReturn = array();
+        $i=0;
+        $units = $this->entityManagerInterface
+            ->getRepository("App\Entity\\".ucfirst($type))
+            ->findAll();
+        foreach ($units as $unit) {
+            $arrayReturn[$unit->getName()] = $unit->getId();
+        }
+
+        return $arrayReturn;
+    }
+
+    public function getAllUnits(ItemInterface $item)
+    {
+        $item->expiresAfter(3600);
+        
+        $arrayReturn = array();
+
+        $heroes = $this->entityManagerInterface
+            ->getRepository("App\Entity\Hero")
+            ->findAll();
+        $ships = $this->entityManagerInterface
+            ->getRepository("App\Entity\Ship")
+            ->findAll();
+
+        foreach($heroes as $hero) {
+            array_push($arrayReturn,htmlentities($hero->getName()));
+        }
+
+        foreach($ships as $ship) {
+            array_push($arrayReturn,htmlentities($ship->getName()));
+        }
+
+        return $arrayReturn;
+        
+    }
+
+    public function findUnitByName($name) {
+        $arrayReturn = array();
+        $name = html_entity_decode($name);
+
+        $hero = $this->entityManagerInterface
+            ->getRepository("App\Entity\Hero")
+            ->findOneBy(['name' => $name]);
+            $arrayReturn['type'] = 'Hero';
+            $arrayReturn['data'] = $hero;
+
+        if (empty($hero)) {
+            $ship = $this->entityManagerInterface
+            ->getRepository("App\Entity\Ship")
+            ->findOneBy(['name' => $name]);
+            $arrayReturn['type'] = 'Ship';
+            $arrayReturn['data'] = $ship;
+        }
+
+        return $arrayReturn;
+
     }
 }

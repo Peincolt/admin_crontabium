@@ -17,6 +17,7 @@ const axios = require('axios');
 console.log('Hello Webpack Encore! Edit me in assets/js/app.js');
 
 window.onload = function(){
+    /* Fill the unit/ship tab when the user came the first time in the page (/heroes,/ships)*/
     select = document.getElementById('selectUnit');
     id = select.value;
     if (select.name == "Ship") {
@@ -53,6 +54,7 @@ document.getElementById('selectUnit').addEventListener('change',function(event){
     })
 });
 
+/* Functions */
 function constructList(name, data, type) {
     div = document.getElementById('list-ajax');
     title = document.createElement('h2');
@@ -126,3 +128,4 @@ function constructList(name, data, type) {
     div.appendChild(title);
     div.appendChild(table);
 }
+  

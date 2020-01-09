@@ -1,0 +1,24 @@
+{% extends 'base.html.twig' %}
+{% block title %}Create squad{% endblock %}
+{% block stylesheets %}
+    {{ parent() }} 
+    {{ encore_entry_link_tags('unit') }}
+{% endblock %}
+{% block body %}
+<h2 class="h2"> Create/Edit your own squad </h2>
+{{ form_start(formChoice) }}
+<div class="autocomplete">
+    {{ form_row(formChoice.name) }}
+    {{ form_row(formChoice.unit1) }}
+    {{ form_row(formChoice.unit2) }}
+    {{ form_row(formChoice.unit3) }}
+    {{ form_row(formChoice.unit4) }}
+    {{ form_row(formChoice.unit5) }}
+</div>
+<input type="submit" name="submit" id="submit" class="btn btn-primary btn-save" value="Submit">
+{{ form_end(formChoice) }}
+{% endblock %}
+{% block javascripts %}
+    {{ parent() }}
+    {{ encore_entry_script_tags('unit') }}
+{% endblock %}
