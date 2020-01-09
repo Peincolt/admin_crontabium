@@ -73,10 +73,16 @@ class Player
      */
     private $guild;
 
+    /**
+     * @ORM\ManyToMany(targetEntity="App\Entity\Team", mappedBy="players")
+     */
+    private $teams;
+
     public function __construct()
     {
         $this->characters = new ArrayCollection();
         $this->ships = new ArrayCollection();
+        $this->teams = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -250,6 +256,34 @@ class Player
     public function setGuild(?Guild $guild): self
     {
         $this->guild = $guild;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection|Team[]
+     */
+    public function getTeams(): Collection
+    {
+        return $this->teams;
+    }
+
+    public function addTeam(Team $team): self
+    {
+        if (!$this->teams->contains($team)) {
+            $this->teams[] = $team;
+            $team->addPlayer($this);
+        }
+
+        return $this;
+    }
+
+    public function removeTeam(Team $team): self
+    {
+        if ($this->teams->contains($team)) {
+            $this->teams->removeElement($team);
+            $team->removePlayer($this);
+        }
 
         return $this;
     }
