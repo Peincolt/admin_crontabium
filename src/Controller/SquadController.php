@@ -69,4 +69,14 @@ class SquadController extends AbstractController
         ]);
 
     }
+
+    /**
+     * @Route("/squad/{id}", name="squad_view")
+     */
+    public function view(Squad $squad)
+    {
+        return $this->render('squad/view.html.twig',[
+            'squad' => $squad
+        ]);
+    }
 }

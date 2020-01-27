@@ -1,0 +1,24 @@
+{% extends 'base.html.twig' %}
+{% block title %}Squad{% endblock %}
+{% block body %}
+<h2 class="h2"> Squad {{ squad.name }} </h2>
+<div class="recap-characters">
+    <table class="table">
+        <thead>
+            <th> Player </th>
+            <th colspan="5">characters</th>
+        </thead>
+        <tbody>
+            <tr>
+            <td rowspan="2"></td>
+            {% for hero in squad.hero %}
+                <td>{{ hero.name }}</td>
+            {% endfor %}
+            {% for ship in squad.ship %}
+                <td>{{ ship.name }}</td>
+            {% endfor %}
+            </tr>
+        </tbody>
+    </table>
+</div>
+{% endblock %}

@@ -65,6 +65,28 @@ class Squad
         }
     }
 
+    public function getSquadUnits($squad)
+    {
+        $arrayReturn = array();
+        $number = 1;
+        $heroes = $squad->getHero();
+        $ships = $squad->getShip();
+
+        if (!empty($heroes)) {
+            foreach($heroes as $hero) {
+                $arrayReturn[] = $hero->getName();
+            }
+        }
+
+        if (!empty($ships)) {
+            foreach($ships as $ship) {
+                $arrayReturn[] = $ship->getName();
+            }
+        }
+
+        return $arrayReturn;
+    }
+
     public function squadToForm($squad)
     {
         $arrayReturn = array();
@@ -88,6 +110,13 @@ class Squad
         }
 
         return $arrayReturn;
+    }
+
+    public function squadToArray($squad)
+    {
+        $arrayReturn = array();
+        $arrayReturn['units'] = $this->getSquadUnits($squad);
+        
     }
 
 }
