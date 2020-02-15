@@ -1,151 +1,116 @@
-require('../css/unit.css');
 const axios = require('axios');
-numberInput = 1;
-data = null;
-window.onload = function (){
-    axios.post('/units').then(response => {
-        inputs = document.getElementsByClassName('unit-form');
-        for (var i=0;i<inputs.length;i++) {
-            autocomplete(inputs[i],response.data);
+
+window.onload = function(){
+    select = document.getElementById('selectUnit');
+    /* Fill the unit/ship tab when the user came the first time in the page (/heroes,/ships)*/
+    if (select) {
+        id = select.value;
+        if (select.name == "Ship") {
+            url = "/ship/";
+            type = 'ship';
+        } else {
+            url = "/hero/";
+            type = 'hero';
         }
-    })
-};
-
-function autocomplete(inp,array)
-{
-    var currentFocus;
-    if (!data) {
-        data = array;
-    }
-    inp.addEventListener("input",function(e) {
-        var value = this.value;
-        deleteItems(value);
-        console.log('event');
-        var a = document.createElement('div');
-        a.classList.add('autocomplete-items');
-        a.setAttribute('id',"autocomplete-list");
-        this.parentNode.appendChild(a);
-        if (!value) {
-            return false;
-        }
-        currentFocus = -1;
-        for(i=0;i<array.length;i++) {
-            if (value.toUpperCase() == array[i].substr(0,value.length).toUpperCase()) {
-                var div = document.createElement('div');
-                div.innerHTML = '<strong>'+value.toUpperCase()+'<strong>'+array[i].substr(value.length);
-                div.innerHTML+= '<input type="hidden" value="'+array[i]+'">';
-                div.addEventListener('click',function(e) {
-                    inp.value = this.getElementsByTagName('input')[0].value;
-                    deleteItems(value);
-                });
-                a.appendChild(div);     
-            }
-        }
-    });
-
-    inp.addEventListener("keydown",function(event) {
-        var x = document.getElementById("autocomplete-list");
-        if (x)
-        var divs = x.getElementsByTagName("div");
-        if (event.keyCode == "40") {
-            currentFocus++;
-            focusElement(divs);
-        }
-
-        if (event.keyCode == "38") { 
-            currentFocus--;
-            focusElement(divs);
-        }
-
-        if (event.keyCode == "13") {
-            event.preventDefault();
-            if (currentFocus > -1) {
-                if (divs) {
-                    divs[currentFocus].click();
-                }
-            }
-        }
-    });
-
-    function focusElement(divs)
-    {
-        if (!divs) {
-            return false;
-        }
-
-        removeFocus(divs);
-
-        if (currentFocus > divs.length) {
-            currentFocus = 0;
-        }
-
-        if (currentFocus < 0) {
-            currentFocus = divs.length - 1;
-        }
-
-        divs[currentFocus].classList.add("autocomplete-active");
-    }
-
-    function removeFocus(divs) {
-        for (var i=0;i<divs.length;i++) {
-            divs[i].classList.remove("autocomplete-active");
-        }
-    }
-
-    function deleteItems(value)
-    {
-        var list = document.getElementsByClassName('autocomplete-items');
-        for (var i=0; i<list.length;i++) {
-            if (list[i] != value) {
-                list[i].parentNode.removeChild(list[i]);
-            }
-        }
-    }
-
-    document.addEventListener("click",function(event){
-        deleteItems(event.target);
-    });
-}
-
-function addInput()
-{
-    console.log('addINputy');
-    numberInput++;
-    if (numberInput <= 5) {
-        var divMaster = document.getElementsByClassName('autocomplete');
-        var newDiv = document.createElement('div');
-        var input = document.createElement('input');
-        var label = document.createElement('label');
-
-        input.classList.add('form-control');
-        input.name = 'squad[unit-'+numberInput+']';
-        input.id = 'squad_unit_'+numberInput;
-        label.appendChild(document.createTextNode('Choose your '+translate(numberInput)+' unit'));
-        newDiv.appendChild(label);
-        newDiv.appendChild(input);
-        divMaster[0].appendChild(newDiv);
-        autocomplete(input,data);
-    }
-}
-
-function translate(number)
-{
-    switch (number) {
-        case 2 :
-            return 'second';
-        break;
-        case 3:
-            return 'third';
-        break;
-        case 4:
-            return 'fourth';
-        break;
-        case 5:
-            return 'fifth';
-        break;
-        default:
-            return 'undefined';
-        break;
-    }
     
+        url+=id;
+    
+        axios.post(url).then(response => {
+            constructList(response.data.name,response.data.players,type);
+        })
+
+        select.addEventListener('change',function(event){
+
+            document.getElementById('list-ajax').innerHTML="";
+        
+            if (this.name == "Ship") {
+                url = "/ship/";
+                type= 'ship';
+            } else {
+                url = "/hero/";
+                type = 'hero';
+            }
+        
+            url+=this.value;
+        
+            axios.post(url).then(response => {
+                constructList(response.data.name,response.data.players,type);
+            });
+        });
+    }
+}
+    
+/* Functions */
+function constructList(name, data, type) {
+    div = document.getElementById('list-ajax');
+    title = document.createElement('h2');
+    table = document.createElement('table');
+    thead = document.createElement('thead');
+    trhead = document.createElement('tr');
+    thName = document.createElement('th');
+    thLevel = document.createElement('th');
+    thGalacticalPower = document.createElement('th');
+    thRarity = document.createElement('th');
+    tbody = document.createElement('tbody');
+
+    table.classList.add('table','table-hover');
+    title.classList.add('h2');
+
+    title.appendChild(document.createTextNode(name));
+    thName.appendChild(document.createTextNode('Player'));
+    thLevel.appendChild(document.createTextNode('Level'));
+    thRarity.appendChild(document.createTextNode('Stars'));
+    thGalacticalPower.appendChild(document.createTextNode('Galactical Power'));
+
+    table.appendChild(thead);
+    thead.appendChild(trhead);
+    trhead.appendChild(thName);
+    trhead.appendChild(thLevel);
+    trhead.appendChild(thRarity);
+
+    if (type == 'hero') {
+        thGearLevel = document.createElement('th');
+        thRelicLevel = document.createElement('th');
+        thGearLevel.appendChild(document.createTextNode('Gear level'));
+        thRelicLevel.appendChild(document.createTextNode('Relic level'));
+        trhead.appendChild(thGearLevel);
+        trhead.appendChild(thRelicLevel);
+    }
+
+    trhead.appendChild(thGalacticalPower);
+    table.appendChild(tbody);
+
+    for (i=0;i<data.length;i++) {
+        tr = document.createElement('tr');
+        tdName = document.createElement('td');
+        tdLevel = document.createElement('td');
+        tdGalacticalPower = document.createElement('td');
+        tdRarity = document.createElement('td');
+
+        tdName.appendChild(document.createTextNode(data[i].player_name));
+        tdLevel.appendChild(document.createTextNode(data[i].level));
+        tdRarity.appendChild(document.createTextNode(data[i].stars));
+        tdGalacticalPower.appendChild(document.createTextNode(data[i].galactical_puissance));
+
+        tr.appendChild(tdName);
+        tr.appendChild(tdLevel);
+        tr.appendChild(tdRarity);
+
+        if (type == 'hero') {
+            tdGearLevel = document.createElement('td');
+            tdRelicLevel = document.createElement('td');
+            tdGearLevel.appendChild(document.createTextNode(data[i].gear_level));
+            tdRelicLevel.appendChild(document.createTextNode(data[i].relic));
+            tr.appendChild(tdGearLevel);
+            tr.appendChild(tdRelicLevel);
+        }
+
+        tr.appendChild(tdGalacticalPower);
+
+        tbody.appendChild(tr);
+
+    }
+
+    div.appendChild(title);
+    div.appendChild(table);
 }
