@@ -24,6 +24,7 @@
                 {{ form_label(formDemand.password.first,null,{'label_attr' : {'class' : 'form-label'}}) }}
                 {{ form_errors(formDemand.password) }}
                 {{ form_widget(formDemand.password.first, {'attr' : {'class' : 'form-control input-form'}}) }}
+                <span id="error_password"></span>
             </div>
             <div class="form-group">
                 {{ form_label(formDemand.password.second,null,{'label_attr' : {'class' : 'form-label'}}) }}
@@ -46,4 +47,8 @@
             {{ form_end(formDemand) }}
         </div>
     </div>  
+{% endblock %}
+{% block javascripts %}
+    {{ parent() }}
+    {{ encore_entry_script_tags('login') }}
 {% endblock %}

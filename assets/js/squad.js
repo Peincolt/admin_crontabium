@@ -107,25 +107,3 @@ function autocomplete(inp,array)
         deleteItems(event.target);
     });
 }
-
-function translate(number)
-{
-    switch (number) {
-        case 2 :
-            return 'second';
-        break;
-        case 3:
-            return 'third';
-        break;
-        case 4:
-            return 'fourth';
-        break;
-        case 5:
-            return 'fifth';
-        break;
-        default:
-            return 'undefined';
-        break;
-    }
-    
-}

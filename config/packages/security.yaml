@@ -41,4 +41,4 @@ security:
         - { path: ^/login$, roles: IS_AUTHENTICATED_ANONYMOUSLY }
         - { path: ^/demand-access$, roles: IS_AUTHENTICATED_ANONYMOUSLY }
         - { path: ^/forget-password, roles: IS_AUTHENTICATED_ANONYMOUSLY }
-        #- { path: ^/, roles: IS_AUTHENTICATED_FULLY }
+        - { path: ^/, roles: IS_AUTHENTICATED_FULLY }
