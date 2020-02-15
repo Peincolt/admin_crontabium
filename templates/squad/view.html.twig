@@ -3,21 +3,39 @@
 {% block body %}
 <h2 class="h2"> Squad {{ squad.name }} </h2>
 <div class="recap-characters">
-    <table class="table">
+    <table class="table table-hover">
         <thead>
             <th> Player </th>
-            <th colspan="5">characters</th>
+            <th colspan="24">characters</th>
         </thead>
         <tbody>
             <tr>
-            <td rowspan="2"></td>
-            {% for hero in squad.hero %}
-                <td>{{ hero.name }}</td>
-            {% endfor %}
-            {% for ship in squad.ship %}
-                <td>{{ ship.name }}</td>
-            {% endfor %}
+                <td></td>
+                {% for hero in squad.hero %}
+                    <td colspan="5">{{ hero.name }}</td>
+                {% endfor %}
+                {% for ship in squad.ship %}
+                    <td colspan="5">{{ ship.name }}</td>
+                {% endfor %}
             </tr>
+            <tr>
+                {% for i in 0..5 %}
+                <td>Gear Level</td>
+                <td>Level</td>
+                <td>Rarity</td>
+                <td>Power</td>
+                {% endfor %}
+            </tr>
+            {% for namePlayer, tabUnits in playersInformations %}
+            <tr>
+                <td>{{ namePlayer }}</td>
+                {% for nameUnit, infoUnit in tabUnits %}
+                    {% for key, value in infoUnit %}
+                <td>{{ value }}</td>
+                    {% endfor %}
+                {% endfor %}
+            </tr>
+            {% endfor %}
         </tbody>
     </table>
 </div>

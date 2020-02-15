@@ -19,6 +19,33 @@ class ShipRepository extends ServiceEntityRepository
         parent::__construct($registry, Ship::class);
     }
 
+    public function getPlayerInformations($id)
+    {
+        $arrayReturn = array();
+
+        $result = $this->createQueryBuilder('s')
+            ->leftjoin('s.shipPlayers','sp','WITH','sp.ship = s.id')
+            ->leftjoin('sp.player','p','WITH','sp.player = p.id')
+            ->where('s.id = ?1')
+            ->setParameter(1, $id)
+            ->select('p.name, sp.level, sp.number_stars as rarity','sp.galactical_puissance as power')
+            ->getQuery()
+            ->getResult()
+        ;
+
+        foreach($result as $tab)
+        {
+            $arrayReturn[$tab['name']]['gearLevel'] = 0;
+            foreach ($tab as $key => $value) {
+                if ($key != 'name') {
+                    $arrayReturn[$tab['name']][$key] = $value;
+                }
+            }
+        }
+
+        return $arrayReturn;
+    }
+
     // /**
     //  * @return Ship[] Returns an array of Ship objects
     //  */

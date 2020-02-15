@@ -4,7 +4,7 @@
 <h2 class="h2"> Squad list </h2>
 {% for squad in squads %}
 <div class="contain-tab">
-    <table class="tab">
+    <table class="table table-hover">
         <thead>
             <th colspan="5" class="th"><a href="{{ path('squad_modification',{'id':squad.id}) }}">{{ squad.name }}</a></th>
         </thead>

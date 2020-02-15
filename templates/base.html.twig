@@ -37,13 +37,36 @@
                     <li class="nav-item dropdown">
                         <a class="nav-link dropdown-toggle" data-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="false">My account</a>
                         <div class="dropdown-menu" x-placement="bottom-start" style="position: absolute; will-change: transform; top: 0px; left: 0px; transform: translate3d(0px, 37px, 0px);">
-                            <a class="dropdown-item" href="">Settings</a>
+                            <a class="dropdown-item" href="">My settings</a>
+                            <a class="dropdown-item" href="">Create account</a>
+                            <a class="dropdown-item" href="">Modify accounts</a>
+                            <a class="dropdown-item" href="">See demands account</a>
                             <a class="dropdown-item" href="{{ path('security_logout') }}">Deconnection</a>
                         </div>
                     </li>
                 </ul>
             </div>
         </nav>
+        {% for flash_message in app.session.flashbag.get('success') %}
+            <div class="container alert alert-success" role="alert">
+                {{ flash_message }}
+            </div>
+        {% endfor %}
+        {% for flash_message in app.session.flashbag.get('info') %}
+            <div class="container alert alert-info" role="alert">
+                {{ flash_message }}
+            </div>
+        {% endfor %}
+        {% for flash_message in app.session.flashbag.get('warning') %}
+            <div class="container alert alert-warning" role="alert">
+                {{ flash_message }}
+            </div>
+        {% endfor %}
+        {% for flash_message in app.session.flashbag.get('error') %}
+            <div class="container alert alert-danger" role="alert">
+                {{ flash_message }}
+            </div>
+        {% endfor %}
         <div class="container">
         {% block body %}{% endblock %}
         {% block javascripts %}

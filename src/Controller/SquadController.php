@@ -2,12 +2,12 @@
 
 namespace App\Controller;
 
-use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\Routing\Annotation\Route;
-use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use App\Entity\Squad;
 use App\Form\SquadType;
 use App\Service\Entity\Squad as SquadHelper;
+use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 
 class SquadController extends AbstractController
 {
@@ -56,7 +56,7 @@ class SquadController extends AbstractController
             $data = $form->getData();
             $result = $squadHelper->createSquad($squad,$data);
             if (isset($result['error_message'])) {
-                $this->addFlash('error','An error occurred where we try to create your squad');
+                $this->addFlash('error',$result['error_message']);
             } else {
                 $this->addFlash('success','We create your squad');
                 $this->redirectToRoute('home');
@@ -73,10 +73,24 @@ class SquadController extends AbstractController
     /**
      * @Route("/squad/{id}", name="squad_view")
      */
-    public function view(Squad $squad)
+    public function view(Squad $squad, SquadHelper $squadHelper)
     {
+        $squadInformations = $squadHelper->getPlayerSquadInformation($squad->getId());
+
         return $this->render('squad/view.html.twig',[
-            'squad' => $squad
+            'squad' => $squad,
+            'playersInformations' => $squadInformations
         ]);
+    }
+
+    /**
+     * @Route("/squad/hero/{id}", name="squad_test")
+     */
+    public function testSquad(SquadHelper $squadHelper)
+    {
+        $result = $squadHelper->getPlayerSquadInformation(1);
+
+        var_dump($result);
+        die('oklm');
     }
 }

@@ -72,9 +72,9 @@ class Unit {
         return $arrayReturn;
     }
 
-    public function getAllUnits(ItemInterface $item)
+    public function getAllUnits(ItemInterface $item = null)
     {
-        $item->expiresAfter(3600);
+        //$item->expiresAfter(3600);
         
         $arrayReturn = array();
 

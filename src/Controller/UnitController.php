@@ -101,8 +101,8 @@ class UnitController extends AbstractController
      */
     public function getAllUnits()
     {
-        $item = new ItemInterface();
-        $data = $this->cache->get('units',$this->unitHelper->getAllUnits($item));
+        //$item = new ItemInterface();
+        $data = /*$this->cache->get('units',*/$this->unitHelper->getAllUnits();//);
         return new JsonResponse($data);
     }
 }

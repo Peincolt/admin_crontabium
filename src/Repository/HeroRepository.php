@@ -3,6 +3,8 @@
 namespace App\Repository;
 
 use App\Entity\Hero;
+use App\Entity\HeroPlayer;
+use App\Entity\Player;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Common\Persistence\ManagerRegistry;
 
@@ -18,6 +20,34 @@ class HeroRepository extends ServiceEntityRepository
     {
         parent::__construct($registry, Hero::class);
     }
+
+    public function getPlayerInformations($id)
+    {
+        $arrayReturn = array();
+
+        $result = $this->createQueryBuilder('h')
+            ->leftjoin('h.heroPlayers','hp','WITH','hp.hero = h.id')
+            ->leftjoin('hp.player','p','WITH','hp.player = p.id')
+            ->where('h.id = ?1')
+            ->setParameter(1, $id)
+            ->select('p.name, hp.gear_level as gearLevel, hp.level, hp.number_stars as rarity','hp.galactical_puissance as power')
+            ->getQuery()
+            ->getResult()
+        ;
+
+        foreach($result as $tab)
+        {
+            foreach ($tab as $key => $value) {
+                if ($key != 'name') {
+                    $arrayReturn[$tab['name']][$key] = $value;
+                }
+            }
+        }
+
+        return $arrayReturn;
+    }
+
+    /*SELECT p.name FROM `hero` as h LEFT JOIN hero_player as hp ON hp.hero_id = h.id LEFT JOIN player as p ON p.id = hp.player_id WHERE hp.hero_id = 1*/
 
     // /**
     //  * @return Character[] Returns an array of Character objects
