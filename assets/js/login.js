@@ -3,11 +3,8 @@ require('../css/login.css');
 document.addEventListener('DOMContentLoaded',function() {
     var inputCreationAcount = document.getElementById('user_demand_password_first');
     var inputCreationAccountDeux = document.getElementById('user_demand_password_second');
-    if (inputCreationAcount) {
+    if (inputCreationAcount && inputCreationAccountDeux) {
         inputCreationAcount.oninput = checkPassword;
-    }
-
-    if (inputCreationAccountDeux) {
         inputCreationAccountDeux.oninput = checkSame;
     }
 },false);
@@ -17,7 +14,6 @@ function checkPassword()
     var inputCreationAccountDeux = document.getElementById('user_demand_password_second');
     var spanError = document.getElementById('error_password');
     spanError.innerHTML = "";
-    console.log(inputCreationAccountDeux.value);
     if (inputCreationAccountDeux.value && this.value != inputCreationAccountDeux.value) {
         spanError.innerHTML = "Les deux mots de passe doivent correspondre";
         spanError.classList.add('error');
@@ -74,7 +70,7 @@ function checkSame()
     var inputCreationAccount = document.getElementById('user_demand_password_first');
     var spanError = document.getElementById('error_password');
     spanError.innerHTML = "";
-    if (inputCreationAccount.value && this.value != inputCreationAccount) {
+    if (inputCreationAccount.value && this.value != inputCreationAccount.value) {
         spanError.innerHTML = "The two passwords must match";
         spanError.classList.add('error');
     }

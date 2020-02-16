@@ -9,7 +9,28 @@
         {% endblock %}
     </head>
     <body>
-        {% block body %}{% endblock %}
+        {% block body %}
+        {% for flash_message in app.session.flashbag.get('success') %}
+            <div class="alert alert-dismissible alert-success" role="alert">
+                {{ flash_message }}
+            </div>
+        {% endfor %}
+        {% for flash_message in app.session.flashbag.get('info') %}
+            <div class="alert alert-dismissible alert-info" role="alert">
+                {{ flash_message }}
+            </div>
+        {% endfor %}
+        {% for flash_message in app.session.flashbag.get('warning') %}
+            <div class="alert alert-dismissible alert-warning" role="alert">
+                {{ flash_message }}
+            </div>
+        {% endfor %}
+        {% for flash_message in app.session.flashbag.get('error') %}
+            <div class="alert alert-dismissible alert-danger" role="alert">
+                {{ flash_message }}
+            </div>
+        {% endfor %}
+        {% endblock %}
         {% block javascripts %}{% endblock %}
     </body>
 </html>
