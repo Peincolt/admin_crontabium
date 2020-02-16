@@ -16,18 +16,20 @@ class User
     public function __construct(EntityManagerInterface $entityManagerInterface, SecurityHelper $securityHelper)
     {
         $this->entityManagerInterface = $entityManagerInterface;
-        $this->dataHelper = $securityHelper;
+        $this->securityHelper = $securityHelper;
     }
 
-    public function updateUser(UserEntity $user)
+    public function updateUser(UserEntity $user, $password = true)
     {
-        if (!$this->securityHelper->isPasswordCorrect($user->getPassword())) {
-            $arrayReturn['error_message'] = 'Your password must contains at least 8 characters composed of 1 digit, 1 capital letter and 1 special char';
-            $arrayReturn['error_forms']['password'] = 'Your password must contains at least 8 characters composed of 1 digit, 1 capital letter and 1 special char';
-            return $arrayReturn;
+        if ($password) {
+            if (!$this->securityHelper->isPasswordCorrect($user->getPassword())) {
+                $arrayReturn['error_message'] = 'Your password must contains at least 8 characters composed of 1 digit, 1 capital letter and 1 special char';
+                $arrayReturn['error_forms']['password'] = 'Your password must contains at least 8 characters composed of 1 digit, 1 capital letter and 1 special char';
+                return $arrayReturn;
+            }
+    
+            $user->setPassword($this->securityHelper->hashPassword($user, $user->getPassword()));
         }
-
-        $user->setPassword($this->securityHelper->hashPassword($user, $user->getPassword()));
 
         try {
             $this->entityManagerInterface->persist($user);

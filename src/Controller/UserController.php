@@ -75,10 +75,15 @@ class UserController extends AbstractController
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            $result = $this->userHelper->updateUser($user);
+            if (!$form->get('password')->getData()) {
+                $result = $this->userHelper->updateUser($user,false);
+            } else {
+                $user->setPassword($form->get('password')->getData());
+                $result = $this->userHelper->updateUser($user);
+            }
             if (!isset($result['error_message'])) {
-                $this->addFlash('success','We register your demand. We will send you an email to tell you if you can acces or not to the website');
-                return $this->redirectToRoute('security_login');
+                $this->addFlash('success','We save your change');
+                return $this->redirectToRoute('home');
             } else {
                 if (isset($result['error_forms'])) {
                     foreach($result['error_forms'] as $key => $value) {

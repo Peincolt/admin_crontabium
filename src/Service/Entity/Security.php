@@ -14,7 +14,7 @@ class Security
         $this->passwordEncoder = $passwordEncoder;
     }
 
-    public function isPasswordCorrect(string $password)
+    public function isPasswordCorrect($password)
     {
         $uppercase = preg_match("#[A-Z]+#",$password);
         $digit = preg_match("#[0-9]+#",$password);
