@@ -21,6 +21,20 @@ class UserController extends AbstractController
     }
 
     /**
+     * @Route("/user/list", name="security_user_list")
+     */
+    public function list()
+    {
+        $users = $this->getDoctrine()
+            ->getRepository(User::class)
+            ->findAll();
+
+        return $this->render('user/list.html.twig',[
+            'users' => $users
+        ]);
+    }
+
+    /**
      * @Route("/user/create", name="security_creation_user")
      */
     public function createUser(Request $request, User $user = null, $id = null)
@@ -35,8 +49,8 @@ class UserController extends AbstractController
         if ($form->isSubmitted() && $form->isValid()) {
             $result = $this->userHelper->updateUser($user);
             if (!isset($result['error_message'])) {
-                $this->addFlash('success','We register your demand. We will send you an email to tell you if you can acces or not to the website');
-                return $this->redirectToRoute('security_login');
+                $this->addFlash('success','Account created');
+                return $this->redirectToRoute('home');
             } else {
                 if (isset($result['error_forms'])) {
                     foreach($result['error_forms'] as $key => $value) {
