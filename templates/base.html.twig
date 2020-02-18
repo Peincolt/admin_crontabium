@@ -41,7 +41,7 @@
                             {% if is_granted('ROLE_ADMIN') %}
                             <a class="dropdown-item" href="{{path('security_creation_user')}}">Create account</a>
                             <a class="dropdown-item" href="{{path('security_user_list')}}">Modify accounts</a>
-                            <a class="dropdown-item" href="">See demands account</a>
+                            <a class="dropdown-item" href="{{path('user_demand_list')}}">See demands account</a>
                             {% endif %}
                             <a class="dropdown-item" href="{{ path('security_logout') }}">Deconnection</a>
                         </div>

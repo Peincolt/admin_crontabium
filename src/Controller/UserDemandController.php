@@ -21,12 +21,16 @@ class UserDemandController extends AbstractController
     }
 
     /**
-     * @Route("/user/demand", name="user_demand")
+     * @Route("/user/demand/list", name="user_demand_list")
      */
     public function index()
     {
-        return $this->render('user_demand/index.html.twig', [
-            'controller_name' => 'UserDemandController',
+        $usersDemands = $this->getDoctrine()
+            ->getRepository(UserDemand::class)
+            ->findAll();
+
+        return $this->render('user_demand/list.html.twig', [
+            'userDemands' => $usersDemands
         ]);
     }
 
