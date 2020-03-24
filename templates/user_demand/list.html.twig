@@ -1,8 +1,8 @@
 {% extends 'base.html.twig' %}
 {% block title %}Demand - list{% endblock %}
 {% block body %}
-<h1> Liste des demandes de cr&eacute;ation de compte </h1>
-<table class="table table-hover">
+<h1 class="h2"> Liste des demandes de cr&eacute;ation de compte </h1>
+<table class="table table-hover" id="array-demands">
     <thead>
         <tr>
             <th>Pseudo</th>
@@ -18,8 +18,8 @@
             <td>{{ userDemand.username }}</a></td>
             <td>{{ userDemand.createdAt | date ('d/m/Y H:i') }}</td>
             <td>{{ userDemand.role }}</td>
-            <td><input type="checkbox" id="checkbox-valider" value="{{ userDemand.id }}"></td>
-            <td><input type="checkbox" id="checkbox-refuser" value="{{ userDemand.id}}"></td>
+            <td><input type="checkbox" name="checkbox-valider" value="{{ userDemand.id }}"></td>
+            <td><input type="checkbox" name="checkbox-refuser" value="{{ userDemand.id}}"></td>
         </tr>
         {% endfor %}
     </tbody>

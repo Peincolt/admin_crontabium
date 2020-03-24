@@ -93,9 +93,15 @@ class User implements UserInterface
         return $this->roles;
     }
 
-    public function setRoles(array $roles): self
+    public function setRoles(string $roles): self
     {
-        $this->roles = $roles;
+        if (preg_match("#;#",$roles)) {
+            $arrayRoles = explode(";",$roles);
+        } else {
+            $arrayRoles = array($roles);
+         }
+        
+        $this->roles = $arrayRoles;
 
         return $this;
     }

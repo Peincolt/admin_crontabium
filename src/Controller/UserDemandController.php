@@ -2,13 +2,17 @@
 
 namespace App\Controller;
 
+use App\Entity\UserDemand;
+use App\Form\UserDemandType;
 use Symfony\Component\Form\FormError;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
-use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use App\Entity\UserDemand;
-use App\Form\UserDemandType;
+use Symfony\Component\HttpFoundation\JsonResponse;
 use App\Service\Entity\UserDemand as userDemandHelper;
+use Exception;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\Validator\Constraints\Json;
 
 class UserDemandController extends AbstractController
 {
@@ -64,7 +68,7 @@ class UserDemandController extends AbstractController
     }
 
     /**
-     * @Route("/demand-access/transform", name="user_demand_transform")
+     * @Route("/demand-access/transforms", name="user_demand_transform")
      */
     public function transformDemand(Request $request)
     {
@@ -76,5 +80,46 @@ class UserDemandController extends AbstractController
             }
         }
         return 404;
+    }
+
+    /* AJAX PART */
+    /**
+     * @Route("/user/demand/valid", name="ajax_user_demand_valid")
+     * @Route("/user/demand/decline", name="ajax_user_demand_decline")
+     * @Method({"POST"})
+     */
+    public function transform(Request $request, UserDemand $userDemand = null, $id = null)
+    {
+        $id = $request->request->get('id');
+        $routeName = $request->get('_route');
+        if ($routeName == 'ajax_user_demand_valid') {
+            $result = $this->userDemandHelper->transformDemandToAccount(array($id));
+            if (isset($result['error_message'])) {
+                return new JsonResponse($result);
+            } else {
+                return new JsonResponse(array('message' => 'La demande a été acceptée et le compte a bien été crée', 'id' => $id, 'action' => 'valider'));
+            }
+        } else {
+            try {
+                $userDemand = $this->getDoctrine()
+                    ->getRepository(UserDemand::class)
+                    ->find($id);
+
+                if (empty($userDemand)) {
+                    return new JsonResponse(array('error_message' => 'Impossible de trouver la demande d\'accés dans la base de données'));
+                }
+
+                $this->getDoctrine()
+                    ->getManager()
+                    ->remove($userDemand);
+
+                /*$this->getDoctrine()
+                    ->getManager()
+                    ->flush();*/
+            return new JsonResponse(array('message' => 'La demande a bien été supprimée', 'id' => $id, 'action' => 'refuser'));
+            } catch (Exception $e) {
+                return new JsonResponse(array('error_message' => 'Erreur lors de la suppression de la demande d\'accés'));
+            }
+        }
     }
 }

@@ -11,20 +11,6 @@ use App\Service\Entity\Guild as GuildHelper;
 class AdminController extends AbstractController
 {
     /**
-     * @Route("/admin", name="admin")
-     */
-    public function index(PlayerHelper $playerHelper)
-    {
-        $tab['form_error']['password'] = 'test';
-        $tab['form_error']['test'] = 'test2';
-        
-        foreach($tab['form_error'] as $key => $value) {
-            var_dump($key);
-            var_dump($value);
-        }
-    }
-
-    /**
      * @Route("/", name="home")
      */
     public function home(Guild $guildHelper)
