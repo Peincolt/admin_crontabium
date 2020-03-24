@@ -19,24 +19,55 @@ class User
         $this->securityHelper = $securityHelper;
     }
 
-    public function updateUser(UserEntity $user, $password = true)
+    public function isFieldTaken(string $field, string $value)
     {
+        $user = $this->entityManagerInterface
+            ->getRepository(UserEntity::class)
+            ->findBy([$field => $value]);
+
+        if (!empty($user)) {
+            return array('error_message' => 'Ce '.$this->translate($field).' est déjà utilisé. Veuillez en choisir un autre','block' => true, 'field' => $field);
+        } else {
+            return array('field' => $field);
+        }
+    }
+
+    public function translate($field)
+    {
+        switch ($field) {
+            case 'username' :
+                return "nom d'utilisateur";
+            break;
+
+            case 'email' :
+                return 'adresse mail';
+            break;
+        }
+    }
+
+    public function updateUser(UserEntity $user)
+    {
+        $this->entityManagerInterface->persist($user);
+        $this->entityManagerInterface->flush();
+        return 200;
+    }
+
+    public function updatePassword(UserEntity $user, $password) {
         if ($password) {
-            if (!$this->securityHelper->isPasswordCorrect($user->getPassword())) {
+            if (!$this->securityHelper->isPasswordCorrect($password)) {
                 $arrayReturn['error_message'] = 'Your password must contains at least 8 characters composed of 1 digit, 1 capital letter and 1 special char';
                 $arrayReturn['error_forms']['password'] = 'Your password must contains at least 8 characters composed of 1 digit, 1 capital letter and 1 special char';
                 return $arrayReturn;
             }
-    
-            $user->setPassword($this->securityHelper->hashPassword($user, $user->getPassword()));
         }
 
         try {
-            $this->entityManagerInterface->persist($user);
-            $this->entityManagerInterface->flush();
-            return 200;
+            $hashPassword = $this->securityHelper->hashPassword($user,$password);
+            $user->setPassword($hashPassword);
+            return $this->updateUser($user);
         } catch (Exception $e) {
-            $arrayReturn['error_message'] = 'An error occured while we\'re saving your demand. Please try later or contact an admin if the error persists';
+            $arrayReturn['error_message'] = 'Une erreur est survenue lors de la sauvegarde des informations. Si l\'erreur persist, veuillez contacter Peincolt';
+            return $arrayReturn['error_message'];
         }
     }
 }

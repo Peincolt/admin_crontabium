@@ -9,8 +9,8 @@ use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 
 /**
  * @ORM\Entity(repositoryClass="App\Repository\UserRepository")
- * @UniqueEntity(fields="email",message="The email is already use")
- * @UniqueEntity(fields="username", message="The username is already use")
+ * @UniqueEntity(fields="email",message="L'email que vous avez utilisé est déjà lié à un compte")
+ * @UniqueEntity(fields="username", message="Le nom d'utilisateur est déjà pris")
  */
 class User implements UserInterface
 {
@@ -28,14 +28,14 @@ class User implements UserInterface
 
     /**
      * @ORM\Column(type="string", length=255)
-     * @Assert\Length(min="8", minMessage="The password must contains at least 8 characters")
+     * @Assert\Length(min="8", minMessage="Le mot de passe doit faire au moins 8 caractères")
      */
     private $password;
 
     /**
      * @ORM\Column(type="string", length=255)
      * @Assert\Email(
-     *      message = "The email you try to use is not recognize as a valid email",
+     *      message = "L'email que vous avez utilisé n'est pas reconnu comme étant une adresse valide. Veuillez essayer avec une autre adresse",
      *      checkMX = true,
      *      checkHost = true
      * )
@@ -93,15 +93,9 @@ class User implements UserInterface
         return $this->roles;
     }
 
-    public function setRoles(string $roles): self
-    {
-        if (preg_match("#;#",$roles)) {
-            $arrayRoles = explode(";",$roles);
-        } else {
-            $arrayRoles = array($roles);
-         }
-        
-        $this->roles = $arrayRoles;
+    public function setRoles(array $roles): self
+    {   
+        $this->roles = $roles;
 
         return $this;
     }
