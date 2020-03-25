@@ -2,6 +2,7 @@
 {% extends 'base.anonymous.html.twig' %}
 {% block title %}Demand access{% endblock %}
 {% block body %}
+{{ parent() }}
     <div class="container">
         <div class = "content">
             <div class="header">
@@ -10,13 +11,13 @@
                 <p class="text-intro"> En remplissant ce formulaire, vous faites une demande de création de compte.
                 Si la demande est acceptée, vous recevrez une notification par email. </p>
             </div>
+            {{ form_start(formDemand) }}
             <div class="form-group">
                 {{ form_label(formDemand.username,null,{'label_attr' : {'class' : 'form-label'}}) }}
                 {{ form_errors(formDemand.username) }}
                 <div id="error_username"></div>
                 {{ form_widget(formDemand.username, {'attr' : {'class' : 'form-control input-form'}}) }}
             </div>
-            {{ form_start(formDemand) }}
             <div class="form-group">
                 {{ form_label(formDemand.email,null,{'label_attr' : {'class' : 'form-label'}}) }}
                 {{ form_errors(formDemand.email) }}

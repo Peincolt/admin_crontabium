@@ -7,8 +7,8 @@ use Symfony\Component\Validator\Constraints as Assert;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 /**
  * @ORM\Entity(repositoryClass="App\Repository\UserDemandRepository")
- * @UniqueEntity(fields="email",message="The email is already use")
- * @UniqueEntity(fields="username", message="The username is already use")
+ * @UniqueEntity(fields="email",message="Cette adresse email est déjà prise")
+ * @UniqueEntity(fields="username", message="Ce nom d'utilisateur est déjà pris")
  */
 class UserDemand
 {

@@ -4,6 +4,7 @@ namespace App\Service\Entity;
 
 use Exception;
 use App\Entity\User as UserEntity;
+use App\Entity\UserDemand;
 use Doctrine\ORM\EntityManagerInterface;
 use App\Service\Entity\Security as SecurityHelper;
 
@@ -19,15 +20,24 @@ class User
         $this->securityHelper = $securityHelper;
     }
 
-    public function isFieldTaken(string $field, string $value)
+    public function isFieldTaken(string $field, string $value, $demand = false)
     {
         $user = $this->entityManagerInterface
             ->getRepository(UserEntity::class)
             ->findBy([$field => $value]);
 
         if (!empty($user)) {
-            return array('error_message' => 'Ce '.$this->translate($field).' est déjà utilisé. Veuillez en choisir un autre','block' => true, 'field' => $field);
+            return array('error_message' => $this->translate($field).' est déjà utilisé. Veuillez en choisir un autre','block' => true, 'field' => $field);
         } else {
+            if ($demand) {
+                $userDemand = $this->entityManagerInterface
+                    ->getRepository(UserDemand::class)
+                    ->findBy([$field => $value]);
+
+                if (!empty($userDemand)) {
+                    return array('error_message' => $this->translate($field).' est déjà utilisé dans une demande de compte. Veuillez en choisir un autre','block' => true, 'field' => $field);
+                }
+            }
             return array('field' => $field);
         }
     }
@@ -36,11 +46,11 @@ class User
     {
         switch ($field) {
             case 'username' :
-                return "nom d'utilisateur";
+                return "Ce nom d'utilisateur";
             break;
 
             case 'email' :
-                return 'adresse mail';
+                return 'Cette adresse mail';
             break;
         }
     }

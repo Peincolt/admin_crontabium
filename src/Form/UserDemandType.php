@@ -11,6 +11,7 @@ use Symfony\Component\Form\Extension\Core\Type\EmailType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\PasswordType;
 use Symfony\Component\Form\Extension\Core\Type\RepeatedType;
+use Symfony\Component\Form\Extension\Core\Type\TextType;
 
 class UserDemandType extends AbstractType
 {
@@ -24,8 +25,9 @@ class UserDemandType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder
-            ->add('username',null,[
-                'label' => "Nom d'utilisateur"
+            ->add('username',TextType::class,[
+                'label' => 'Nom d\'utilisateur',
+                'required' => true
             ])
             ->add('password', RepeatedType::class, [
                 'type' => PasswordType::class,

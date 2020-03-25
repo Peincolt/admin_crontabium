@@ -124,11 +124,12 @@ class UserController extends AbstractController
     {
         $field = $request->request->get('field');
         $value = $request->request->get('value');
+        $demand = $request->request->get('demand');
 
-        if (empty($field) || empty($value)) {
+        if (empty($field) || empty($value) || empty($demand)) {
             return new JsonResponse(false);
         }
 
-        return new JsonResponse($userHelper->isFieldTaken($field,$value));
+        return new JsonResponse($userHelper->isFieldTaken($field,$value,$demand));
     }
 }

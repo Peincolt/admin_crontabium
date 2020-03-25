@@ -16,6 +16,8 @@ const $ = require('jquery');
 // const $ = require('jquery');
 
 
+var formErreur;
+
 document.addEventListener('DOMContentLoaded',function() {
     /* USER PART */
     var inputsUsername = document.querySelectorAll('input[id$="_username"]');
@@ -85,12 +87,18 @@ function checkField(event)
     var value = event.target.value;
     var split = event.target.id.split('_');
     var field = split[split.length-1];
+    if (split[1] == "demand") {
+        var demand = true;
+    } else {
+        var demand = false;
+    }
 
     if (value) {
         $.post('/ajax/user/isFieldTaken',
             {
                 'field' : field,
-                'value' : value
+                'value' : value,
+                'demand' : demand
             }
         ).done(function(data) {
             var submit = document.getElementById('submit');
@@ -207,7 +215,9 @@ function checkSame(event)
         submit.disabled = true;
     } else {
         divError.classList.remove('alert-danger','alert');
-        submit.disabled = false;
+        if (formErreur != false) {
+            submit.disabled = false;
+        }
     }
 }
 

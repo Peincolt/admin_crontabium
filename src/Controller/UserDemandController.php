@@ -57,7 +57,7 @@ class UserDemandController extends AbstractController
                         $form->get($key)->addError(new FormError($value));
                     }
                 }
-                $this->addFlash('error','Une erreur est survenue lors de la sauvegarde de votre demande. Veuillez réessayer plus tard');
+                $this->addFlash('error',$result['error_message']);
             }
         }
 
@@ -96,7 +96,7 @@ class UserDemandController extends AbstractController
                 $this->getDoctrine()
                     ->getManager()
                     ->remove($userDemand);
-                    
+
             return new JsonResponse(array('message' => 'La demande a bien été supprimée', 'id' => $id, 'action' => 'refuser'));
             } catch (Exception $e) {
                 return new JsonResponse(array('error_message' => 'Erreur lors de la suppression de la demande d\'accés'));

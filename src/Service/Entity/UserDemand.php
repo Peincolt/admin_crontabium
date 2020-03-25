@@ -6,6 +6,7 @@ use Doctrine\ORM\EntityManagerInterface;
 use Exception;
 use App\Service\Data\Helper as DataHelper;
 use App\Entity\UserDemand as UserDemandEntity;
+use App\Service\Entity\User as UserHelper;
 use App\Entity\User;
 use App\Service\Entity\Security as SecurityHelper;
 
@@ -13,37 +14,45 @@ class UserDemand
 {
 
     private $dataHelper;
+    private $userHelper;
     private $entityManagerInterface;
     private $securityHelper;
 
     public function __construct(DataHelper $dataHelper,
         EntityManagerInterface $entityManagerInterface,
-        SecurityHelper $securityHelper
+        SecurityHelper $securityHelper,
+        UserHelper $userHelper
     )
     {
         $this->dataHelper = $dataHelper;
         $this->entityManagerInterface = $entityManagerInterface;
         $this->securityHelper = $securityHelper;
+        $this->userHelper = $userHelper;
     }
 
     public function createUserDemand(UserDemandEntity $user)
     {
         $arrayReturn = array();
-        $entityName = "\App\Entity\UserDemand";
         $createdAt = new \DateTime();
-
-        $userDemand = $this->dataHelper
-            ->getDatabaseData($entityName,array('email' => $user->getEmail()));
-        if ($userDemand) {
-            $arrayReturn['error_message'] = 'Quelqu\'un a déjà crée un compte avec cette adresse mail';
-            return $arrayReturn;
-        }
 
         if (!$this->securityHelper->isPasswordCorrect($user->getPassword())) {
             $arrayReturn['error_message'] = 'Votre mot de passe doit contenir au moins 8 caractéres dont une lettre majuscule, un chiffre et un caractére spécial';
             $arrayReturn['error_forms']['password'] = 'Votre mot de passe doit contenir au moins 8 caractéres dont une lettre majuscule, un chiffre et un caractére spécial';
             return $arrayReturn;
         }
+
+        $isEmailTaken = $this->userHelper->isFieldTaken('email',$user->getEmail());
+        $isUsernameTaken = $this->userHelper->isFieldTaken('username',$user->getUsername());
+
+        if (isset($isEmailTaken['error_message']) || isset($isUsernameTaken['error_message'])) {
+            if (isset($isEmailTaken['error_message'])) {
+                return $isEmailTaken;
+            } else {
+                return $isUsernameTaken;
+            }
+        }
+
+        die('on return pas');
 
         $user->setCreatedAt($createdAt);
 
