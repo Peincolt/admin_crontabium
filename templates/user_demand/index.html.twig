@@ -6,23 +6,27 @@
         <div class = "content">
             <div class="header">
                 <img src="{{ asset('build/images/Logo-jedi-order.png') }}" class="image-header">
-                <h1 class="title"> Demand your access </h1>
-                <p class="text-intro"> With this form, you can create a request to have an account in this platform </p>
+                <h1 class="title"> Demandez votre compte ! </h1>
+                <p class="text-intro"> En remplissant ce formulaire, vous faites une demande de création de compte.
+                Si la demande est acceptée, vous recevrez une notification par email. </p>
+            </div>
+            <div class="form-group">
+                {{ form_label(formDemand.username,null,{'label_attr' : {'class' : 'form-label'}}) }}
+                {{ form_errors(formDemand.username) }}
+                <div id="error_username"></div>
+                {{ form_widget(formDemand.username, {'attr' : {'class' : 'form-control input-form'}}) }}
             </div>
             {{ form_start(formDemand) }}
             <div class="form-group">
                 {{ form_label(formDemand.email,null,{'label_attr' : {'class' : 'form-label'}}) }}
                 {{ form_errors(formDemand.email) }}
+                <div id="error_email"></div>
                 {{ form_widget(formDemand.email, {'attr' : {'class' : 'form-control input-form'}}) }}
-            </div>
-            <div class="form-group">
-                {{ form_label(formDemand.username,null,{'label_attr' : {'class' : 'form-label'}}) }}
-                {{ form_errors(formDemand.username) }}
-                {{ form_widget(formDemand.username, {'attr' : {'class' : 'form-control input-form'}}) }}
             </div>
             <div class="form-group">
                 {{ form_label(formDemand.password.first,null,{'label_attr' : {'class' : 'form-label'}}) }}
                 {{ form_errors(formDemand.password) }}
+                <div id="error_password"></div>
                 {{ form_widget(formDemand.password.first, {'attr' : {'class' : 'form-control input-form'}}) }}
                 <span id="error_password"></span>
             </div>
@@ -42,7 +46,7 @@
                 {{ form_widget(formDemand.role, {'attr' : {'class' : 'form-control form-select'}}) }}
             </div>
             <div class="form-group">
-                <input type="submit" name="submit" value="Submit" class="btn btn-submit">
+                <input type="submit" name="submit" id="submit" value="Valider" class="btn btn-submit">
             </div>
             {{ form_end(formDemand) }}
         </div>
@@ -50,5 +54,4 @@
 {% endblock %}
 {% block javascripts %}
     {{ parent() }}
-    {{ encore_entry_script_tags('login') }}
 {% endblock %}

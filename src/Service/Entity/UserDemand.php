@@ -35,13 +35,13 @@ class UserDemand
         $userDemand = $this->dataHelper
             ->getDatabaseData($entityName,array('email' => $user->getEmail()));
         if ($userDemand) {
-            $arrayReturn['error_message'] = 'Someone has already tried to do a request with this email';
+            $arrayReturn['error_message'] = 'Quelqu\'un a déjà crée un compte avec cette adresse mail';
             return $arrayReturn;
         }
 
         if (!$this->securityHelper->isPasswordCorrect($user->getPassword())) {
-            $arrayReturn['error_message'] = 'Your password must contains at least 8 characters composed of 1 digit, 1 capital letter and 1 special char';
-            $arrayReturn['error_forms']['password'] = 'Your password must contains at least 8 characters composed of 1 digit, 1 capital letter and 1 special char';
+            $arrayReturn['error_message'] = 'Votre mot de passe doit contenir au moins 8 caractéres dont une lettre majuscule, un chiffre et un caractére spécial';
+            $arrayReturn['error_forms']['password'] = 'Votre mot de passe doit contenir au moins 8 caractéres dont une lettre majuscule, un chiffre et un caractére spécial';
             return $arrayReturn;
         }
 
@@ -52,7 +52,7 @@ class UserDemand
             $this->entityManagerInterface->flush();
             return 200;
         } catch (Exception $e) {
-            $arrayReturn['error_message'] = 'An error occured while we\'re saving your demand. Please try later or contact an admin if the error persists';
+            $arrayReturn['error_message'] = 'Une erreur est survenue lors de la sauvegarde de votre demande de compte. Veuillez réessayer plus tard';
         }
     }
 

@@ -12,7 +12,6 @@ use App\Service\Entity\UserDemand as userDemandHelper;
 use Exception;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use Symfony\Component\Validator\Constraints\Json;
 
 class UserDemandController extends AbstractController
 {
@@ -50,7 +49,7 @@ class UserDemandController extends AbstractController
         if ($form->isSubmitted() && $form->isValid()) {
             $result = $this->userDemandHelper->createUserDemand($userDemand);
             if (!isset($result['error_message'])) {
-                $this->addFlash('success','We register your demand. We will send you an email to tell you if you can acces or not to the website');
+                $this->addFlash('success','Nous avons pris en compte votre demande. Si elle est acceptée, vous recevrez un email de confirmation');
                 return $this->redirectToRoute('security_login');
             } else {
                 if (isset($result['error_forms'])) {
@@ -58,28 +57,13 @@ class UserDemandController extends AbstractController
                         $form->get($key)->addError(new FormError($value));
                     }
                 }
-                $this->addFlash('error','An error occured while we\'re trying to save your demand. Please try again or contact an admin if the error persist');
+                $this->addFlash('error','Une erreur est survenue lors de la sauvegarde de votre demande. Veuillez réessayer plus tard');
             }
         }
 
         return $this->render('user_demand/index.html.twig',[
             'formDemand' => $form->createView()
         ]);
-    }
-
-    /**
-     * @Route("/demand-access/transforms", name="user_demand_transform")
-     */
-    public function transformDemand(Request $request)
-    {
-        $ids = $request->request->get('ids');
-        if ($ids) {
-            $result = $this->userDemandHelper->transformDemandToAccount($ids);
-            if (isset($result['error_message'])) {
-                var_dump($result['error_message']);
-            }
-        }
-        return 404;
     }
 
     /* AJAX PART */
@@ -112,10 +96,7 @@ class UserDemandController extends AbstractController
                 $this->getDoctrine()
                     ->getManager()
                     ->remove($userDemand);
-
-                /*$this->getDoctrine()
-                    ->getManager()
-                    ->flush();*/
+                    
             return new JsonResponse(array('message' => 'La demande a bien été supprimée', 'id' => $id, 'action' => 'refuser'));
             } catch (Exception $e) {
                 return new JsonResponse(array('error_message' => 'Erreur lors de la suppression de la demande d\'accés'));

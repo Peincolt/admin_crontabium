@@ -87,7 +87,7 @@ function checkField(event)
     var field = split[split.length-1];
 
     if (value) {
-        $.post('/user/isFieldTaken',
+        $.post('/ajax/user/isFieldTaken',
             {
                 'field' : field,
                 'value' : value

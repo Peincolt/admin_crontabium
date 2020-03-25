@@ -24,25 +24,27 @@ class UserDemandType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder
-            ->add('username')
+            ->add('username',null,[
+                'label' => "Nom d'utilisateur"
+            ])
             ->add('password', RepeatedType::class, [
                 'type' => PasswordType::class,
-                'invalid_message' => 'The password fields must match',
+                'invalid_message' => 'Les deux mots de passe doivent être identiques',
                 'required' => true,
-                'first_options' => ['label' => 'Enter your futur password'],
-                'second_options' => ['label' => 'Repeat your futur password']
+                'first_options' => ['label' => 'Saisissez votre mot de passe'],
+                'second_options' => ['label' => 'Confirmer votre mot de passe']
             ])
             ->add('email', EmailType::class)
             ->add('guild', ChoiceType::class, [
                 'choices' => $this->guildHelper->getFormGuild(),
-                'label' => 'Choose your guild'
+                'label' => 'Choisissez votre guild'
             ])
             ->add('role', ChoiceType::class, [
                 'choices' => [
-                    'Member' => 'USER',
-                    'Officer' => 'ADMIN'
+                    'Membre' => 'USER',
+                    'Officier' => 'ADMIN'
                 ],
-                'label' => 'What\'s your status in your guild ?'
+                'label' => 'Quel est votre statut dans la guilde ?'
             ])
         ;
     }

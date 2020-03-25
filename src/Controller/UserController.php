@@ -117,7 +117,7 @@ class UserController extends AbstractController
     /* AJAX PART */
 
     /**
-     * @Route("/user/isFieldTaken", name="ajax_user_field_taken")
+     * @Route("/ajax/user/isFieldTaken", name="ajax_user_field_taken")
      * @Method({"POST"})
      */
     public function isUsernameTake(Request $request, UserHelper $userHelper)
