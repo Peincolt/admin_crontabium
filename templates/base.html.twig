@@ -2,7 +2,7 @@
 <html>
     <head>
         <meta charset="UTF-8">
-        <title>{% block title %}Welcome!{% endblock %}</title>
+        <title>{% block title %}Crontabium{% endblock %}</title>
         <link rel="stylesheet" type="text/css" href="https://bootswatch.com/4/lux/bootstrap.min.css">
         {% block stylesheets %}
             {{ encore_entry_link_tags('app') }}
@@ -21,29 +21,29 @@
                         <a class="nav-link" href="{{ path('home') }}">Home<span class="sr-only">(current)</span></a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="{{ path('players_list') }}">Players</a>
+                        <a class="nav-link" href="{{ path('players_list') }}">Joueurs</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="{{ path('unit_list_hero') }}">Heroes</a>
+                        <a class="nav-link" href="{{ path('unit_list_hero') }}">Héros</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="{{ path('unit_list_ship') }}">Ships</a>
+                        <a class="nav-link" href="{{ path('unit_list_ship') }}">Vaisseaux</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="{{ path('squad_list') }}">Teams</a>
+                        <a class="nav-link" href="{{ path('squad_list') }}">Équipes</a>
                     </li>
                 </ul>
                 <ul class="my-2 my-lg-0 navbar-nav nav-pills flex-column">
                     <li class="nav-item dropdown">
-                        <a class="nav-link dropdown-toggle" data-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="false">My account</a>
+                        <a class="nav-link dropdown-toggle" data-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="false">Mon compte</a>
                         <div class="dropdown-menu" x-placement="bottom-start" style="position: absolute; will-change: transform; top: 0px; left: 0px; transform: translate3d(0px, 37px, 0px);">
-                            <a class="dropdown-item" href="{{path('user_edit',{'id':app.user.id}) }}">My settings</a>
+                            <a class="dropdown-item" href="{{path('user_edit',{'id':app.user.id}) }}">Modifier un compte</a>
                             {% if is_granted('ROLE_ADMIN') %}
-                            <a class="dropdown-item" href="{{path('security_creation_user')}}">Create account</a>
-                            <a class="dropdown-item" href="{{path('security_user_list')}}">Modify accounts</a>
-                            <a class="dropdown-item" href="{{path('user_demand_list')}}">See demands account</a>
+                            <a class="dropdown-item" href="{{path('security_creation_user')}}">Créer un compte</a>
+                            <a class="dropdown-item" href="{{path('security_user_list')}}">Modifier un compte</a>
+                            <a class="dropdown-item" href="{{path('user_demand_list')}}">Voir les demandes de compte</a>
                             {% endif %}
-                            <a class="dropdown-item" href="{{ path('security_logout') }}">Deconnection</a>
+                            <a class="dropdown-item" href="{{ path('app_logout') }}">Déconnexion</a>
                         </div>
                     </li>
                 </ul>

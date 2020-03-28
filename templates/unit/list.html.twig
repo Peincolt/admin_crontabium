@@ -2,7 +2,7 @@
 
 {% block title %}{{ type }}{% endblock %}
 {% block body %}
-<h1 class="title"> There is some general informations about {{ type }} : </h1>
+<h1 class="title"> Informations générales concernant les {{ type }} : </h1>
 <br/>
 <div class="content">
     <div class="numbers-players">
@@ -16,7 +16,7 @@
         </div>
     </div>
     <div class="select-{{ type }}">
-        <h2 class="h2"> List of all {{ type }} in the guild </h2>
+        <h2 class="h2"> Liste de tout les {{ type }} de la guilde </h2>
         <div class="form-group">
             <select class="form-control" id="selectUnit" name="{{ type }}">
                 {% for unit in units %}        
