@@ -37,7 +37,8 @@ class Helper {
                     $date->setTimestamp($data['data']['last_updated']);
                     $arrayReturn['LastUpdated'] = $date;
                 } else {
-                    $date = \DateTime::createFromFormat('Y-m-d H:i:s.u',preg_replace("#[a-zA-Z]+#",'',$data['data']['last_updated']));
+                    $date = \DateTime::createFromFormat('Y-m-d H:i:s',preg_replace("#[a-zA-Z]+#",' ',$data['data']['last_updated']));
+                    $newDate = preg_replace("#[a-zA-Z]+#",' ',$data['data']['last_updated']);
                     $arrayReturn['LastUpdated'] = new \DateTime($date->format('Y-m-d H:i'));
                 }
                 $arrayReturn['AllyCode'] = $data['data']['ally_code'];

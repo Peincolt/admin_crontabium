@@ -7,6 +7,7 @@ use App\Service\Entity\Guild as ServiceGuild;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
+use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 
 class GuildCommand extends Command
@@ -28,10 +29,10 @@ class GuildCommand extends Command
         $this->setDescription('Synchronize the data guild with swgoh.gg api')
             ->setHelp('This command can be use if you want to synchronize your guild data')
             ->addArgument('id', InputArgument::REQUIRED, 'The id of the guild. This option is necessary')
-            ->addArgument('players', InputArgument::OPTIONAL, 'Do you want to synchronize guild players ?')
+            ->addOption('players', null, InputOption::VALUE_NONE, 'Do you want to synchronize guild players ?')
             /* Arguments when the user wants to synchronize guild player or player */
-            ->addArgument('players-characters', InputArgument::OPTIONAL, 'Do you want to synchronize player\'s characters when you synchronize players ?')
-            ->addArgument('players-ships', InputArgument::OPTIONAL, 'Do you want to synchronize player\'s ships when you synchronize players ?');
+            ->addOption('players-characters', null, InputOption::VALUE_NONE, 'Do you want to synchronize player\'s characters when you synchronize players ?')
+            ->addOption('players-ships', null, InputOption::VALUE_NONE, 'Do you want to synchronize player\'s ships when you synchronize players ?');
     }
 
     protected function execute(InputInterface $input, OutputInterface $output)
@@ -47,14 +48,14 @@ class GuildCommand extends Command
                 '==========================='
                 ]);
             $arrayOption = array();
-            if ($input->getArgument('players')) {
+            if ($input->getOption('players')) {
                 $output->writeln(['You choose to synchronize player\'s data']);
                 $arrayOption['players'] = true;
-                if ($input->getArgument('players-characters')) {
+                if ($input->getOption('players-characters')) {
                     $output->writeln(['You choose to synchronize player\'s heroes']);
                     $arrayOption['players_heroes'] = true;
                 }
-                if ($input->getArgument('players-ships')) {
+                if ($input->getOption('players-ships')) {
                     $output->writeln(['You choose to synchronize player\'s ships']);
                     $arrayOption['players_ships'] = true;
                 }
