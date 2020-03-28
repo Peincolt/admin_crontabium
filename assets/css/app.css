@@ -21,10 +21,6 @@
     }
 }
 
-th {
-    cursor: pointer;
-}
-
 #img-hp {
     text-align: center;
 }
@@ -93,14 +89,13 @@ table tbody tr td a {
     margin: 50px auto;
 }
 
-.th {
+.td {
     border: solid 2px;
     padding: 5px 5px;
 }
 
-.td {
-    border: solid 2px;
-    padding: 5px 5px;
+tbody, thead {
+    border-collapse: separate;
 }
 
 a:hover {

@@ -2,9 +2,7 @@
 
 namespace App\Form;
 
-use App\Entity\Squad;
 use Symfony\Component\Form\AbstractType;
-use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use App\Service\Entity\Unit as UnitHelper;
@@ -22,27 +20,28 @@ class SquadType extends AbstractType
     {
         $builder
             ->add('name',null,[
-                'attr' => ['class' => 'form-control']
+                'attr' => ['class' => 'form-control'],
+                'label' => 'Nom de l\'équipe'
             ])
             ->add('unit1',null,[
                 'attr' => ['class' => 'form-control unit-form'],
-                'label' => 'The first unit of the squad'
+                'label' => '1ère unité de l\'équipe'
             ])
             ->add('unit2',null,[
                 'attr' => ['class' => 'form-control unit-form'],
-                'label' => 'The first unit of the squad'
+                'label' => '2ème unité de l\'équipe'
             ])
             ->add('unit3',null,[
                 'attr' => ['class' => 'form-control unit-form'],
-                'label' => 'The first unit of the squad'
+                'label' => '3ème unité de l\'équipe'
             ])
             ->add('unit4',null,[
                 'attr' => ['class' => 'form-control unit-form'],
-                'label' => 'The first unit of the squad'
+                'label' => '4ème unité de l\'équipe'
             ])
             ->add('unit5',null,[
                 'attr' => ['class' => 'form-control unit-form'],
-                'label' => 'The first unit of the squad'
+                'label' => '5ème unité de l\'équipe'
             ]);
     }
 

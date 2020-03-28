@@ -5,7 +5,7 @@
     {{ encore_entry_link_tags('squad') }}
 {% endblock %}
 {% block body %}
-<h2 class="h2"> Create/Edit your own squad </h2>
+<h2 class="h2"> {% if squad.id is not empty %} Modifier l'équipe {{ squad.name }}{% else %} Créer une équipe {% endif %}</h2>
 {{ form_start(formChoice) }}
 <div class="autocomplete">
     {{ form_row(formChoice.name) }}

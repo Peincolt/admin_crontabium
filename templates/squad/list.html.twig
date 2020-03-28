@@ -1,21 +1,38 @@
 {% extends 'base.html.twig' %}
-{% block title %}Squads{% endblock %}
+{% block title %}Équipes{% endblock %}
 {% block body %}
-<h2 class="h2"> Squad list </h2>
+<h2 class="h2"> Liste des équipes </h2>
 {% for squad in squads %}
 <div class="contain-tab">
-    <table class="table table-hover">
+    <table style="margin:auto">
         <thead>
-            <th colspan="5" class="th"><a href="{{ path('squad_modification',{'id':squad.id}) }}">{{ squad.name }}</a></th>
+            <th colspan="6" class="td"><a href="{{ path('squad_modification',{'id':squad.id}) }}">{{ squad.name }}</a></th>
         </thead>
         <tbody>
             <tr>
+                <td class="td">1<sup>ère</sup> unité</td>
+                <td class="td">2<sup>ème</sup> unité</td>
+                <td class="td" colspan="2">3<sup>ème</sup> unité</td>
+                <td class="td">4<sup>ème</sup> unité</td>
+                <td class="td">5<sup>ème</sup> unité</td>
+            </tr>
+            {% set compteur = 1 %}
             {% for hero in squad.hero %}
-            <td class="td"><a href="{{ path('squad_modification',{'id':squad.id}) }}">{{ hero.name }}</a></td>
+            <td {% if compteur == 3 %}colspan="2" {% endif %}class="td">{{ hero.name }}</td>
+            {% set compteur = compteur + 1 %}
             {% endfor %}
             {% for ship in squad.ship %}
-            <td class="td"><a href="{{ path('squad_modification',{'id':squad.id}) }}">{{ ship.name}}</a></td>
+            <td {% if compteur == 3 %}colspan="2" {% endif %}class="td">{{ ship.name}}</td>
+            {% set compteur = compteur + 1 %}
             {% endfor %}
+            </tr>
+            <tr>
+                <td colspan="3" class="td">
+                    <a href="{{ path('squad_modification',{'id':squad.id}) }}">Modifier l'équipe</a>
+                </td>
+                <td colspan="3" class="td">
+                    <a href="{{ path('squad_view',{'id':squad.id}) }}">Voir les statistiques de cette équipe</a>
+                </td>
             </tr>
         </tbody>
     </table>

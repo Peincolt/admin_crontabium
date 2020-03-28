@@ -1,37 +1,39 @@
 {% extends 'base.html.twig' %}
-{% block title %}Squad{% endblock %}
+{% block title %}Crontabium - Équipe {{ squad.name }} {% endblock %}
 {% block body %}
-<h2 class="h2"> Squad {{ squad.name }} </h2>
+<h2 class="h2"> Équipe {{ squad.name }} </h2>
 <div class="recap-characters">
-    <table class="table table-hover">
+    <table style="margin:auto">
         <thead>
-            <th> Player </th>
-            <th colspan="24">characters</th>
+            <tr>
+                <th class="td"> Joueur </th>
+                <th colspan="24" class="td">Unités</th>
+            </tr>
         </thead>
         <tbody>
             <tr>
-                <td></td>
+                <td class="td" rowspan="2"></td>
                 {% for hero in squad.hero %}
-                    <td colspan="5">{{ hero.name }}</td>
+                    <td colspan="4" class="td">{{ hero.name }}</td>
                 {% endfor %}
                 {% for ship in squad.ship %}
-                    <td colspan="5">{{ ship.name }}</td>
+                    <td colspan="4" class="td">{{ ship.name }}</td>
                 {% endfor %}
             </tr>
             <tr>
-                {% for i in 0..5 %}
-                <td>Gear Level</td>
-                <td>Level</td>
-                <td>Rarity</td>
-                <td>Power</td>
+                {% for i in 0..4 %}
+                <td class="td">Niveau d'équipement</td>
+                <td class="td">Niveau</td>
+                <td class="td">Nombre d'étoile</td>
+                <td class="td">Puissance galactique</td>
                 {% endfor %}
             </tr>
             {% for namePlayer, tabUnits in playersInformations %}
             <tr>
-                <td>{{ namePlayer }}</td>
+                <td class="td">{{ namePlayer }}</td>
                 {% for nameUnit, infoUnit in tabUnits %}
                     {% for key, value in infoUnit %}
-                <td>{{ value }}</td>
+                <td class="td">{{ value }}</td>
                     {% endfor %}
                 {% endfor %}
             </tr>

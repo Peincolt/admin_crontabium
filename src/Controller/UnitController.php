@@ -49,7 +49,7 @@ class UnitController extends AbstractController
 
         return $this->render('unit/list.html.twig', [
             'units' => $units,
-            'type' => $entityInformation['name'],
+            'type' => $entityInformation['name'].'s',
             'number' => $number
         ]);
     }

@@ -1,43 +1,36 @@
 const axios = require('axios');
 
 window.onload = function(){
-    select = document.getElementById('selectUnit');
+    var select = document.getElementById('selectUnit');
     /* Fill the unit/ship tab when the user came the first time in the page (/heroes,/ships)*/
     if (select) {
-        id = select.value;
-        if (select.name == "Ship") {
-            url = "/ship/";
-            type = 'ship';
-        } else {
-            url = "/hero/";
-            type = 'hero';
-        }
-    
-        url+=id;
-    
-        axios.post(url).then(response => {
-            constructList(response.data.name,response.data.players,type);
-        })
-
-        select.addEventListener('change',function(event){
-
-            document.getElementById('list-ajax').innerHTML="";
-        
-            if (this.name == "Ship") {
-                url = "/ship/";
-                type= 'ship';
-            } else {
-                url = "/hero/";
-                type = 'hero';
-            }
-        
-            url+=this.value;
-        
-            axios.post(url).then(response => {
-                constructList(response.data.name,response.data.players,type);
-            });
-        });
+        select.addEventListener('change',getUnitInformation);
+        getUnitInformation();
     }
+}
+
+function getUnitInformation(event)
+{
+    if (event == undefined) {
+        var object = document.getElementById('selectUnit')
+    } else {
+        var object = event.target;
+    }
+
+    document.getElementById('list-ajax').innerHTML="";
+    if (object.name == "Ships") {
+        url = "/ship/";
+        type= 'ship';
+    } else {
+        url = "/hero/";
+        type = 'hero';
+    }
+
+    url+=object.value;
+
+    axios.post(url).then(response => {
+        constructList(response.data.name,response.data.players,type);
+    });
 }
     
 /* Functions */
