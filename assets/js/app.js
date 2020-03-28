@@ -15,9 +15,6 @@ const $ = require('jquery');
 // Need jQuery? Install it with "yarn add jquery", then uncomment to require it.
 // const $ = require('jquery');
 
-
-var formErreur;
-
 document.addEventListener('DOMContentLoaded',function() {
     /* USER PART */
     var inputsUsername = document.querySelectorAll('input[id$="_username"]');
@@ -215,9 +212,7 @@ function checkSame(event)
         submit.disabled = true;
     } else {
         divError.classList.remove('alert-danger','alert');
-        if (formErreur != false) {
-            submit.disabled = false;
-        }
+        submit.disabled = false;
     }
 }
 
