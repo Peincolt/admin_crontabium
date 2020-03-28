@@ -57,10 +57,10 @@ function constructList(name, data, type) {
     title.classList.add('h2');
 
     title.appendChild(document.createTextNode(name));
-    thName.appendChild(document.createTextNode('Player'));
-    thLevel.appendChild(document.createTextNode('Level'));
-    thRarity.appendChild(document.createTextNode('Stars'));
-    thGalacticalPower.appendChild(document.createTextNode('Galactical Power'));
+    thName.appendChild(document.createTextNode('Joueur'));
+    thLevel.appendChild(document.createTextNode('Niveau'));
+    thRarity.appendChild(document.createTextNode('Nombre d\'étoile'));
+    thGalacticalPower.appendChild(document.createTextNode('Puissance galactique'));
 
     table.appendChild(thead);
     thead.appendChild(trhead);
@@ -71,8 +71,8 @@ function constructList(name, data, type) {
     if (type == 'hero') {
         thGearLevel = document.createElement('th');
         thRelicLevel = document.createElement('th');
-        thGearLevel.appendChild(document.createTextNode('Gear level'));
-        thRelicLevel.appendChild(document.createTextNode('Relic level'));
+        thGearLevel.appendChild(document.createTextNode('Niveau d\'équipement'));
+        thRelicLevel.appendChild(document.createTextNode('Niveau de relic'));
         trhead.appendChild(thGearLevel);
         trhead.appendChild(thRelicLevel);
     }
