@@ -73,6 +73,10 @@ table tbody tr td a {
     height: 100%;
 }
 
+.block {
+    margin-top: 20px;
+}
+
 .name-squad {
     text-align: center;
     border: solid 5px;

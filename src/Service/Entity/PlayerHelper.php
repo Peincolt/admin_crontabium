@@ -79,4 +79,14 @@ class PlayerHelper {
         }
         return $playerDatas;
     }
+
+    public function getFields()
+    {
+        $arrayReturn = array();
+        $arrayReturn['name'] = 'Nom';
+        $arrayReturn['galactical_puissance'] = 'Puissance galactique';
+        $arrayReturn['characters_galactical_puissance'] = 'Puissance galactique des héros';
+        $arrayReturn['ships_galactical_puissance'] = 'Puissance galactique des vaisseaux';
+        return $arrayReturn;
+    }
 }

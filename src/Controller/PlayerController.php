@@ -8,6 +8,7 @@ use App\Entity\ShipPlayer;
 use App\Service\Entity\Unit as UnitHelper;
 use Knp\Component\Pager\PaginatorInterface;
 use App\Service\Entity\Guild as GuildHelper;
+use App\Service\Entity\PlayerHelper;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 
@@ -16,15 +17,17 @@ class PlayerController extends AbstractController
     /**
      * @Route("/players", name="players_list")
      */
-    public function players(GuildHelper $guildHelper, PaginatorInterface $paginatorInterface)
+    public function players(GuildHelper $guildHelper, PlayerHelper $playerHelper, PaginatorInterface $paginatorInterface)
     {
         $entityManager = $this->getDoctrine()->getManager();
         $guild = $entityManager->getRepository("App\Entity\Guild")->findOneBy(['id' => 1]);
         $playersEntity = $entityManager->getRepository("App\Entity\Player")->findBy(['guild' => $guild]);
         $players = $paginatorInterface->paginate($playersEntity,1,50);
+        $playerFields = $playerHelper->getFields();
         return $this->render('player/list.html.twig', [
             'guildMembers' => $guild->getMembers(),
             'players' => $players,
+            'playerFields' => $playerFields,
             'guildHeroesGp' => $guildHelper->getHeroesGalacticalPower($guild),
             'guildShipsGp' => $guildHelper->getShipsGalacticalPower($guild),
             'guildNumberHeroes' => $guildHelper->getHeroesNumber($guild),

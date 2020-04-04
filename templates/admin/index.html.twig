@@ -29,25 +29,7 @@
     </div>
     <div class="list-players">
         <h2 class="h2"> Informations concernant les joueurs </h2>
-        <table id="table-players" class="table table-hover">
-            <thead>
-                <tr>
-                    <th scope="col" id="th-0">{{ knp_pagination_sortable(players, 'Nom', 'name') }}</th>
-                    <th scope="col" id="th-1">{{ knp_pagination_sortable(players, 'Puissance galactique', 'galactical_puissance') }}</th>
-                    <th scope="col" id="th-2">{{ knp_pagination_sortable(players, 'Puissance galactique des héros', 'characters_galactical_puissance') }}</th>
-                    <th scope="col" id="th-3">{{ knp_pagination_sortable(players, 'Puissance galactique des vaisseaux', 'ships_galactical_puissance') }}</th>
-                </tr>
-            </thead>
-            {% for player in players %}
-            <tr>
-                <td><a href="{{ path('player_viewer',{'name':player.name}) }}"> {{ player.name }}</a></td>
-                <td><a href="{{ path('player_viewer',{'name':player.name}) }}"> {{ player.galacticalPuissance | number_format('0',',',' ') }}</a></td>
-                <td><a href="{{ path('player_viewer',{'name':player.name}) }}"> {{ player.charactersGalacticalPuissance | number_format('0',',',' ') }}</a></td>
-                <td><a href="{{ path('player_viewer',{'name':player.name}) }}"> {{ player.shipsGalacticalPuissance | number_format('0',',',' ') }}</a></td>
-            </tr>
-            {% endfor %}
-        </table>
-        {{ knp_pagination_render(players) }}
+        {% include 'player/array.html.twig' with {'players':players,'playerFields':playerFields} %}
     </div>
 </div>
 {% endblock %}
