@@ -5,9 +5,6 @@
 <h1 class="title"> Informations générales concernant le joueur {{ player.name }} : </h1>
 <br/>
 <div class="content">
-    {% if empty is defined %}
-    <p> Le jouer {{ name }} n'existe pas en base de données </p>
-    {% else %}
     <div class="numbers-players">
         <div class="big-number">
             <img src="{{ asset('build/images/power.jpg') }}">
@@ -71,7 +68,6 @@
             </tbody>
         </table>
     </div>
-    {% endif %}
     {% endif %}
 </div>
 {% endblock %}

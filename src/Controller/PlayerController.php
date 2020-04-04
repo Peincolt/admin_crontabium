@@ -25,7 +25,7 @@ class PlayerController extends AbstractController
         $players = $paginatorInterface->paginate($playersEntity,1,50);
         $playerFields = $playerHelper->getFields();
         return $this->render('player/list.html.twig', [
-            'guildMembers' => $guild->getMembers(),
+            'guild' => $guild,
             'players' => $players,
             'playerFields' => $playerFields,
             'guildHeroesGp' => $guildHelper->getHeroesGalacticalPower($guild),
@@ -40,24 +40,18 @@ class PlayerController extends AbstractController
      */
     public function player(Player $player, $name = null, PaginatorInterface $paginatorInterface, UnitHelper $unitHelper)
     {
-        if (empty($player) || empty($name)) {
-            $options['empty'] = true;
-            $option['name'] = $name;
-        } else {
-            $options['player'] = $player;
-            $dqlPlayerHeroes = $this->getDoctrine()->getRepository(HeroPlayer::class)->findBy(['player' => $player]);
-            $dqlPlayerShips = $this->getDoctrine()->getRepository(ShipPlayer::class)->findBy(['player' => $player]);
-            if (count($dqlPlayerHeroes) > 0) {
-                $options['heroesFields'] = $unitHelper->setFields('Hero');
-                $options['playerHeroes'] = $paginatorInterface->paginate($dqlPlayerHeroes,1,500);
-            }
-
-            if (count($dqlPlayerShips) > 0) {
-                $options['siphsFields'] = $unitHelper->setFields('Ship');
-                $options['playerShips'] = $paginatorInterface->paginate($dqlPlayerShips,1,500);
-            }
+        $options['player'] = $player;
+        $dqlPlayerHeroes = $this->getDoctrine()->getRepository(HeroPlayer::class)->findBy(['player' => $player]);
+        $dqlPlayerShips = $this->getDoctrine()->getRepository(ShipPlayer::class)->findBy(['player' => $player]);
+        if (count($dqlPlayerHeroes) > 0) {
+            $options['heroesFields'] = $unitHelper->setFields('Hero');
+            $options['playerHeroes'] = $paginatorInterface->paginate($dqlPlayerHeroes,1,500);
         }
 
+        if (count($dqlPlayerShips) > 0) {
+            $options['siphsFields'] = $unitHelper->setFields('Ship');
+            $options['playerShips'] = $paginatorInterface->paginate($dqlPlayerShips,1,500);
+        }
 
         return $this->render('player/player.html.twig',$options);
     }

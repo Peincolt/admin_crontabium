@@ -2,6 +2,7 @@
 {% block title %}Équipes{% endblock %}
 {% block body %}
 <h2 class="h2"> Liste des équipes </h2>
+{% if squads | length > 0 %}
 {% for squad in squads %}
 <div class="contain-tab">
     <table style="margin:auto">
@@ -38,4 +39,9 @@
     </table>
 </div>
 {% endfor %}
+{% else %}
+<div>
+    <p align="center"> Créez votre première équipe en cliquand <a href="{{ path('squad_creation') }}">ici</a></p>
+</div>
+{% endif %}
 {% endblock %}

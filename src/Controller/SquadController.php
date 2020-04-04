@@ -12,16 +12,6 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 class SquadController extends AbstractController
 {
     /**
-     * @Route("/squad", name="squad")
-     */
-    public function index()
-    {
-        return $this->render('squad/index.html.twig', [
-            'controller_name' => 'SquadController',
-        ]);
-    }
-
-    /**
      * @Route("/squads", name="squad_list")
      */
     public function list()
@@ -35,15 +25,17 @@ class SquadController extends AbstractController
 
     /**
      * @Route("/squad/create", name="squad_creation")
-     * @Route("/squad/modify/{id}", name="squad_modification")
+     * @Route("/squad/edit/{id}", name="squad_modification")
      */
     public function edit(Request $requet, Squad $squad = null, SquadHelper $squadHelper, $id = null)
     {
         if ($id) {
-            $squad = $this->getDoctrine()
-                ->getRepository(Squad::class)
-                ->find($id);
+            if (empty($squad)) {
+                $this->addFlash('error','L\'équipe que vous essayez d\'éditer n\'existe pas');
+                return $this->redirectToRoute('squad_list');
+            } else {
             $dataSquad = $squadHelper->squadToForm($squad);
+            }
         } else {
             $squad = new Squad();
             $dataSquad = null;

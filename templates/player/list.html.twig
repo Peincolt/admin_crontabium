@@ -2,13 +2,14 @@
 
 {% block title %}Crontabium - joueurs{% endblock %}
 {% block body %}
-<h1 class="title"> Informations générales concernant les joueurs </h1>
+<h1 class="title">Informations générales concernant les joueurs de la guilde {{ guild.name }}</h1>
 <br/>
 <div class="content">
+    {% if players | length > 0 %}
     <div class="numbers-players">
         <div class="big-number">
             <img src="{{ asset('build/images/people.png') }}" class="img-big-number">
-            <br/>{{ guildMembers }} joueur(s)
+            <br/>{{ guild.members }} joueur(s)
         </div>
         <div class="big-number">
             <img src="{{ asset('build/images/blaster.png') }}">
@@ -25,5 +26,10 @@
         <h2 class="h2"> Informations concernant les joueurs </h2>
         {% include 'player/array.html.twig' with {'players':players,'playerFields':playerFields} %}
     </div>
+    {% else %}
+    <div>
+        <p> Les membres de la guilde {{ guild.name }} ne possédent pas de compte swgoh.gg. Veuillez demander aux membres de s'inscrire sur le site et ensuite exécutez la synchronisation des datas </p>
+    </div>
+    {% endif %}
 </div>
 {% endblock %}
