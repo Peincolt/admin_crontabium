@@ -5,6 +5,9 @@
 <h1 class="title"> Informations générales concernant le joueur {{ player.name }} : </h1>
 <br/>
 <div class="content">
+    {% if empty is defined %}
+    <p> Le jouer {{ name }} n'existe pas en base de données </p>
+    {% else %}
     <div class="numbers-players">
         <div class="big-number">
             <img src="{{ asset('build/images/power.jpg') }}">
@@ -21,53 +24,54 @@
         <br/>
         <br/>
     </div>
+    {% if playerHeroes is defined %}
     <div class="list-heroes">
         <h2 class="h2"> {{ player.name }} Héro(s) </h2>
         <table id="table-heroes" class="table table-hover">
             <thead>
                 <tr>
-                    <th scope="col" id="th-0"> Nom </th>
-                    <th scope="col" id="th-0"> Nombre d'étoile </th>
-                    <th scope="col" id="th-0"> Niveau </th>
-                    <th scope="col" id="th-0"> Niveau d'équipement </th>
-                    <th scope="col" id="th-0"> Niveau de relique </th>
-                    <th scope="col" id="th-1"> Puissance galactique </th>
+                {% for key,value in heroesFields %}
+                    <th scope="col">{{ knp_pagination_sortable(playerHeroes, value, key) }}</th>
+                {% endfor %}
                 </tr>
             </thead>
             <tbody>
-                {% for playerUnit in player.characters %}
+                {% for playerHero in playerHeroes %}
                 <tr>
-                    <td>{{ playerUnit.hero.name }}</td>
-                    <td>{{ playerUnit.numberStars }}</td>
-                    <td>{{ playerUnit.level }}</td>
-                    <td>{{ playerUnit.gearLevel }}</td>
-                    <td>{{ playerUnit.relicLevel }}</td>
-                    <td>{{ playerUnit.galacticalPuissance }}</td>
+                    <td>{{ playerHero.hero.name }}</td>
+                    <td>{{ playerHero.numberStars }}</td>
+                    <td>{{ playerHero.level }}</td>
+                    <td>{{ playerHero.gearLevel }}</td>
+                    <td>{{ playerHero.relicLevel }}</td>
+                    <td>{{ playerHero.galacticalPuissance }}</td>
                 {% endfor %}
             </tbody>
         </table>
     </div>
+    {% endif %}
+    {% if playerShips is defined %}
     <div class="list-ships">
         <h2 class="h2"> {{ player.name }} Vaisseaux </h2>
         <table id="table-ships" class="table table-hover">
             <thead>
                 <tr>
-                    <th scope="col" id="th-0"> Nom </th>
-                    <th scope="col" id="th-0"> Nombre d'étoile </th>
-                    <th scope="col" id="th-0"> Niveau </th>
-                    <th scope="col" id="th-1"> Puissance galactique </th>
+                {% for key,value in siphsFields %}
+                    <th scope="col">{{ knp_pagination_sortable(playerShips, value, key) }}</th>
+                {% endfor %}
                 </tr>
             </thead>
             <tbody>
-                {% for playerUnit in player.ships %}
+                {% for playerShip in playerShips %}
                 <tr>
-                    <td>{{ playerUnit.ship.name }}</td>
-                    <td>{{ playerUnit.numberStars }}</td>
-                    <td>{{ playerUnit.level }}</td>
-                    <td>{{ playerUnit.galacticalPuissance }}</td>
+                    <td>{{ playerShip.ship.name }}</td>
+                    <td>{{ playerShip.numberStars }}</td>
+                    <td>{{ playerShip.level }}</td>
+                    <td>{{ playerShip.galacticalPuissance }}</td>
                 {% endfor %}
             </tbody>
         </table>
     </div>
+    {% endif %}
+    {% endif %}
 </div>
 {% endblock %}

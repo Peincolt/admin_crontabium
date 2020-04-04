@@ -58,33 +58,13 @@ class UnitController extends AbstractController
      * @Route("/hero/{id}", name="unit_hero")
      * @Route("/ship/{id}", name="unit_ship")
      */
-    public function unit(Request $request,$id)
+    public function unit(Request $request,UnitHelper $unitHelper, $id = null)
     {
-        $arrayReturn = array();
-        $entityInformation = $this->unitHelper
-            ->getEntityByRoute($request->attributes->get('_route'));
-
-        $unit = $this->getDoctrine()
-            ->getRepository($entityInformation['namespace'])
-            ->find($id);
-        $arrayReturn['name'] = $unit->getName();
-        $functionName = $entityInformation['function'];
-        $unitPlayers = $unit->$functionName();
-
-        for($i=0;$i<count($unitPlayers);$i++) {
-            $arrayReturn['players'][$i]['player_name'] = $unitPlayers[$i]->getPlayer()->getName();
-            $arrayReturn['players'][$i]['level'] = $unitPlayers[$i]->getLevel();
-            $arrayReturn['players'][$i]['stars'] = $unitPlayers[$i]->getNumberStars();
-            $arrayReturn['players'][$i]['galactical_puissance'] = $unitPlayers[$i]->getGalacticalPuissance();
-            if ($entityInformation['name'] == 'Hero') {
-                $arrayReturn['players'][$i]['relic'] = $unitPlayers[$i]->getRelicLevel();
-                $arrayReturn['players'][$i]['gear_level'] = $unitPlayers[$i]->getGearLevel();
-            }
+        if (empty($id)) {
+            return new JsonResponse(array('erorr_message' => 'Impossible de trouver l\'unité que vous cherchez'));
         }
 
-        $response = new JsonResponse($arrayReturn);
-
-        return $response;
+        return new JsonResponse($unitHelper->getFrontUnitInformation($request->attributes->get('_route'),$id));
     }
 
     /**

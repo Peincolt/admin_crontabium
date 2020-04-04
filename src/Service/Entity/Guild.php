@@ -44,7 +44,7 @@ class Guild
                 $this->entityManagerInterface->flush();
         
                 if (isset($options['players'])) {
-        
+                    $arrayPlayer = array();
                     if (isset($options['players_heroes'])) {
                         $heros = true;
                     } else {
@@ -59,9 +59,17 @@ class Guild
         
                     for ($i=0;$i<count($dataGuild['players']);$i++) {
                         $result = $this->playerHelper->createPlayer($dataGuild['players'][$i]['data']['ally_code'],$heros,$ships,$dataGuild['players'][$i],$guild);
+                        array_push($arrayPlayer,$dataGuild['players'][$i]['data']['name']);
                         if (isset($result['error_code'])) {
-                        break;
-                        return $result;
+                            break;
+                        }
+                    }
+
+                    $players = $guild->getPlayers();
+                    foreach ($players as $player) {
+                        if (!in_array($player->getName(),$arrayPlayer)) {
+                            $this->entityManagerInterface
+                                ->remove($player);
                         }
                     }
                 }

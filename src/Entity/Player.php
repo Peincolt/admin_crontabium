@@ -59,12 +59,12 @@ class Player
     private $gear_given;
 
     /**
-     * @ORM\OneToMany(targetEntity="App\Entity\HeroPlayer", mappedBy="player")
+     * @ORM\OneToMany(targetEntity="App\Entity\HeroPlayer", mappedBy="player", cascade={"remove"})
      */
     private $characters;
 
     /**
-     * @ORM\OneToMany(targetEntity="App\Entity\ShipPlayer", mappedBy="player")
+     * @ORM\OneToMany(targetEntity="App\Entity\ShipPlayer", mappedBy="player", cascade={"remove"})
      */
     private $ships;
 

@@ -2,19 +2,34 @@
 
 namespace App\Controller;
 
+use App\Entity\Player;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use App\Service\Entity\Guild;
 use Knp\Component\Pager\PaginatorInterface;
 
-class AdminController extends AbstractController
+class TestController extends AbstractController
 {
     /**
-     * @Route("/", name="home")
+     * @Route("/test", name="home_test")
      */
-    public function home(Guild $guildHelper, PaginatorInterface $paginatorInterface)
+    public function home()
     {
-        $entityManager = $this->getDoctrine()->getManager();
+        $player = $this->getDoctrine()
+            ->getRepository(Player::class)
+            ->find(95);
+
+        $this->getDoctrine()
+            ->getManager()
+            ->remove($player);
+
+        $this->getDoctrine()
+            ->getManager()
+            ->flush();
+
+        die('oklm');
+
+        /*$entityManager = $this->getDoctrine()->getManager();
         $guild = $entityManager->getRepository("App\Entity\Guild")->findOneBy(['id' => 1]);
         $playersEntity = $entityManager->getRepository("App\Entity\Player")->findBy(['guild' => $guild]);
         $players = $paginatorInterface->paginate($playersEntity,1,50);
@@ -23,6 +38,6 @@ class AdminController extends AbstractController
             'players' => $players,
             'guildHeroesGp' => $guildHelper->getHeroesGalacticalPower($guild),
             'guildShipsGp' => $guildHelper->getShipsGalacticalPower($guild)
-        ]);
+        ]);*/
     }
 }

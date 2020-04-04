@@ -13,7 +13,10 @@ class Unit {
     private $swgohGg;
     private $dataHelper;
 
-    public function __construct(EntityManagerInterface $entityManagerInterface, SwgohGg $swgohGg, Helper $dataHelper)
+    public function __construct(EntityManagerInterface $entityManagerInterface,
+        SwgohGg $swgohGg,
+        Helper $dataHelper
+    )
     {
         $this->entityManagerInterface = $entityManagerInterface;
         $this->swgohGg = $swgohGg;
@@ -104,18 +107,73 @@ class Unit {
         $hero = $this->entityManagerInterface
             ->getRepository("App\Entity\Hero")
             ->findOneBy(['name' => $name]);
-            $arrayReturn['type'] = 'Hero';
-            $arrayReturn['data'] = $hero;
+        $arrayReturn['type'] = 'Hero';
+        $arrayReturn['data'] = $hero;
 
         if (empty($hero)) {
             $ship = $this->entityManagerInterface
-            ->getRepository("App\Entity\Ship")
-            ->findOneBy(['name' => $name]);
+                ->getRepository("App\Entity\Ship")
+                ->findOneBy(['name' => $name]);
             $arrayReturn['type'] = 'Ship';
             $arrayReturn['data'] = $ship;
         }
 
         return $arrayReturn;
 
+    }
+
+    public function getFrontUnitInformation($route,$id)
+    {
+        $arrayReturn = array();
+        $entityInformation = $this->getEntityByRoute($route);
+        $unit = $this->entityManagerInterface
+            ->getRepository($entityInformation['namespace'])
+            ->find($id);
+        
+        if (!empty($unit)) {
+            $arrayReturn['name'] = $unit->getName();
+            $functionName = $entityInformation['function'];
+            $unitPlayers = $unit->$functionName();
+    
+            for($i=0;$i<count($unitPlayers);$i++) {
+                $arrayReturn['players'][$i]['player_name'] = $unitPlayers[$i]->getPlayer()->getName();
+                $arrayReturn['players'][$i]['level'] = $unitPlayers[$i]->getLevel();
+                $arrayReturn['players'][$i]['stars'] = $unitPlayers[$i]->getNumberStars();
+                $arrayReturn['players'][$i]['galactical_puissance'] = $unitPlayers[$i]->getGalacticalPuissance();
+                if ($entityInformation['name'] == 'Hero') {
+                    $arrayReturn['players'][$i]['relic'] = $unitPlayers[$i]->getRelicLevel();
+                    $arrayReturn['players'][$i]['gear_level'] = $unitPlayers[$i]->getGearLevel();
+                }
+            }
+        } else {
+            $arrayReturn['error_message'] = 'Impossible de trouver l\'unité que vous cherchez';
+        }
+
+        return $arrayReturn;
+    }
+
+    public function setFields($type)
+    {
+        $arrayReturn = array();
+
+        switch ($type) {
+            case 'Hero':
+                $arrayReturn['hero.name'] = 'nom';
+                $arrayReturn['number_stars'] = 'Nom d\'étoile';
+                $arrayReturn['level'] = 'Niveau';
+                $arrayReturn['gear_level'] = 'Niveau d\'équipement';
+                $arrayReturn['relic_level'] = 'Niveau de relique';
+                $arrayReturn['galactical_puissance'] = 'Puissance galactique';
+            break;
+
+            case 'Ship':
+                $arrayReturn['ship.name'] = 'nom';
+                $arrayReturn['number_stars'] = 'Nom d\'étoile';
+                $arrayReturn['level'] = 'Niveau';
+                $arrayReturn['galactical_puissance'] = 'Puissance galactique';
+            break;
+        }
+
+        return $arrayReturn;
     }
 }

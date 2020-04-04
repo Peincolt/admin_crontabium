@@ -26,10 +26,10 @@
         <table id="table-players" class="table table-hover">
             <thead>
                 <tr>
-                    <th scope="col" id="th-0"> Nom </th>
-                    <th scope="col" id="th-1"> Puissance galactique </th>
-                    <th scope="col" id="th-2"> Puissance galactique des héros </th>
-                    <th scope="col" id="th-3"> Puissance galactique des vaisseaux </th>
+                    <th scope="col" id="th-0">{{ knp_pagination_sortable(players, 'Nom', 'name') }}</th>
+                    <th scope="col" id="th-1">{{ knp_pagination_sortable(players, 'Puissance galactique', 'galactical_puissance') }}</th>
+                    <th scope="col" id="th-2">{{ knp_pagination_sortable(players, 'Puissance galactique des héros', 'characters_galactical_puissance') }}</th>
+                    <th scope="col" id="th-3">{{ knp_pagination_sortable(players, 'Puissance galactique des vaisseaux', 'ships_galactical_puissance') }}</th>
                 </tr>
             </thead>
             <tbody>
@@ -43,6 +43,7 @@
             {% endfor %}
             </tbody>
         </table>
+        {{ knp_pagination_render(players) }}
     </div>
 </div>
 {% endblock %}
