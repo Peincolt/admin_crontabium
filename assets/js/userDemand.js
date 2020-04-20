@@ -48,8 +48,6 @@ function editDemand(event)
                 }
 
                 createAlert(data.message,'success');
-                /* foreach sur les checkbox pour récupérer celui qui correspond à l'id que j'aurais renvoyé.
-                récupération du parent de la checkbox et du tbody. Suppression du child td qui contient la checkbox */
             }
         }).fail(function(data) {
             console.log(data);

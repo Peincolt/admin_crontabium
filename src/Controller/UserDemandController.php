@@ -97,6 +97,10 @@ class UserDemandController extends AbstractController
                     ->getManager()
                     ->remove($userDemand);
 
+                $this->getDoctrine()
+                    ->getManager()
+                    ->flush();
+
             return new JsonResponse(array('message' => 'La demande a bien été supprimée', 'id' => $id, 'action' => 'refuser'));
             } catch (Exception $e) {
                 return new JsonResponse(array('error_message' => 'Erreur lors de la suppression de la demande d\'accés'));

@@ -48,8 +48,6 @@ class UserDemand
             }
         }
 
-        die('on return pas');
-
         $user->setCreatedAt($createdAt);
 
         try {
