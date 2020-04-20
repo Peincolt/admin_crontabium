@@ -28,6 +28,12 @@ class UserDemandController extends AbstractController
      */
     public function index()
     {
+        if (!$this->isGranted('ROLE_ADMIN'))
+        {
+            $this->addFlash('error','Il faut être administrateur pour voir les demandes de comptes');
+            return $this->redirectToRoute('home');
+        }
+        
         $usersDemands = $this->getDoctrine()
             ->getRepository(UserDemand::class)
             ->findAll();
@@ -76,6 +82,12 @@ class UserDemandController extends AbstractController
     {
         $id = $request->request->get('id');
         $routeName = $request->get('_route');
+
+        if (!$this->isGranted('ROLE_ADMIN'))
+        {
+            return new JsonResponse(array('error_message' => 'Il faut être administrateur pour valider/invalider les demandes de comptes'));
+        }
+
         if ($routeName == 'ajax_user_demand_valid') {
             $result = $this->userDemandHelper->transformDemandToAccount(array($id));
             if (isset($result['error_message'])) {
