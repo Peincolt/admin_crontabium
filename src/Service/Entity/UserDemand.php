@@ -4,7 +4,6 @@ namespace App\Service\Entity;
 
 use Doctrine\ORM\EntityManagerInterface;
 use Exception;
-use App\Service\Data\Helper as DataHelper;
 use App\Entity\UserDemand as UserDemandEntity;
 use App\Service\Entity\User as UserHelper;
 use App\Entity\User;
@@ -13,18 +12,15 @@ use App\Service\Entity\Security as SecurityHelper;
 class UserDemand
 {
 
-    private $dataHelper;
     private $userHelper;
     private $entityManagerInterface;
     private $securityHelper;
 
-    public function __construct(DataHelper $dataHelper,
-        EntityManagerInterface $entityManagerInterface,
+    public function __construct(EntityManagerInterface $entityManagerInterface,
         SecurityHelper $securityHelper,
         UserHelper $userHelper
     )
     {
-        $this->dataHelper = $dataHelper;
         $this->entityManagerInterface = $entityManagerInterface;
         $this->securityHelper = $securityHelper;
         $this->userHelper = $userHelper;
@@ -69,7 +65,9 @@ class UserDemand
     {
         try {
             foreach($ids as $id) {
-                $demand = $this->dataHelper->getDatabaseData("App\Entity\UserDemand",array('id' => $id));
+                $demand = $this->entityManagerInterface
+					->getRepository(UserDemandEntity::class)
+					->find($id);
                 $user = new User();
                 $user->setUsername($demand->getUsername())
                     ->setPassword($this->securityHelper
