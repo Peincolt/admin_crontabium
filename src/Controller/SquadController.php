@@ -51,7 +51,7 @@ class SquadController extends AbstractController
                 $this->addFlash('error',$result['error_message']);
             } else {
                 $this->addFlash('success','We create your squad');
-                $this->redirectToRoute('home');
+                return $this->redirectToRoute('squad_list');
             }
         }
 
