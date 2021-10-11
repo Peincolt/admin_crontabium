@@ -42,11 +42,17 @@ class GuildCommand extends Command
             '===========================',
             'Retrieving guild data from the database'
             ]);
-        if ($guild = $this->dataHelper->getDatabaseData("\App\Entity\Guild",array('id_swgoh' => $input->getArgument('id')))) {
+
+        $guild = $this->dataHelper->getDatabaseData("\App\Entity\Guild",array('id_swgoh' => $input->getArgument('id')));
+ 
+        if (empty($guild)) {
+            $result = $this->serviceGuild->updateGuild($input->getArgument('id'),array('players' => true, 'players_heroes' => true, 'players_ship' => true));
+        } else {
             $output->writeln([
                 'We found the guild on the database',
                 '==========================='
                 ]);
+
             $arrayOption = array();
             if ($input->getOption('players')) {
                 $output->writeln(['You choose to synchronize player\'s data']);
@@ -67,31 +73,25 @@ class GuildCommand extends Command
                 'The synchronize will start now'
                 ]);
             $result = $this->serviceGuild->updateGuild($input->getArgument('id'),$arrayOption);
-            if (!isset($result['error_message'])) {
-                $output->writeln([
-                'The synchronization of the guild is over and everything is fine',
+        }
+        
+        if (!isset($result['error_message'])) {
+            $output->writeln([
+            'The synchronization of the guild is over and everything is fine',
+            '===========================',
+            'End of the command'
+            ]);
+            return 200;
+        } else {
+            $output->writeln([
+                'An error occured where we try to synchronize the data. The error message is : ',
+                $result['error_message'],
+                'If the error persist, join the admin',
                 '===========================',
                 'End of the command'
                 ]);
-                return 200;
-            } else {
-                $output->writeln([
-                    'An error occured where we try to synchronize the data. The error message is : ',
-                    $result['error_message'],
-                    'If the error persist, join the admin',
-                    '===========================',
-                    'End of the command'
-                    ]);
-                return 500;
-            }
+            return 500;
         }
-
-        $output->writeln([
-            'The guild doesn\'t exist. You can get the id of yout guild when you\'re in the admin panel',
-            '===========================',
-            'End of the command'
-        ]);
-        return 500;
     }
 
 }

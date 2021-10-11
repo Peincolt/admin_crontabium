@@ -75,7 +75,17 @@ class Helper {
                 $arrayReturn['Level'] = $data['level'];
                 $arrayReturn['GearLevel'] = $data['gear_level'];
                 $arrayReturn['GalacticalPuissance'] = $data['power'];
-                $arrayReturn['RelicLevel'] = $data['relic_tier'];
+                if ($data['gear_level'] == 13 && $data['relic_tier'] == 2) {
+                    $arrayReturn['RelicLevel'] = $data['relic_tier'];
+                } elseif ($data['gear_level'] == 13 && $data['relic_tier'] >= 3) {
+                    $arrayReturn['RelicLevel'] = $data['relic_tier'] - 2;
+                } else {
+                    $arrayReturn['RelicLevel'] = 0;
+                }
+                $arrayReturn['Speed'] = $data['stats']['5'];
+                $arrayReturn['Life'] = $data['stats']['1'];
+                $arrayReturn['Protection'] = $data['stats']['28'];
+                
             break;
         }
 

@@ -30,7 +30,7 @@ class HeroRepository extends ServiceEntityRepository
             ->leftjoin('hp.player','p','WITH','hp.player = p.id')
             ->where('h.id = ?1')
             ->setParameter(1, $id)
-            ->select('p.name, hp.gear_level as gearLevel, hp.level, hp.number_stars as rarity','hp.galactical_puissance as power')
+            ->select('p.name, hp.gear_level, hp.level, hp.number_stars as rarity','hp.protection','hp.life','hp.speed','hp.relic_level')
             ->getQuery()
             ->getResult()
         ;

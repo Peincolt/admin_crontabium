@@ -19,6 +19,15 @@ class GuildRepository extends ServiceEntityRepository
         parent::__construct($registry, Guild::class);
     }
 
+    public function countMembers($idGuild)
+    {
+        return $this->createQueryBuilder('g')
+            ->join('App\Entity\Player','p','p.guild = g')
+            ->select('count(p)')
+            ->getQuery()
+            ->getOneOrNullResult();
+    }
+
     // /**
     //  * @return Guild[] Returns an array of Guild objects
     //  */

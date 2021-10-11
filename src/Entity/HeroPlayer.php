@@ -51,6 +51,21 @@ class HeroPlayer
      */
     private $hero;
 
+    /**
+     * @ORM\Column(type="integer")
+     */
+    private $protection;
+
+    /**
+     * @ORM\Column(type="integer")
+     */
+    private $life;
+
+    /**
+     * @ORM\Column(type="integer")
+     */
+    private $speed;
+
     public function getId(): ?int
     {
         return $this->id;
@@ -136,6 +151,42 @@ class HeroPlayer
     public function setHero(?Hero $hero): self
     {
         $this->hero = $hero;
+
+        return $this;
+    }
+
+    public function getProtection(): ?int
+    {
+        return $this->protection;
+    }
+
+    public function setProtection(int $protection): self
+    {
+        $this->protection = $protection;
+
+        return $this;
+    }
+
+    public function getLife(): ?int
+    {
+        return $this->life;
+    }
+
+    public function setLife(int $life): self
+    {
+        $this->life = $life;
+
+        return $this;
+    }
+
+    public function getSpeed(): ?int
+    {
+        return $this->speed;
+    }
+
+    public function setSpeed(int $speed): self
+    {
+        $this->speed = $speed;
 
         return $this;
     }

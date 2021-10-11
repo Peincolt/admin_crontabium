@@ -160,10 +160,12 @@ class Squad
                 if (array_key_exists($playerName,$playerHero)) {
                     $arrayReturn[$playerName][$hero->getName()] = $playerHero[$playerName];
                 } else {
-                    $arrayReturn[$playerName][$hero->getName()]['gearLevel'] = 0;
-                    $arrayReturn[$playerName][$hero->getName()]['level'] = 0;
+                    $arrayReturn[$playerName][$hero->getName()]['gear_level'] = 0;
                     $arrayReturn[$playerName][$hero->getName()]['rarity'] = 0;
-                    $arrayReturn[$playerName][$hero->getName()]['power'] = 0;
+                    $arrayReturn[$playerName][$hero->getName()]['life'] = 0;
+                    $arrayReturn[$playerName][$hero->getName()]['protection'] = 0;
+                    $arrayReturn[$playerName][$hero->getName()]['relic_level'] = 0;
+                    $arrayReturn[$playerName][$hero->getName()]['speed'] = 0;
                 }
             }
 
