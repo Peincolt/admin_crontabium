@@ -2,8 +2,7 @@
 
 namespace App\Command;
 
-use App\Service\Data\Helper as DataHelper;
-use App\Service\Entity\Guild as ServiceGuild;
+use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
@@ -14,14 +13,12 @@ class GuildCommand extends Command
 {
 
     protected static $defaultName = 'app:synchro-guild';
-    private $serviceGuild;
-    private $dataHelper;
+    private $entityManagerInterface;
 
-    public function __construct(ServiceGuild $serviceGuild, DataHelper $dataHelper)
+    public function __construct(EntityManagerInterface $entityManagerInterface)
     {
         parent::__construct();
-        $this->serviceGuild = $serviceGuild;
-        $this->dataHelper = $dataHelper;
+        $this->entityManagerInterface = $entityManagerInterface;
     }
 
     protected function configure()
@@ -29,32 +26,99 @@ class GuildCommand extends Command
         $this->setDescription('Synchronize the data guild with swgoh.gg api')
             ->setHelp('This command can be use if you want to synchronize your guild data')
             ->addArgument('id', InputArgument::REQUIRED, 'The id of the guild. This option is necessary')
+            ->addOption('all',null,InputOption::VALUE_NONE, 'Voulez-vous récupérer toutes les informations de la guilde ?')
             ->addOption('players', null, InputOption::VALUE_NONE, 'Do you want to synchronize guild players ?')
             /* Arguments when the user wants to synchronize guild player or player */
-            ->addOption('players-characters', null, InputOption::VALUE_NONE, 'Do you want to synchronize player\'s characters when you synchronize players ?')
-            ->addOption('players-ships', null, InputOption::VALUE_NONE, 'Do you want to synchronize player\'s ships when you synchronize players ?');
+            ->addOption('players-heroes', null, InputOption::VALUE_OPTIONAL, 'Do you want to synchronize player\'s characters when you synchronize players ?')
+            ->addOption('players-ships', null, InputOption::VALUE_OPTIONAL, 'Do you want to synchronize player\'s ships when you synchronize players ?');
     }
 
     protected function execute(InputInterface $input, OutputInterface $output)
     {
-        $output->writeln([
-            'Start of the command',
-            '===========================',
-            'Retrieving guild data from the database'
-            ]);
+        $arrayOption = array();
+        $guild = $this->entityManagerInterface->getRepository(Guild::class)->findOneBy([
+            'id_swgoh' => $input->getArgument('id')
+        ]);
 
-        $guild = $this->dataHelper->getDatabaseData("\App\Entity\Guild",array('id_swgoh' => $input->getArgument('id')));
- 
-        if (empty($guild)) {
+        $output->writeln([
+            'Début de la commande',
+            '===========================',
+        ]);
+
+        if ($input->getOption('all')) {
+            $output->writeln([
+                'Vous avez décidé de tout synchroniser (guilde, joueurs, données des joueurs)',
+                '===========================',
+                'Début de la synchronisation',
+                '==========================='
+            ]);
             $result = $this->serviceGuild->updateGuild($input->getArgument('id'),array('players' => true, 'players_heroes' => true, 'players_ship' => true));
         } else {
             $output->writeln([
-                'We found the guild on the database',
+                'Synchronisation des informations de la guilde',
                 '==========================='
+            ]);
+            if (empty($guild)) {
+                $output->writeln([
+                    'La guilde n\'existe pas en base de données',
+                    'Création de la guilde en cours ...'
                 ]);
+            } else {
+                $output->writeln([
+                    'La guilde a été trouvé dans la base de données',
+                    'Mis à jour des informations de la guilde en cours ...'
+                ]);
+            }
 
-            $arrayOption = array();
-            if ($input->getOption('players')) {
+            $result = $this->serviceGuild->updateGuild($input->getArgument('id'),$guild);
+            
+            if (is_array($result)) {
+                $output->writeln([
+                    'Erreur lors de la synchronisation des informations de la guilde',
+                    'L\'erreur est la suivante : '.$result['error_message'],
+                    '==========================='
+                ]);
+            
+            }
+
+            $output->writeln([
+                'Synchronisation des informations de la guilde terminée',
+                '==========================='
+            ]);
+            
+            $output->writeln([
+                'Création de la base de données dans la '
+            ]);
+        }
+
+        if ($input->getOption('players')) {
+            if ($input->getOption('player') == "all") {
+                $output->writeln([
+                    'Vous avez décidé de synchroniser toutes les données (héros et vaisseaux compris) des joueurs',
+                    '===========================',
+                    'Début de la synchronisation des données des joueurs'
+                ]);
+            } else {
+                $output->writeln([
+                    'Vous avez décidé de synchroniser toutes les données des joueurs',
+                    '===========================',
+                    'Début de la synchronisation des données des joueurs'
+                ]);
+            }
+        }
+
+        if ($playersHeroesSynchro = $input->getOption('players-heroes')) {
+            $arrayOption['players-heroes'] = $playersHeroesSynchro;
+            if ($playersShipsSynchro)
+            $output->writeln('Vous avez décidé de synchroniser les héros des joueurs');
+            
+        }
+
+        if ($playersShipsSynchro = $input->getOption('players-ships')) {
+            $arrayOption['players-ships'] = $playersShipsSynchro;
+        }
+            
+            /*if ($input->getOption('players')) {
                 $output->writeln(['You choose to synchronize player\'s data']);
                 $arrayOption['players'] = true;
                 if ($input->getOption('players-characters')) {
@@ -91,7 +155,7 @@ class GuildCommand extends Command
                 'End of the command'
                 ]);
             return 500;
-        }
+        }*/
     }
 
 }

@@ -7,6 +7,7 @@ use App\Service\Api\SwgohGg;
 use App\Service\Data\Helper;
 use Doctrine\ORM\EntityManagerInterface;
 use Exception;
+use Symfony\Component\Console\Output\OutputInterface;
 
 class Guild
 {
@@ -14,8 +15,14 @@ class Guild
     private $playerHelper;
     private $dataHelper;
     private $entityManagerInterface;
+    private $outputInterface;
 
-    public function __construct(SwgohGg $swgohGg, PlayerHelper $playerHelper, Helper $dataHelper, EntityManagerInterface $entityManagerInterface)
+    public function __construct(
+        SwgohGg $swgohGg, 
+        PlayerHelper $playerHelper, 
+        Helper $dataHelper, 
+        EntityManagerInterface $entityManagerInterface
+    )
     {
         $this->swgohGg = $swgohGg;
         $this->playerHelper = $playerHelper;
@@ -23,7 +30,31 @@ class Guild
         $this->entityManagerInterface = $entityManagerInterface;
     }
 
-    public function updateGuild(string $idGuild, array $options = null)
+    public function updateGuild(string $idGuild,EntityGuild $guild = null)
+    {
+        if (empty($guild)) {
+            $guild = new EntityGuild();
+        }
+
+        try {
+            $dataGuild = $this->swgohGg->fetchGuild($idGuild);
+            $entityField = $this->dataHelper->matchEntityField('guild',$dataGuild['data']);
+            foreach($entityField as $key => $value) {
+                $function = 'set'.$key;
+                $guild->$function($value);
+            }
+    
+            $this->entityManagerInterface->persist($guild);
+            $this->entityManagerInterface->flush();
+            return $guild;
+        } catch (Exception $e) {
+            $arrayReturn['error_code'] = $e->getCode();
+            $arrayReturn['error_message'] = $e->getMessage();
+            return $arrayReturn;
+        }
+    }
+
+    public function updateGuild2(string $idGuild, array $options = null)
     {
         try {
             $dataGuild = $this->swgohGg->fetchGuild($idGuild);
