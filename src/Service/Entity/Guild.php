@@ -30,6 +30,7 @@ class Guild
         $this->entityManagerInterface = $entityManagerInterface;
     }
 
+    // METTRE DU CACHE ICI CAR L'API SE MET PAS A JOUR AUTOMATIQUEMENT ET CA FAIT COOL DANS LE PROJET
     public function updateGuild(string $idGuild,EntityGuild $guild = null)
     {
         if (empty($guild)) {
@@ -51,6 +52,18 @@ class Guild
             $arrayReturn['error_code'] = $e->getCode();
             $arrayReturn['error_message'] = $e->getMessage();
             return $arrayReturn;
+        }
+    }
+
+    public function updateGuildPlayers(EntityGuild $guild, bool $heroes, bool $ships)
+    {
+        $dataGuild = $this->swgohGg->fetchGuild($guild->getIdSwgoh());
+        for ($i=0;$i<count($dataGuild['players']);$i++) {
+            $result = $this->playerHelper->createPlayer($dataGuild['players'][$i]['data']['ally_code'],$heroes,$ships,$dataGuild['players'][$i],$guild);
+            array_push($arrayPlayer,$dataGuild['players'][$i]['data']['name']);
+            if (isset($result['error_code'])) {
+                break;
+            }
         }
     }
 
