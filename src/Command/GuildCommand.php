@@ -3,6 +3,7 @@
 namespace App\Command;
 
 use App\Entity\Guild;
+use App\Service\Entity\Guild as ServiceGuild;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputOption;
@@ -15,11 +16,13 @@ class GuildCommand extends Command
 
     protected static $defaultName = 'app:synchro-guild';
     private $entityManagerInterface;
+    private $serviceGuild;
 
-    public function __construct(EntityManagerInterface $entityManagerInterface)
+    public function __construct(EntityManagerInterface $entityManagerInterface, ServiceGuild $serviceGuild)
     {
         parent::__construct();
         $this->entityManagerInterface = $entityManagerInterface;
+        $this->serviceGuild = $serviceGuild;
     }
 
     protected function configure()
@@ -135,7 +138,7 @@ class GuildCommand extends Command
                 }
             }
 
-            $result = $this->serviceGuild->updateGuild($input->getArgument('id'),$arrayOption);
+            $result = $this->serviceGuild->udpdatePlayers($guild);
         }
             
             /*if ($input->getOption('players')) {

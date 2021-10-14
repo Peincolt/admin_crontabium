@@ -30,7 +30,6 @@ class Guild
         $this->entityManagerInterface = $entityManagerInterface;
     }
 
-    // METTRE DU CACHE ICI CAR L'API SE MET PAS A JOUR AUTOMATIQUEMENT ET CA FAIT COOL DANS LE PROJET
     public function updateGuild(string $idGuild,EntityGuild $guild = null)
     {
         if (empty($guild)) {

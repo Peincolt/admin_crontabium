@@ -2,13 +2,14 @@
 
 namespace App\Service\Entity;
 
+use Exception;
 use App\Entity\Guild;
 use App\Entity\Player;
 use App\Service\Api\SwgohGg;
 use App\Service\Data\Helper;
 use App\Service\Entity\PlayerUnit;
 use Doctrine\ORM\EntityManagerInterface;
-use Exception;
+use Symfony\Component\Cache\Adapter\AdapterInterface;
 
 class PlayerHelper {
     
@@ -16,13 +17,20 @@ class PlayerHelper {
     private $dataHelper;
     private $entityManager;
     private $playerUnit;
+    private $cache;
 
-    public function __construct(SwgohGg $swgoh, Helper $dataHelper, EntityManagerInterface $entityManager, PlayerUnit $playerUnit) 
+    public function __construct(SwgohGg $swgoh, Helper $dataHelper, EntityManagerInterface $entityManager, PlayerUnit $playerUnit, AdapterInterface $adapterInterface) 
     {
         $this->swgoh = $swgoh;
         $this->dataHelper = $dataHelper;
         $this->entityManager = $entityManager;
         $this->playerUnit = $playerUnit;
+        $this->cache = $cache;
+    }
+
+    public function updatePlayers(array $guild, bool $characters = false, bool $ships = false)
+    {
+        $players = $guild['players'];
     }
 
     public function createPlayer(int $allyCode, bool $characters = false, bool $ships = false, array $playerDatas = null, $guild = false)
