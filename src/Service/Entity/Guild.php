@@ -46,7 +46,7 @@ class Guild
     
             $this->entityManagerInterface->persist($guild);
             $this->entityManagerInterface->flush();
-            return $guild;
+            return $dataGuild;
         } catch (Exception $e) {
             $arrayReturn['error_code'] = $e->getCode();
             $arrayReturn['error_message'] = $e->getMessage();

@@ -4,6 +4,7 @@ namespace App\Command;
 
 use App\Entity\Guild;
 use App\Service\Entity\Guild as ServiceGuild;
+use App\Service\Entity\PlayerHelper;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputOption;
@@ -17,12 +18,18 @@ class GuildCommand extends Command
     protected static $defaultName = 'app:synchro-guild';
     private $entityManagerInterface;
     private $serviceGuild;
+    private $playerHelper;
 
-    public function __construct(EntityManagerInterface $entityManagerInterface, ServiceGuild $serviceGuild)
+    public function __construct(
+        EntityManagerInterface $entityManagerInterface, 
+        ServiceGuild $serviceGuild,
+        PlayerHelper $playerHelper
+    )
     {
         parent::__construct();
         $this->entityManagerInterface = $entityManagerInterface;
         $this->serviceGuild = $serviceGuild;
+        $this->playerHelper = $playerHelper;
     }
 
     protected function configure()
@@ -39,7 +46,6 @@ class GuildCommand extends Command
 
     protected function execute(InputInterface $input, OutputInterface $output)
     {
-        $arrayOption = array();
         $guild = $this->entityManagerInterface->getRepository(Guild::class)->findOneBy([
             'id_swgoh' => $input->getArgument('id')
         ]);
@@ -76,12 +82,12 @@ class GuildCommand extends Command
             ]);
         }
 
-        $result = $this->serviceGuild->updateGuild($input->getArgument('id'),$guild);
+        $dataGuild = $this->serviceGuild->updateGuild($input->getArgument('id'),$guild);
         
-        if (is_array($result)) {
+        if (isset($dataGuild['error_message'])) {
             $output->writeln([
                 'Erreur lors de la synchronisation des informations de la guilde',
-                'L\'erreur est la suivante : '.$result['error_message'],
+                'L\'erreur est la suivante : '.$dataGuild['error_message'],
                 '===========================',
                 'Fin de la commande'
             ]);
@@ -93,12 +99,10 @@ class GuildCommand extends Command
             '==========================='
         ]);
 
-        $guild = $result;
-
-
         if ($option = $input->getOption('players')) {
+            $ships = $heroes = false;
             if ($option == "all" || isset($all)) {
-                $ship = $heroes = true;
+                $ships = $heroes = true;
                 $output->writeln([
                     'Vous avez décidé de synchroniser toutes les données (héros et vaisseaux compris) des joueurs',
                     '===========================',
@@ -138,7 +142,7 @@ class GuildCommand extends Command
                 }
             }
 
-            $result = $this->serviceGuild->udpdatePlayers($guild);
+            $result = $this->playerHelper->updatePlayers($dataGuild,$ships,$heroes);
         }
             
             /*if ($input->getOption('players')) {
