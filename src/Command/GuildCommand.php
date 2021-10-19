@@ -38,10 +38,7 @@ class GuildCommand extends Command
             ->setHelp('This command can be use if you want to synchronize your guild data')
             ->addArgument('id', InputArgument::REQUIRED, 'The id of the guild. This option is necessary')
             ->addOption('all',null,InputOption::VALUE_NONE, 'Voulez-vous récupérer toutes les informations de la guilde ?')
-            ->addOption('players', null, InputOption::VALUE_OPTIONAL, 'Do you want to synchronize guild players ?')
-            /* Arguments when the user wants to synchronize guild player or player */
-            ->addOption('players-heroes', null, InputOption::VALUE_OPTIONAL, 'Do you want to synchronize player\'s characters when you synchronize players ?')
-            ->addOption('players-ships', null, InputOption::VALUE_OPTIONAL, 'Do you want to synchronize player\'s ships when you synchronize players ?');
+            ->addOption('players', null, InputOption::VALUE_OPTIONAL, 'Do you want to synchronize guild players ?');
     }
 
     protected function execute(InputInterface $input, OutputInterface $output)
@@ -144,45 +141,5 @@ class GuildCommand extends Command
 
             $result = $this->playerHelper->updatePlayers($dataGuild,$ships,$heroes);
         }
-            
-            /*if ($input->getOption('players')) {
-                $output->writeln(['You choose to synchronize player\'s data']);
-                $arrayOption['players'] = true;
-                if ($input->getOption('players-characters')) {
-                    $output->writeln(['You choose to synchronize player\'s heroes']);
-                    $arrayOption['players_heroes'] = true;
-                }
-                if ($input->getOption('players-ships')) {
-                    $output->writeln(['You choose to synchronize player\'s ships']);
-                    $arrayOption['players_ships'] = true;
-                }
-            } else {
-                $output->writeln(['No options are found']);
-            }
-            $output->writeln([
-                '===========================',
-                'The synchronize will start now'
-                ]);
-            $result = $this->serviceGuild->updateGuild($input->getArgument('id'),$arrayOption);
-        }
-        
-        if (!isset($result['error_message'])) {
-            $output->writeln([
-            'The synchronization of the guild is over and everything is fine',
-            '===========================',
-            'End of the command'
-            ]);
-            return 200;
-        } else {
-            $output->writeln([
-                'An error occured where we try to synchronize the data. The error message is : ',
-                $result['error_message'],
-                'If the error persist, join the admin',
-                '===========================',
-                'End of the command'
-                ]);
-            return 500;
-        }*/
     }
-
 }

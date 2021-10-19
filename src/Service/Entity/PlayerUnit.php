@@ -38,7 +38,6 @@ class PlayerUnit
                 $playerUnit->$fonctionName($baseUnit);
                 $this->entityManagerInterface->persist($playerUnit);
                 $this->entityManagerInterface->flush();
-                return array('message' => 'Unit is on the database', 'code' => 200);
             }
         } catch (Exception $e) {
             $arrayReturn['error_message'] = $e->getMessage();

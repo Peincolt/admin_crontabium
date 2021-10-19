@@ -75,13 +75,14 @@ class PlayerHelper {
         }
     }
 
-    /*public function createPlayer(int $allyCode, bool $characters = false, bool $ships = false, array $playerDatas = null, $guild = false)
+    public function createPlayer(int $allyCode, bool $characters = false, bool $ships = false)
     {
         if (!$playerDatas) {
             $playerDatas = $this->swgoh->fetchPlayer($allyCode);
         }
 
         if (!isset($playerDatas['error_message'])) {
+            $guild = $this->entityManager->getRepository(Guild::class)->findOneBy(['id_swgoh' => $test]);
             try {
                 $entityField = $this->dataHelper->matchEntityField('player',$playerDatas);
                 if (!($player = $this->dataHelper->getDatabaseData("\App\Entity\Player",array('ally_code' => $allyCode)))) {
@@ -92,7 +93,7 @@ class PlayerHelper {
                     $player->$function($value);
                 }
     
-                if ($guild) {
+                if (!empty($guild)) {
                     $player->setGuild($guild);
                 }
     
