@@ -29,11 +29,7 @@ class PlayerUnit
                 if (!$playerUnit = $this->dataHelper->getDatabaseData($entityName, array('player' => $player, $type => $baseUnit))) {
                     $playerUnit = new $entityName;
                 }
-                $entityField = $this->dataHelper->matchEntityField('player_'.$type,$data);
-                foreach($entityField as $key => $value) {
-                    $function = 'set'.$key;
-                    $playerUnit->$function($value);
-                }
+                $this->dataHelper->fillObject($data,'player_'.$type,$playerUnit);
                 $playerUnit->setPlayer($player);
                 $playerUnit->$fonctionName($baseUnit);
                 $this->entityManagerInterface->persist($playerUnit);

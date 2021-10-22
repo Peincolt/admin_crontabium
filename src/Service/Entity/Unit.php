@@ -23,25 +23,17 @@ class Unit {
         $this->dataHelper = $dataHelper;
     }
 
-    public function updateUnit($type,$listId = false) 
+    public function updateUnit($type) 
     {
         $entityName = "\App\Entity\\".$this->dataHelper->convertTypeToEntityName($type);
-        $data = $this->swgohGg->fetchHeroOrShip($type,$listId);
-        if (!isset($data['error_message'])) {
-            foreach($data as $key => $value) {
-                if (!($hero = $this->dataHelper->getDatabaseData($entityName,array('base_id' => $data[$key]['base_id'])))) {
-                    $hero = new $entityName;
-                }
-                $entityField = $this->dataHelper->matchEntityField($type,$data[$key]);
-                foreach($entityField as $key => $value) {
-                    $function = 'set'.$key;
-                    $hero->$function($value);
-                }
-                $this->entityManagerInterface->persist($hero);
-                $this->entityManagerInterface->flush();
+        $data = $this->swgohGg->fetchHeroOrShip($type);
+        foreach($data as $key => $value) {
+            if (!($unit = $this->dataHelper->getDatabaseData($entityName,array('base_id' => $data[$key]['base_id'])))) {
+                $unit = new $entityName;
+                $this->entityManagerInterface->persist($unit);
             }
-        } else {
-            return $data;
+            $this->dataHelper->fillObject($data[$key],$type,$unit);
+            $this->entityManagerInterface->flush();
         }
     }
 

@@ -12,7 +12,7 @@ use Symfony\Component\Console\Output\OutputInterface;
 class UnitCommand extends Command 
 {
 
-    protected static $defaultName = 'app:synchro-unit';
+    protected static $defaultName = 'synchro-unit';
     private $unit;
     private $dataHelper;
 
@@ -25,110 +25,98 @@ class UnitCommand extends Command
 
     protected function configure()
     {
-        $this->setDescription('Synchronize data unit with swgoh.gg api')
-            ->setHelp('This command can be use if you want to synchronize Star Wars Galaxy Of Heroes Hero/Ship from swgoh.gg api ')
-            ->addArgument('data-name', InputArgument::REQUIRED, 'What do you want to synchronize ? (Possible values : Hero, Ship')
-            /* Arguments when the user wants to synchronize hero or ships */
-            ->addArgument('unit-ids', InputArgument::IS_ARRAY | InputArgument::OPTIONAL, 'List the heroes you wanna synchronize (wich id must be seperated with a space)');
+        $this->setDescription('Commande qui permet de récupérer les héros/vaisseaux du jeu grâce à l\'api de swgoh.gg')
+            ->addArgument('type', InputArgument::REQUIRED, 'Que souhaitez-vous synchroniser ? (Valeurs possibles : heros, vaisseaux, tout');
     }
 
     protected function execute(InputInterface $input, OutputInterface $output)
     {
         $output->writeln([
-            'Start of the command',
+            'Début de la commande',
             '==========================='
         ]);
 
-        switch (ucfirst($input->getArgument('data-name'))) {
-            case 'Hero':
-                $type = 'Hero';
-                $entityName = 'characters';
+        switch ($input->getArgument('type')) {
+            case 'heros':
                 $output->writeln([
-                    'You choose to synchronize heroes'
+                    'Vous avez choisi de synchroniser les héros',
+                    '===========================',
+                    'Début de la synchronisation des héros ...',
                 ]);
+                try {
+                    $this->unit->updateUnit('characters');
+                    $output->writeln([
+                        'Fin de la synchronisation des héros',
+                        'Fin de la commande',
+                    ]);
+                } catch (\Exception $e) {
+                    $output->writeln([
+                        'Une erreur est survenue lors de la synchronisation. Voilà le message d\'erreur :',
+                        $e->getMessage(),
+                        '===========================',
+                        'Fin de la commande',
+                    ]);
+                }
             break;
 
-            case 'Ship':
-                $type = 'Ship';
-                $entityName = 'ships';
+            case 'vaisseaux':
                 $output->writeln([
-                    'You choose to synchronize ships'
+                    'Vous avez choisi de synchroniser les vaisseaux',
+                    '===========================',
+                    'Début de la synchronisation des vaisseaux ...',
                 ]);
+                try {
+                    $this->unit->updateUnit('ships');
+                    $output->writeln([
+                        'Fin de la synchronisation des vaisseaux',
+                        'Fin de la commande',
+                    ]);
+                } catch (\Exception $e) {
+                    $output->writeln([
+                        'Une erreur est survenue lors de la synchronisation. Voilà le message d\'erreur :',
+                        $e->getMessage(),
+                        '===========================',
+                        'Fin de la commande',
+                    ]);
+                }
+            break;
+
+            case 'tout':
+                $output->writeln([
+                    'Vous avez choisi de synchroniser les héros et les vaisseaux',
+                    '===========================',
+                    'Début de la synchronisation des héros ...',
+                ]);
+                try {
+                    $this->unit->updateUnit('characters');
+                    $output->writeln([
+                        'Fin de la synchronisation des héros',
+                        'Début de la synchronisation des vaisseaux ...'
+                    ]);
+                    $this->unit->updateUnit('ships');
+                    $output->writeln([
+                        'Fin de la synchronisation des vaisseaux',
+                        '===========================',
+                        'Fin de la commande',
+                    ]);
+                } catch (\Exception $e) {
+                    $output->writeln([
+                        'Une erreur est survenue lors de la synchronisation. Voilà le message d\'erreur :',
+                        $e->getMessage(),
+                        '===========================',
+                        'Fin de la commande',
+                    ]);
+                }
             break;
             
             default:
                 $output->writeln([
-                    'With this command, you can synchronize Hero or Ship. Type Hero or Ship after the command name',
+                    'L\'option type ne peut prendre que les valeurs suivantes : heros, vaisseaux, tout',
                     '===========================',
-                    'End of the command'
+                    'Fin de la commande'
                 ]);
                 return 500;
             break;
         }
-
-        if ($array = $this->dataHelper->getNumbers($input->getArgument('unit-ids'),$type)) {
-            if (isset($array['wrong_ids'])) {
-                $output->writeln([
-                    'You tried to update some heroes but the following ids doesn\'t match'
-                ]);
-                $output->writeln($array['wrong_ids']);
-            }
-
-            if (isset($array['names'])) {
-                $output->writeln([
-                    'You decided to update these '.$type.' : '
-                ]);
-                $output->writeln($array['names']);
-                $output->writeln([
-                    '===========================',
-                    'The synchronization will start',
-                ]);
-                $result = $this->unit->updateUnit($entityName,$array['ids']);
-                if (!isset($result['error_message'])) {
-                    $output->writeln([
-                        '===========================',
-                        'The synchronization is over and everything is fine',
-                    ]);
-                    return 200;
-                } else {
-                    $output->writeln([
-                        '===========================',
-                        'The synchronization stopped because we encounter an error',
-                        'There is the message : ',
-                        $result['error_message']
-                    ]);
-                    return 404;
-                }
-            }
-
-            $output->writeln([
-                '===========================',
-                'We can\'t synchronize '.$type.' because you put wrong informations',
-            ]);
-            return 404;
-        } else {
-            $output->writeln([
-                'You choose to synchronize all '.$type.'s',
-                '===========================',
-                'The synchronization will start',
-            ]);
-            $result = $this->unit->updateUnit($entityName,false);
-            if (isset($result['error_message'])) {
-                $output->writeln([
-                    '===========================',
-                    'The synchronization stopped because we encounter an error',
-                    'There is the message : ',
-                    $result['error_message']
-                ]);
-                return 404;
-            } else {
-                $output->writeln([
-                    '===========================',
-                    'The synchronization is over and everything is fine',
-                ]);
-                return 200;
-            }
-        }
     }
-
 }

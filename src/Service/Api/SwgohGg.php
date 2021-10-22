@@ -59,25 +59,9 @@ class SwgohGg {
         
     }
 
-    public function fetchHeroOrShip($type,$listId)
+    public function fetchHeroOrShip($type)
     {
-        $arrayReturn = array();
-
-        try {
-            if ($listId) {
-                foreach($listId as $id) {
-                    $response = $this->client->request("GET",$this->baseUrl.$type."/".$id)->toArray();
-                    array_push($arrayReturn,$response);
-                }
-                return $arrayReturn;
-            } else {
-                return $this->client->request("GET",$this->baseUrl.$type)->toArray();
-            }
-        } catch (Exception $e) {
-            $arrayReturn['error_code'] = $e->getCode();
-            $arrayReturn['error_message'] = $e->getMessage();
-            return $arrayReturn;
-        }
+        return $this->client->request("GET",$this->baseUrl.$type)->toArray();
     }
 
     public function fetchHeroes($listId)

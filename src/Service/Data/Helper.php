@@ -129,4 +129,14 @@ class Helper {
         }
         return $ids;
     }
+
+    public function fillObject(array $array, string $objectName, $object)
+    {
+        $entityField = $this->matchEntityField($objectName,$array);
+        foreach($entityField as $key => $value) {
+            $function = 'set'.$key;
+            $object->$function($value);
+        }
+        return $object;
+    }
 }

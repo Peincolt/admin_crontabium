@@ -7,7 +7,6 @@ use App\Service\Api\SwgohGg;
 use App\Service\Data\Helper;
 use Doctrine\ORM\EntityManagerInterface;
 use Exception;
-use Symfony\Component\Console\Output\OutputInterface;
 
 class Guild
 {
@@ -15,7 +14,6 @@ class Guild
     private $playerHelper;
     private $dataHelper;
     private $entityManagerInterface;
-    private $outputInterface;
 
     public function __construct(
         SwgohGg $swgohGg, 
@@ -34,17 +32,12 @@ class Guild
     {
         if (empty($guild)) {
             $guild = new EntityGuild();
+            $this->entityManagerInterface->persist($guild);
         }
 
         try {
             $dataGuild = $this->swgohGg->fetchGuild($idGuild);
-            $entityField = $this->dataHelper->matchEntityField('guild',$dataGuild['data']);
-            foreach($entityField as $key => $value) {
-                $function = 'set'.$key;
-                $guild->$function($value);
-            }
-    
-            $this->entityManagerInterface->persist($guild);
+            $this->dataHelper->fillObject($dataGuild['data'],'guild',$guild);
             $this->entityManagerInterface->flush();
             return $dataGuild;
         } catch (Exception $e) {
@@ -54,7 +47,16 @@ class Guild
         }
     }
 
-    public function updateGuildPlayers(EntityGuild $guild, bool $heroes, bool $ships)
+    public function updateGuildPlayers(array $dataGuild, bool $characters = false, bool $ships = false)
+    {
+        $guild = $this->entityManagerInterface->getRepository(EntityGuild::class)->findOneBy(['id_swgoh' => $dataGuild['data']['id']]);
+        foreach ($dataGuild['players'] as $playerData) {
+            $this->playerHelper->updatePlayerGuild($guild,$playerData,$characters,$ships);
+        }
+        return 200;
+    }
+
+    /*public function updateGuildPlayers(array $guild, bool $heroes, bool $ships)
     {
         $dataGuild = $this->swgohGg->fetchGuild($guild->getIdSwgoh());
         for ($i=0;$i<count($dataGuild['players']);$i++) {
@@ -64,7 +66,7 @@ class Guild
                 break;
             }
         }
-    }
+    }*/
 
     public function updateGuild2(string $idGuild, array $options = null)
     {

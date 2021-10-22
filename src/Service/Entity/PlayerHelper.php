@@ -9,7 +9,6 @@ use App\Service\Api\SwgohGg;
 use App\Service\Data\Helper;
 use App\Service\Entity\PlayerUnit;
 use Doctrine\ORM\EntityManagerInterface;
-use Symfony\Component\Cache\Adapter\AdapterInterface;
 
 class PlayerHelper {
     
@@ -22,8 +21,7 @@ class PlayerHelper {
         SwgohGg $swgoh, 
         Helper $dataHelper, 
         EntityManagerInterface $entityManager, 
-        PlayerUnit $playerUnit, 
-        AdapterInterface $adapterInterface
+        PlayerUnit $playerUnit
     ) 
     {
         $this->swgoh = $swgoh;
@@ -32,50 +30,53 @@ class PlayerHelper {
         $this->playerUnit = $playerUnit;
     }
 
-    public function updatePlayers(array $guildData, bool $characters = false, bool $ships = false)
+    public function updatePlayers(array $dataGuild, bool $characters = false, bool $ships = false)
     {
-        $guild = $this->entityManager->getRepository(Guild::class)->findOneBy(['id_swgoh' => $guildData['id_swgoh']]);
-        $players = $guildData['players'];
+        $guild = $this->entityManager->getRepository(Guild::class)->findOneBy(['id_swgoh' => $dataGuild['id']]);
+        $players = $dataGuild['players'];
         foreach ($players as $arrayDataPlayer)
         {
-            if (!($player = $this->dataHelper->getDatabaseData("\App\Entity\Player",array('ally_code' => $arrayDataPlayer['data']['ally_code'])))) {
-                $player = new Player();
-            }
-            $entityField = $this->dataHelper->matchEntityField('player',$arrayDataPlayer['data']); // Voir pour faire une classe générique qui a cette fonction. Elle est utilisée partout.
-            foreach($entityField as $key => $value) {
-                $function = 'set'.$key;
-                $player->$function($value);
-            }
-
-            $player->setGuild($guild);
-
-            $this->entityManager->persist($player);
-            if (empty($player->getId())) { // Voir pour faire l'auto pesrsist
-                $this->entityManager->flush();
-            }
-
-            if ($characters || $ships) {
-                foreach($arrayDataPlayer['units'] as $key => $value)
-                {
-                    switch ($value['data']['combat_type']) {
-                        case 1:
-                            if ($characters) {
-                                $this->playerUnit->createPlayerHero($value['data'],$player);
-                            }
-                        break;
-                        case 2:
-                            if ($ships) {
-                                $this->playerUnit->createPlayerShip($value['data'],$player);
-                            }
-                        break;
-                    }
-                }
-            }
-            return 200;
+            $this->updatePlayerByJson($arrayDataPlayer['data']['ally_code'],$characters,$ships,$guild);
         }
     }
 
-    public function createPlayer(int $allyCode, bool $characters = false, bool $ships = false)
+    public function updatePlayer(array $arrayDataPlayer, bool $characters = false, bool $ships = false)
+    {
+        if (!($player = $this->entityManager->getRepository(Player::class)->findOneBy(['ally_code' => $arrayDataPlayer['data']['ally_code']]))) {
+            $player = new Player();
+            $this->entityManager->persist($player);
+        }
+        $this->dataHelper->fillObject($arrayDataPlayer,'player',$player);
+        $this->entityManager->flush();
+        if ($characters || $ships) {
+            foreach($arrayDataPlayer['units'] as $unit)
+            {
+                switch ($unit['data']['combat_type']) {
+                    case 1:
+                        if ($characters) {
+                            $this->playerUnit->createPlayerHero($unit['data'],$player);
+                        }
+                    break;
+                    case 2:
+                        if ($ships) {
+                            $this->playerUnit->createPlayerShip($unit['data'],$player);
+                        }
+                    break;
+                }
+            }
+        }
+        return $player;
+    }
+
+    public function updatePlayerGuild(Guild $guild, array $arrayDataPlayer, bool $characters = false, bool $ships = false)
+    {
+        $player = $this->updatePlayer($arrayDataPlayer, $characters, $ships);
+        $player->setGuild($guild);
+        $this->entityManager->persist($player);
+        $this->entityManager->flush();
+    }
+
+    /*public function updatePlayerByApi(int $allyCode, bool $characters = false, bool $ships = false)
     {
         if (!$playerDatas) {
             $playerDatas = $this->swgoh->fetchPlayer($allyCode);

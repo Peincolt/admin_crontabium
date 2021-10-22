@@ -34,17 +34,18 @@ class GuildCommand extends Command
 
     protected function configure()
     {
-        $this->setDescription('Synchronize the data guild with swgoh.gg api')
-            ->setHelp('This command can be use if you want to synchronize your guild data')
-            ->addArgument('id', InputArgument::REQUIRED, 'The id of the guild. This option is necessary')
-            ->addOption('all',null,InputOption::VALUE_NONE, 'Voulez-vous récupérer toutes les informations de la guilde ?')
-            ->addOption('players', null, InputOption::VALUE_OPTIONAL, 'Do you want to synchronize guild players ?');
+        $this->setDescription('Commande qui permet de récupérer les informatiosn d\'une guilde grâce à l\'api de swgoh.gg')
+            ->addArgument('id', InputArgument::REQUIRED, 'Id de la guilde ')
+            ->addOption('all',null,InputOption::VALUE_NONE, 'Voulez-vous récupérer toutes les informations de la guilde (guilde + joueurs + unités des joueurs) ?')
+            ->addOption('players', null, InputOption::VALUE_OPTIONAL, 'Voulez vous synchroniser toutes les données des joueurs ?');
     }
 
     protected function execute(InputInterface $input, OutputInterface $output)
     {
+        $ships = $heroes = false;
+        $idGuild = $input->getArgument('id');
         $guild = $this->entityManagerInterface->getRepository(Guild::class)->findOneBy([
-            'id_swgoh' => $input->getArgument('id')
+            'id_swgoh' => $idGuild
         ]);
 
         $output->writeln([
@@ -53,7 +54,7 @@ class GuildCommand extends Command
         ]);
 
         if ($input->getOption('all')) {
-            $all = true;
+            $ships = $heroes = $all = true;
             $output->writeln([
                 'Vous avez décidé de tout synchroniser (guilde, joueurs, données des joueurs)',
                 '===========================',
@@ -96,50 +97,59 @@ class GuildCommand extends Command
             '==========================='
         ]);
 
-        if ($option = $input->getOption('players')) {
-            $ships = $heroes = false;
-            if ($option == "all" || isset($all)) {
-                $ships = $heroes = true;
-                $output->writeln([
-                    'Vous avez décidé de synchroniser toutes les données (héros et vaisseaux compris) des joueurs',
-                    '===========================',
-                    'Début de la synchronisation des données de toutes les données des joueurs',
-                    'Synchronisation en cours ...'
-                ]);
-            } else {
-                switch ($option) {
-                    case 'heroes' :
-                        $heroes = true;
-                        $output->writeln([
-                            'Vous avez décidé de synchroniser toutes les données des joueurs et de leurs héros',
-                            '===========================',
-                            'Début de la synchronisation des données des joueurs et de leurs héros',
-                            'Synchronisation en cours ...'
-                        ]);
-                    break;
-                    
-                    case 'ships' :
-                        $ships = true;
-                        $output->writeln([
-                            'Vous avez décidé de synchroniser toutes les données des joueurs et de leurs vaisseaux',
-                            '===========================',
-                            'Début de la synchronisation des données des joueurs et de leurs vaisseaux',
-                            'Synchronisation en cours ...'
-                        ]);
-                    break;
-
-                    default :
-                        $output->writeln([
-                            'Vous avez décidé de synchroniser toutes les données des joueurs',
-                            '===========================',
-                            'Début de la synchronisation des données des joueurs',
-                            'Synchronisation en cours ...'
-                        ]);
-                    break;
-                }
+        
+        if (isset($all)) {
+            $output->writeln([
+                'Vous avez décidé de synchroniser toutes les données (héros et vaisseaux compris) des joueurs',
+                '===========================',
+                'Début de la synchronisation des données de toutes les données des joueurs',
+                'Synchronisation en cours ...'
+            ]);
+        } elseif ($input->getOption('players')) {
+            switch ($input->getOption('players')) {
+                case 'heros' :
+                    $heroes = true;
+                    $output->writeln([
+                        'Vous avez décidé de synchroniser toutes les données des joueurs et de leurs héros',
+                        '===========================',
+                        'Début de la synchronisation des données des joueurs et de leurs héros',
+                        'Synchronisation en cours ...'
+                    ]);
+                break;
+                
+                case 'vaisseaux' :
+                    $ships = true;
+                    $output->writeln([
+                        'Vous avez décidé de synchroniser toutes les données des joueurs et de leurs vaisseaux',
+                        '===========================',
+                        'Début de la synchronisation des données des joueurs et de leurs vaisseaux',
+                        'Synchronisation en cours ...'
+                    ]);
+                break;
             }
+        } else {
+            $output->writeln([
+                'Vous avez décidé de synchroniser toutes les données des joueurs',
+                '===========================',
+                'Début de la synchronisation des données des joueurs',
+                'Synchronisation en cours ...'
+            ]);
+        }
 
-            $result = $this->playerHelper->updatePlayers($dataGuild,$ships,$heroes);
+        try {
+            $this->serviceGuild->updateGuildPlayers($dataGuild,$ships,$heroes);
+            $output->writeln([
+                'Synchronisation terminée',
+                '===========================',
+                'Fin de la commande'
+            ]);
+        } catch (\Exception $e) {
+            $output->writeln([
+                'Une erreur est survenue lors de la synchronisation. Voilà le message d\'erreur :',
+                $e->getMessage(),
+                '===========================',
+                'Fin de la commande'
+            ]);
         }
     }
 }
