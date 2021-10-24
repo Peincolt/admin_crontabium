@@ -136,14 +136,14 @@ class Squad
         
     }
 
-    public function getPlayerSquadInformation($id)
+    public function getPlayerSquadInformation($id,$guild)
     {
         $arrayReturn = array();
         $arrayPlayersName = array();
 
         $players = $this->entityManagerInterface
             ->getRepository(Player::class)
-            ->findAll();
+            ->findBy(['guild' => $guild]);
 
         foreach($players as $player) {
             array_push($arrayPlayersName,$player->getName());
@@ -155,7 +155,7 @@ class Squad
 
         foreach ($squad->getHero() as $hero) {
             $playerHero = $this->heroRepository
-                ->getPlayerInformations($hero->getId());
+                ->getPlayerInformations($hero->getId(),$guild);
             foreach($arrayPlayersName as $playerName) {
                 if (array_key_exists($playerName,$playerHero)) {
                     $arrayReturn[$playerName][$hero->getName()] = $playerHero[$playerName];
@@ -173,7 +173,7 @@ class Squad
 
         foreach ($squad->getShip() as $ship) {
             $playerShip = $this->shipRepository
-                ->getPlayerInformations($ship->getId());
+                ->getPlayerInformations($ship->getId(),$guild);
             foreach($arrayPlayersName as $playerName) {
                 if (array_key_exists($playerName,$playerShip)) {
                     $arrayReturn[$playerName][$ship->getName()] = $playerShip[$playerName];

@@ -21,7 +21,7 @@ class HeroRepository extends ServiceEntityRepository
         parent::__construct($registry, Hero::class);
     }
 
-    public function getPlayerInformations($id)
+    public function getPlayerInformations($id,$guild)
     {
         $arrayReturn = array();
 
@@ -29,7 +29,9 @@ class HeroRepository extends ServiceEntityRepository
             ->leftjoin('h.heroPlayers','hp','WITH','hp.hero = h.id')
             ->leftjoin('hp.player','p','WITH','hp.player = p.id')
             ->where('h.id = ?1')
+            ->andWhere('p.guild = :guild')
             ->setParameter(1, $id)
+            ->setParameter(':guild',$guild)
             ->select('p.name, hp.gear_level, hp.level, hp.number_stars as rarity','hp.protection','hp.life','hp.speed','hp.relic_level')
             ->getQuery()
             ->getResult()

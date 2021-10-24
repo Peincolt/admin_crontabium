@@ -19,7 +19,7 @@ class ShipRepository extends ServiceEntityRepository
         parent::__construct($registry, Ship::class);
     }
 
-    public function getPlayerInformations($id)
+    public function getPlayerInformations($id,$guild)
     {
         $arrayReturn = array();
 
@@ -27,7 +27,9 @@ class ShipRepository extends ServiceEntityRepository
             ->leftjoin('s.shipPlayers','sp','WITH','sp.ship = s.id')
             ->leftjoin('sp.player','p','WITH','sp.player = p.id')
             ->where('s.id = ?1')
+            ->andWhere('p.guild = :guild')
             ->setParameter(1, $id)
+            ->setParameter(':guild',$guild)
             ->select('p.name, sp.level, sp.number_stars as rarity','sp.galactical_puissance as power')
             ->getQuery()
             ->getResult()
