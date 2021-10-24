@@ -15,7 +15,7 @@ use Symfony\Component\Console\Output\OutputInterface;
 class GuildCommand extends Command
 {
 
-    protected static $defaultName = 'app:synchro-guild';
+    protected static $defaultName = 'synchro-guild';
     private $entityManagerInterface;
     private $serviceGuild;
     private $playerHelper;
@@ -37,7 +37,7 @@ class GuildCommand extends Command
         $this->setDescription('Commande qui permet de récupérer les informatiosn d\'une guilde grâce à l\'api de swgoh.gg')
             ->addArgument('id', InputArgument::REQUIRED, 'Id de la guilde ')
             ->addOption('all',null,InputOption::VALUE_NONE, 'Voulez-vous récupérer toutes les informations de la guilde (guilde + joueurs + unités des joueurs) ?')
-            ->addOption('players', null, InputOption::VALUE_OPTIONAL, 'Voulez vous synchroniser toutes les données des joueurs ?');
+            ->addOption('joueurs', null, InputOption::VALUE_OPTIONAL, 'Voulez vous synchroniser toutes les données des joueurs ?');
     }
 
     protected function execute(InputInterface $input, OutputInterface $output)
@@ -105,8 +105,8 @@ class GuildCommand extends Command
                 'Début de la synchronisation des données de toutes les données des joueurs',
                 'Synchronisation en cours ...'
             ]);
-        } elseif ($input->getOption('players')) {
-            switch ($input->getOption('players')) {
+        } elseif ($input->getOption('joueurs')) {
+            switch ($input->getOption('joueurs')) {
                 case 'heros' :
                     $heroes = true;
                     $output->writeln([

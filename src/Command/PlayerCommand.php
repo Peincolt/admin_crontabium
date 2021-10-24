@@ -13,7 +13,7 @@ use Symfony\Component\Console\Output\OutputInterface;
 class PlayerCommand extends Command 
 {
 
-    protected static $defaultName = 'app:synchro-player';
+    protected static $defaultName = 'synchro-player';
     private $playerHelper;
     private $dataHelper;
 
@@ -26,11 +26,10 @@ class PlayerCommand extends Command
 
     protected function configure()
     {
-        $this->setDescription('Synchronize player data with swgoh.gg api')
-            ->setHelp('This command can be use if you want to synchronize Star Wars Galaxy Of Heroes player from swgoh.gg api ')
-            ->addArgument('ally-code', InputArgument::REQUIRED, 'The ally code (put all the numbers together)')
+        $this->setDescription('Commande qui permet de récupérer les informatiosn d\'un joueur grâce à l\'api de swgoh.gg')
+            ->addArgument('code', InputArgument::REQUIRED, 'Le code allié du joueur (retirez les - du code joueur)')
             /* Arguments when the user wants to synchronize hero or ships */
-            ->addOption('data',null,InputOption::VALUE_REQUIRED, 'Voulez-vous récupérer toutes les informations du joueur ?');
+            ->addOption('data',null,InputOption::VALUE_REQUIRED, 'Que souhaitez-vous synchroniser ? (tout = heros + vaisseaux, heros, vaisseaux)');
     }
 
     protected function execute(InputInterface $input, OutputInterface $output)
@@ -42,28 +41,28 @@ class PlayerCommand extends Command
             '==========================='
         ]);
 
-        if ($player = $this->dataHelper->getDatabaseData('App\Entity\Player',array('ally_code' => $input->getArgument('ally-code')))) {
+        if ($player = $this->dataHelper->getDatabaseData('App\Entity\Player',array('ally_code' => $input->getArgument('code')))) {
             $output->writeln([
                 'Vous souhaitez synchroniser les données du joueur '.$player->getName(),
             ]);
         }
 
         switch ($input->getOption('data')) {
-            case 'all':
+            case 'tout':
                 $ships = $heroes = true;
                 $output->writeln([
                     'Vous souhaitez synchroniser toutes les données du joueur.'
                 ]);
             break;
 
-            case 'ships':
+            case 'vaisseaux':
                 $ships = true;
                 $output->writeln([
                     'Vous souhaitez synchroniser les données du joueur ainsi que celles de ses vaisseaux.',
                 ]);
             break;
 
-            case 'heroes':
+            case 'heros':
                 $heroes = true;
                 $output->writeln([
                     'Vous souhaitez synchroniser les données du joueur ainsi que celles de ses héros.',
@@ -73,11 +72,22 @@ class PlayerCommand extends Command
 
         $output->writeln([
             '===========================',
-            'Début de la synchronisation',
-            '===========================',
+            'Début de la synchronisation'
         ]);
 
-        $result = $this->playerHelper->createPlayer($input->getArgument('ally-code'),$heroes,$ships,null);
+        try {
+            $this->playerHelper->updatePlayerByApi($input->getArgument('code'),$heroes,$ships,null);
+            $output->writeln([
+                'La synchronisation des données du joueur est terminée',
+                'Fin de la commande'
+            ]);
+        } catch (Exception $e) {
+            $output->writeln([
+                'Une erreur est survenue lors de la synchronisation des données du joueur',
+                'Fin de la commande'
+            ]);
+        }
+        
         if (isset($result['error_message'])) {
             $output->writeln([
                 '===========================',
