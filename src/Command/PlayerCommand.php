@@ -41,7 +41,7 @@ class PlayerCommand extends Command
             '==========================='
         ]);
 
-        if ($player = $this->dataHelper->getDatabaseData('App\Entity\Player',array('ally_code' => $input->getArgument('code')))) {
+        if ($player = $this->dataHelper->getDatabaseData('App\Entity\Player',array('id_swgoh' => $input->getArgument('code')))) {
             $output->writeln([
                 'Vous souhaitez synchroniser les données du joueur '.$player->getName(),
             ]);

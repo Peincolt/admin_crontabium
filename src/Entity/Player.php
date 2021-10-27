@@ -2,15 +2,18 @@
 
 namespace App\Entity;
 
-use Doctrine\Common\Collections\ArrayCollection;
-use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+use App\Entity\Traits\InformationTrait;
+use Doctrine\Common\Collections\Collection;
+use Doctrine\Common\Collections\ArrayCollection;
 
 /**
  * @ORM\Entity(repositoryClass="App\Repository\PlayerRepository")
  */
 class Player
 {
+    use InformationTrait;
+
     /**
      * @ORM\Id()
      * @ORM\GeneratedValue()
@@ -22,16 +25,6 @@ class Player
      * @ORM\Column(type="datetime", length=255)
      */
     private $last_updated;
-
-    /**
-     * @ORM\Column(type="integer")
-     */
-    private $ally_code;
-
-    /**
-     * @ORM\Column(type="string", length=255)
-     */
-    private $name;
 
     /**
      * @ORM\Column(type="smallint")
@@ -98,30 +91,6 @@ class Player
     public function setLastUpdated(\DateTimeInterface $last_updated): self
     {
         $this->last_updated = $last_updated;
-
-        return $this;
-    }
-
-    public function getAllyCode(): ?int
-    {
-        return $this->ally_code;
-    }
-
-    public function setAllyCode(int $ally_code): self
-    {
-        $this->ally_code = $ally_code;
-
-        return $this;
-    }
-
-    public function getName(): ?string
-    {
-        return $this->name;
-    }
-
-    public function setName(string $name): self
-    {
-        $this->name = $name;
 
         return $this;
     }

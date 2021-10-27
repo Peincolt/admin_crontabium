@@ -42,7 +42,7 @@ class PlayerHelper {
 
     public function updatePlayer(array $arrayDataPlayer, bool $characters = false, bool $ships = false)
     {
-        if (!($player = $this->entityManager->getRepository(Player::class)->findOneBy(['ally_code' => $arrayDataPlayer['data']['ally_code']]))) {
+        if (!($player = $this->entityManager->getRepository(Player::class)->findOneBy(['id_swgoh' => $arrayDataPlayer['data']['ally_code']]))) {
             $player = new Player();
             $this->entityManager->persist($player);
         }

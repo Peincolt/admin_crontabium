@@ -41,7 +41,7 @@ class Helper {
                     $newDate = preg_replace("#[a-zA-Z]+#",' ',$data['data']['last_updated']);
                     $arrayReturn['LastUpdated'] = new \DateTime($date->format('Y-m-d H:i'));
                 }
-                $arrayReturn['AllyCode'] = $data['data']['ally_code'];
+                $arrayReturn['IdSwgoh'] = $data['data']['ally_code'];
                 $arrayReturn['Name'] = $data['data']['name'];
                 $arrayReturn['Level'] = $data['data']['level'];
                 $arrayReturn['GalacticalPuissance'] = $data['data']['galactic_power'];

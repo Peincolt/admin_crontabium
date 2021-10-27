@@ -2,6 +2,7 @@
 
 namespace App\Entity;
 
+use App\Entity\Traits\InformationTrait;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
@@ -11,6 +12,8 @@ use Doctrine\ORM\Mapping as ORM;
  */
 class Guild
 {
+    use InformationTrait;
+    
     /**
      * @ORM\Id()
      * @ORM\GeneratedValue()
@@ -19,19 +22,9 @@ class Guild
     private $id;
 
     /**
-     * @ORM\Column(type="string", length=255)
-     */
-    private $name;
-
-    /**
      * @ORM\Column(type="integer")
      */
     private $members;
-
-    /**
-     * @ORM\Column(type="string", length=255)
-     */
-    private $id_swgoh;
 
     /**
      * @ORM\Column(type="string", length=255)
@@ -54,18 +47,6 @@ class Guild
         return $this->id;
     }
 
-    public function getName(): ?string
-    {
-        return $this->name;
-    }
-
-    public function setName(string $name): self
-    {
-        $this->name = $name;
-
-        return $this;
-    }
-
     public function getMembers(): ?int
     {
         return $this->members;
@@ -74,18 +55,6 @@ class Guild
     public function setMembers(int $members): self
     {
         $this->members = $members;
-
-        return $this;
-    }
-
-    public function getIdSwgoh(): ?string
-    {
-        return $this->id_swgoh;
-    }
-
-    public function setIdSwgoh(string $id_swgoh): self
-    {
-        $this->id_swgoh = $id_swgoh;
 
         return $this;
     }

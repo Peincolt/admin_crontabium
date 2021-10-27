@@ -2,15 +2,18 @@
 
 namespace App\Entity;
 
-use Doctrine\Common\Collections\ArrayCollection;
-use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+use App\Entity\Traits\InformationTrait;
+use Doctrine\Common\Collections\Collection;
+use Doctrine\Common\Collections\ArrayCollection;
 
 /**
  * @ORM\Entity(repositoryClass="App\Repository\ShipRepository")
  */
 class Ship
 {
+    use InformationTrait;
+
     /**
      * @ORM\Id()
      * @ORM\GeneratedValue()
@@ -24,19 +27,9 @@ class Ship
     private $base_id;
 
     /**
-     * @ORM\Column(type="string", length=255)
-     */
-    private $name;
-
-    /**
      * @ORM\OneToMany(targetEntity="App\Entity\ShipPlayer", mappedBy="ship")
      */
     private $shipPlayers;
-
-    /**
-     * @ORM\Column(type="smallint")
-     */
-    private $id_swgoh;
 
     /**
      * @ORM\Column(type="json")
@@ -71,18 +64,6 @@ class Ship
         return $this;
     }
 
-    public function getName(): ?string
-    {
-        return $this->name;
-    }
-
-    public function setName(string $name): self
-    {
-        $this->name = $name;
-
-        return $this;
-    }
-
     /**
      * @return Collection|ShipPlayer[]
      */
@@ -110,18 +91,6 @@ class Ship
                 $shipPlayer->setShip(null);
             }
         }
-
-        return $this;
-    }
-
-    public function getIdSwgoh(): ?int
-    {
-        return $this->id_swgoh;
-    }
-
-    public function setIdSwgoh(int $id_swgoh): self
-    {
-        $this->id_swgoh = $id_swgoh;
 
         return $this;
     }
