@@ -24,8 +24,8 @@ class GeneratePdf
     public function constructSpreadShit($idGuild)
     {
         $spreadSheet = new Spreadsheet();
-        $arrayHeroColumnStart = array("B","D","F","H","J");
-        $arrayHeroColumnEnd = array("C","E","G","I","K");
+        $arrayHeroColumnStart = array("B","D","F","H","J","L","N","P");
+        $arrayHeroColumnEnd = array("C","E","G","I","K","M","O","Q");
         $arrayInformationHero = array ("Etoile Gear Relic (Speed)","Protection/Vie");
         $squads = $this->squadRepository->findAll();
         $numberPlayers = $this->guildRepository->countMembers($idGuild)[1];
@@ -36,14 +36,21 @@ class GeneratePdf
             $compteur = 0;
             $startData = 4;
             $NbSiFormulaStart = $startData + $numberPlayers;
+            if ($squad->getType() == "hero") {
+                $list = $squad->getHero();
+            } else {
+                $list = $squad->getShip();
+            }
+
             $sheet = $spreadSheet->createSheet();
             $sheet->setTitle($squad->getName());
             $sheet->setCellValue('A1','Joueur');
             $sheet->setCellValue('B1','Unités');
             $sheet->mergeCells('B1:U1');
             $sheet->mergeCells('A2:A3');
-            foreach ($squad->getHero() as $squadHero) {
-                $sheet->setCellValue($arrayHeroColumnStart[$compteur]."2",$squadHero->getName());
+
+            foreach ($list as $squadUnit) {
+                $sheet->setCellValue($arrayHeroColumnStart[$compteur]."2",$squadUnit->getName());
                 //$sheet->setCellValue($arrayHeroColumnStart[$compteur].($NbSiFormulaStart),'=NB.SI('.$arrayHeroColumnStart[$compteur].'4:'.$arrayHeroColumnStart[$compteur].($NbSiFormulaStart-1).',"*G13*")');
                 $sheet->setCellValue($arrayHeroColumnStart[$compteur].($NbSiFormulaStart),'=COUNTIF('.$arrayHeroColumnStart[$compteur].'4:'.$arrayHeroColumnStart[$compteur].($NbSiFormulaStart-1).',"*G13*")');
                 $sheet->getCell($arrayHeroColumnStart[$compteur].($NbSiFormulaStart))->getStyle()->setQuotePrefix(true);
@@ -51,9 +58,9 @@ class GeneratePdf
                 $sheet->fromArray($arrayInformationHero,null,$arrayHeroColumnStart[$compteur]."3");
                 $compteur++;
             }
+
             $sheet->setCellValue('A'.$NbSiFormulaStart,'Nombre de G13 :');
             
-
             $squadData = $this->squadService->getPlayerSquadInformation($squad->getId());
             foreach($squadData as $player => $data) {
                 $sheet->setCellValue('A'.$startData,$player);

@@ -35,6 +35,7 @@ class HeroRepository extends ServiceEntityRepository
             ->getResult()
         ;
 
+        //BOUGER CA DANS UNE FONCTION AUTRE QUE LE REPO
         foreach($result as $tab)
         {
             foreach ($tab as $key => $value) {

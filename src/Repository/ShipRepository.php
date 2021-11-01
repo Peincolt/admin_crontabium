@@ -28,14 +28,14 @@ class ShipRepository extends ServiceEntityRepository
             ->leftjoin('sp.player','p','WITH','sp.player = p.id')
             ->where('s.id = ?1')
             ->setParameter(1, $id)
-            ->select('p.name, sp.level, sp.number_stars as rarity','sp.galactical_puissance as power')
+            ->select('p.name, sp.gear_level, sp.level, sp.number_stars as rarity','sp.protection','sp.life','sp.speed','sp.relic_level')
             ->getQuery()
             ->getResult()
         ;
 
+        //BOUGER CA DANS UNE FONCTION AUTRE QUE LE REPO
         foreach($result as $tab)
         {
-            $arrayReturn[$tab['name']]['gearLevel'] = 0;
             foreach ($tab as $key => $value) {
                 if ($key != 'name') {
                     $arrayReturn[$tab['name']][$key] = $value;

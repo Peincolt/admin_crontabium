@@ -65,11 +65,6 @@ class Helper {
             break;
 
             case 'player_ship':
-                $arrayReturn['NumberStars'] = $data['rarity'];
-                $arrayReturn['Level'] = $data['level'];
-                $arrayReturn['GalacticalPuissance'] = $data['power'];
-            break;
-
             case 'player_hero':
                 $arrayReturn['NumberStars'] = $data['rarity'];
                 $arrayReturn['Level'] = $data['level'];

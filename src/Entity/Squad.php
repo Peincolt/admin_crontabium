@@ -34,6 +34,11 @@ class Squad
      */
     private $Ship;
 
+    /**
+     * @ORM\Column(type="string", length=255)
+     */
+    private $type;
+
     public function __construct()
     {
         $this->Hero = new ArrayCollection();
@@ -105,6 +110,18 @@ class Squad
         if ($this->Ship->contains($ship)) {
             $this->Ship->removeElement($ship);
         }
+
+        return $this;
+    }
+
+    public function getType(): ?string
+    {
+        return $this->type;
+    }
+
+    public function setType(string $type): self
+    {
+        $this->type = $type;
 
         return $this;
     }

@@ -153,12 +153,38 @@ class Squad
             ->getRepository(SquadEntity::class)
             ->find($id);
 
-        foreach ($squad->getHero() as $hero) {
-            $playerHero = $this->heroRepository
-                ->getPlayerInformations($hero->getId());
+        if ($squad->getType() == "hero") {
+            $list = $squad->getHero();
+            $repo = $this->heroRepository;
+        } else {
+            $list = $squad->getShip();
+            $repo = $this->shipRepository;
+        }
+
+        foreach ($list as $unit) {
+            $playerUnit = $repo
+                ->getPlayerInformations($unit->getId());
             foreach($arrayPlayersName as $playerName) {
-                if (array_key_exists($playerName,$playerHero)) {
-                    $arrayReturn[$playerName][$hero->getName()] = $playerHero[$playerName];
+                if (array_key_exists($playerName,$playerUnit)) {
+                    $arrayReturn[$playerName][$unit->getName()] = $playerUnit[$playerName];
+                } else {
+                    $arrayReturn[$playerName][$unit->getName()]['gear_level'] = 0;
+                    $arrayReturn[$playerName][$unit->getName()]['rarity'] = 0;
+                    $arrayReturn[$playerName][$unit->getName()]['life'] = 0;
+                    $arrayReturn[$playerName][$unit->getName()]['protection'] = 0;
+                    $arrayReturn[$playerName][$unit->getName()]['relic_level'] = 0;
+                    $arrayReturn[$playerName][$unit->getName()]['speed'] = 0;
+                }
+            }
+
+        }
+
+        /*foreach ($squad->getShip() as $ship) {
+            $playerShip = $this->shipRepository
+                ->getPlayerInformations($ship->getId());
+            foreach($arrayPlayersName as $playerName) {
+                if (array_key_exists($playerName,$playerShip)) {
+                    $arrayReturn[$playerName][$ship->getName()] = $playerShip[$playerName];
                 } else {
                     $arrayReturn[$playerName][$hero->getName()]['gear_level'] = 0;
                     $arrayReturn[$playerName][$hero->getName()]['rarity'] = 0;
@@ -168,22 +194,7 @@ class Squad
                     $arrayReturn[$playerName][$hero->getName()]['speed'] = 0;
                 }
             }
-
-        }
-
-        foreach ($squad->getShip() as $ship) {
-            $playerShip = $this->shipRepository
-                ->getPlayerInformations($ship->getId());
-            foreach($arrayPlayersName as $playerName) {
-                if (array_key_exists($playerName,$playerShip)) {
-                    $arrayReturn[$playerName][$ship->getName()] = $playerShip[$playerName];
-                } else {
-                    $arrayReturn[$playerName][$ship->getName()]['level'] = 0;
-                    $arrayReturn[$playerName][$hero->getName()]['rarity'] = 0;
-                    $arrayReturn[$playerName][$hero->getName()]['power'] = 0;
-                }
-            }
-        }
+        }*/
 
         return $arrayReturn;
     }
