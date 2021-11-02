@@ -24,9 +24,10 @@ class GeneratePdf
     public function constructSpreadShit($idGuild)
     {
         $spreadSheet = new Spreadsheet();
-        $arrayHeroColumnStart = array("B","D","F","H","J","L","N","P");
-        $arrayHeroColumnEnd = array("C","E","G","I","K","M","O","Q");
+        $arrayColumnStart = array("B","D","F","H","J","L","N","P");
+        $arrayColumnEnd = array("C","E","G","I","K","M","O","Q");
         $arrayInformationHero = array ("Etoile Gear Relic (Speed)","Protection/Vie");
+        $arrayInformationShip = array ("Protection/Vie (Speed)");
         $squads = $this->squadRepository->findAll();
         $numberPlayers = $this->guildRepository->countMembers($idGuild)[1];
 
@@ -38,8 +39,10 @@ class GeneratePdf
             $NbSiFormulaStart = $startData + $numberPlayers;
             if ($squad->getType() == "hero") {
                 $list = $squad->getHero();
+                $arrayInformations = $arrayInformationHero;
             } else {
                 $list = $squad->getShip();
+                $arrayInformations = $arrayInformationShip;
             }
 
             $sheet = $spreadSheet->createSheet();
@@ -50,32 +53,67 @@ class GeneratePdf
             $sheet->mergeCells('A2:A3');
 
             foreach ($list as $squadUnit) {
-                $sheet->setCellValue($arrayHeroColumnStart[$compteur]."2",$squadUnit->getName());
+                $sheet->setCellValue($arrayColumnStart[$compteur]."2",$squadUnit->getName());
                 //$sheet->setCellValue($arrayHeroColumnStart[$compteur].($NbSiFormulaStart),'=NB.SI('.$arrayHeroColumnStart[$compteur].'4:'.$arrayHeroColumnStart[$compteur].($NbSiFormulaStart-1).',"*G13*")');
-                $sheet->setCellValue($arrayHeroColumnStart[$compteur].($NbSiFormulaStart),'=COUNTIF('.$arrayHeroColumnStart[$compteur].'4:'.$arrayHeroColumnStart[$compteur].($NbSiFormulaStart-1).',"*G13*")');
-                $sheet->getCell($arrayHeroColumnStart[$compteur].($NbSiFormulaStart))->getStyle()->setQuotePrefix(true);
-                $sheet->mergeCells($arrayHeroColumnStart[$compteur]."2:".$arrayHeroColumnEnd[$compteur]."2");
-                $sheet->fromArray($arrayInformationHero,null,$arrayHeroColumnStart[$compteur]."3");
+                if ($squad->getType() == "hero") {
+                    $sheet->setCellValue($arrayColumnStart[$compteur].($NbSiFormulaStart),'=COUNTIF('.$arrayColumnStart[$compteur].'4:'.$arrayColumnStart[$compteur].($NbSiFormulaStart-1).',"*G13*")');
+                }
+                $sheet->getCell($arrayColumnStart[$compteur].($NbSiFormulaStart))->getStyle()->setQuotePrefix(true);
+                $sheet->mergeCells($arrayColumnStart[$compteur]."2:".$arrayColumnEnd[$compteur]."2");
+                $sheet->fromArray($arrayInformations,null,$arrayColumnStart[$compteur]."3");
                 $compteur++;
             }
 
-            $sheet->setCellValue('A'.$NbSiFormulaStart,'Nombre de G13 :');
+            if ($squad->getType() == "hero") {
+                $sheet->setCellValue('A'.$NbSiFormulaStart,'Nombre de G13 :');
+            }
             
             $squadData = $this->squadService->getPlayerSquadInformation($squad->getId());
             foreach($squadData as $player => $data) {
                 $sheet->setCellValue('A'.$startData,$player);
                 $startLetter = "B";
-                foreach ($data as $arrayValueHero) {
-                    $sheet->setCellValue($startLetter.$startData,$arrayValueHero['rarity'].'* G'.$arrayValueHero['gear_level'].' R'.$arrayValueHero['relic_level'].' ('.$arrayValueHero['speed'].')');
-                    $startLetter++;
-                    $sheet->setCellValue($startLetter.$startData,$arrayValueHero['protection'].'/'.$arrayValueHero['life']);
-                    $startLetter++;
+                foreach ($data as $arrayValueUnit) {
+                    if ($squad->getType() == "hero") {
+                        $sheet->setCellValue($startLetter.$startData,$arrayValueUnit['rarity'].'* G'.$arrayValueUnit['gear_level'].' R'.$arrayValueUnit['relic_level'].' ('.$arrayValueUnit['speed'].')');
+                        $sheet->getStyle($startLetter.$startData)->applyFromArray($this->getStyleByGear($arrayValueUnit['gear_level']));
+                        $startLetter++;
+                        $sheet->setCellValue($startLetter.$startData,$arrayValueUnit['protection'].'/'.$arrayValueUnit['life']);
+                        $startLetter++;
+                    } else {
+                        $sheet->setCellValue($startLetter.$startData,$arrayValueUnit['protection'].'/'.$arrayValueUnit['life'].' ('.$arrayValueUnit['speed'].')');
+                        $startLetter++;
+                    }
                 }
                 $startData++;
                 
             }
         }
         $writer = new Xlsx($spreadSheet);
-        $writer->save('F:\Code\admin_crontabium\public\heroesTest.xlsx');
+        $writer->save('D:\Code\admin_crontabium\public\heroesTest.xlsx');
+    }
+
+    public function getStyleByGear(String $gearLevel)
+    {
+        switch ($gearLevel)
+        {
+            case 13:
+                $color = 'FF0000';
+            break;
+
+            case 12:
+                $color = 'FFC90E';
+            break;
+
+            default:
+                $color = '800080';
+            break;
+        }
+
+        return array(
+            'font' => [
+                'bold' => true,
+                'color' => array('rgb' => $color)
+            ]
+        );
     }
 }
