@@ -8,7 +8,7 @@ use PhpOffice\PhpSpreadsheet\Spreadsheet;
 use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
 use App\Service\Entity\Squad as SquadService;
 
-class GeneratePdf
+class GenerateExcel
 {
     private $squadRepository;
     private $squadService;
@@ -24,8 +24,8 @@ class GeneratePdf
     public function constructSpreadShit($idGuild)
     {
         $spreadSheet = new Spreadsheet();
-        $arrayColumnStart = array("B","D","F","H","J","L","N","P");
-        $arrayColumnEnd = array("C","E","G","I","K","M","O","Q");
+        $arrayColumnStart = array("B","D","F","H","J","L","N","P","R","T","V","X","Z");
+        $arrayColumnEnd = array("C","E","G","I","K","M","O","Q","S","U","W","Y","AB");
         $arrayInformationHero = array ("Etoile Gear Relic (Speed)","Protection/Vie");
         $arrayInformationShip = array ("Protection/Vie (Speed)");
         $squads = $this->squadRepository->findAll();
@@ -56,7 +56,7 @@ class GeneratePdf
                 $sheet->setCellValue($arrayColumnStart[$compteur]."2",$squadUnit->getName());
                 //$sheet->setCellValue($arrayHeroColumnStart[$compteur].($NbSiFormulaStart),'=NB.SI('.$arrayHeroColumnStart[$compteur].'4:'.$arrayHeroColumnStart[$compteur].($NbSiFormulaStart-1).',"*G13*")');
                 if ($squad->getType() == "hero") {
-                    $sheet->setCellValue($arrayColumnStart[$compteur].($NbSiFormulaStart),'=COUNTIF('.$arrayColumnStart[$compteur].'4:'.$arrayColumnStart[$compteur].($NbSiFormulaStart-1).',"*G13*")');
+                    $sheet->setCellValue($arrayColumnStart[$compteur].($NbSiFormulaStart),"=COUNTIF(".$arrayColumnStart[$compteur]."4:".$arrayColumnStart[$compteur].($NbSiFormulaStart-1).",\"*G13*\")");
                 }
                 $sheet->getCell($arrayColumnStart[$compteur].($NbSiFormulaStart))->getStyle()->setQuotePrefix(true);
                 $sheet->mergeCells($arrayColumnStart[$compteur]."2:".$arrayColumnEnd[$compteur]."2");
@@ -89,7 +89,7 @@ class GeneratePdf
             }
         }
         $writer = new Xlsx($spreadSheet);
-        $writer->save('D:\Code\admin_crontabium\public\heroesTest.xlsx');
+        $writer->save('C:\wamp64\www\admin_crontabium\public\heroesTest.xlsx');
     }
 
     public function getStyleByGear(String $gearLevel)

@@ -81,7 +81,7 @@ class PlayerCommand extends Command
                 'La synchronisation des données du joueur est terminée',
                 'Fin de la commande'
             ]);
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             $output->writeln([
                 'Une erreur est survenue lors de la synchronisation des données du joueur',
                 'Fin de la commande'

@@ -6,6 +6,7 @@ use App\Entity\Player;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use App\Service\Entity\Guild;
+use App\Service\phpspreadsheet\GenerateExcel;
 use App\Service\phpspreadsheet\GeneratePdf;
 use Knp\Component\Pager\PaginatorInterface;
 
@@ -14,7 +15,7 @@ class TestController extends AbstractController
     /**
      * @Route("/test", name="home_test")
      */
-    public function home(GeneratePdf $generatePdf)
+    public function home(GenerateExcel $generatePdf)
     {
         //$var = "AB";
         //$var+=4;
