@@ -7,6 +7,7 @@ use App\Entity\Player;
 use App\Service\Api\SwgohGg;
 use App\Service\Data\Helper;
 use App\Entity\Guild as EntityGuild;
+use App\Repository\PlayerRepository;
 use Doctrine\ORM\EntityManagerInterface;
 
 class Guild
@@ -15,18 +16,21 @@ class Guild
     private $playerHelper;
     private $dataHelper;
     private $entityManagerInterface;
+    private $playerRepository;
 
     public function __construct(
         SwgohGg $swgohGg, 
         PlayerHelper $playerHelper, 
         Helper $dataHelper, 
-        EntityManagerInterface $entityManagerInterface
+        EntityManagerInterface $entityManagerInterface,
+        PlayerRepository $playerRepository
     )
     {
         $this->swgohGg = $swgohGg;
         $this->playerHelper = $playerHelper;
         $this->dataHelper = $dataHelper;
         $this->entityManagerInterface = $entityManagerInterface;
+        $this->playerRepository = $playerRepository;
     }
 
     public function updateGuild(string $idGuild,EntityGuild $guild = null)
@@ -54,9 +58,13 @@ class Guild
         $guild = $this->entityManagerInterface->getRepository(EntityGuild::class)->findOneBy(['id_swgoh' => $dataGuild['data']['id']]);
         foreach ($dataGuild['players'] as $playerData) {
             array_push($arrayActualMembers,$playerData['data']['name']);
-            //$this->playerHelper->updatePlayerGuild($guild,$playerData,$characters,$ships);
+            $this->playerHelper->updatePlayerGuild($guild,$playerData,$characters,$ships);
         }
-        $playersOut = $this->entityManagerInterface->getRepository(EntityGuild::class)->deleteOldMembers($arrayActualMembers);
+        $playersOut = $this->playerRepository->getOldMembers($guild,$arrayActualMembers);
+        foreach($playersOut as $player) {
+            $this->entityManagerInterface->remove($player);
+        }
+        $this->entityManagerInterface->flush();
         return 200;
     }
 

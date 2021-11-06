@@ -3,8 +3,9 @@
 namespace App\Repository;
 
 use App\Entity\Guild;
-use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
+use Doctrine\DBAL\Connection;
 use Doctrine\Common\Persistence\ManagerRegistry;
+use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 
 /**
  * @method Guild|null find($id, $lockMode = null, $lockVersion = null)
@@ -26,19 +27,6 @@ class GuildRepository extends ServiceEntityRepository
             ->select('count(p)')
             ->getQuery()
             ->getOneOrNullResult();
-    }
-
-    public function deleteOldMembers(Guild $guild, array $actuelMembers)
-    {
-        return $this->createQueryBuilder('g')
-            ->delete('p')
-            ->join('App\Entity\Player','p','WITH','p.guild = g')
-            ->where('p.name not in :array')
-            ->andWhere('g.id = :g')
-            ->setParameter(':g',$guild)
-            ->setParameter(':array',$actuelMembers,\Doctrine\DBAL\Connection::PARAM_STR_ARRAY)
-            ->getQuery()
-            ->getResult();
     }
 
     // /**

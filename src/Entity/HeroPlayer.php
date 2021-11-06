@@ -20,7 +20,7 @@ class HeroPlayer
     private $id;
 
     /**
-     * @ORM\ManyToOne(targetEntity="App\Entity\Player", inversedBy="characters")
+     * @ORM\ManyToOne(targetEntity="App\Entity\Player", inversedBy="characters", cascade={"remove"})
      */
     private $player;
 

@@ -2,9 +2,11 @@
 
 namespace App\Repository;
 
+use App\Entity\Guild;
 use App\Entity\Player;
-use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
+use Doctrine\DBAL\Connection;
 use Doctrine\Common\Persistence\ManagerRegistry;
+use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 
 /**
  * @method Player|null find($id, $lockMode = null, $lockVersion = null)
@@ -19,6 +21,17 @@ class PlayerRepository extends ServiceEntityRepository
     public function __construct(ManagerRegistry $registry)
     {
         parent::__construct($registry, Player::class);
+    }
+
+    public function getOldMembers(Guild $guild, array $actuelMembers)
+    {
+        return $this->createQueryBuilder('p')
+            ->where('p.name not in (:array)')
+            ->andWhere("p.guild = :guild")
+            ->setParameter(':array',$actuelMembers,Connection::PARAM_STR_ARRAY)
+            ->setParameter(':guild',$guild)
+            ->getQuery()
+            ->getResult();
     }
 
     // /**

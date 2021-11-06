@@ -20,7 +20,7 @@ class ShipPlayer
     private $id;
 
     /**
-     * @ORM\ManyToOne(targetEntity="App\Entity\Player", inversedBy="ships")
+     * @ORM\ManyToOne(targetEntity="App\Entity\Player", inversedBy="ships", cascade={"remove"})
      */
     private $player;
 
