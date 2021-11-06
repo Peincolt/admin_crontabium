@@ -89,7 +89,7 @@ class GenerateExcel
             }
         }
         $writer = new Xlsx($spreadSheet);
-        $writer->save('C:\wamp64\www\admin_crontabium\public\heroesTest.xlsx');
+        $writer->save('D:\Code\admin_crontabium\public\heroesTest.xlsx');
     }
 
     public function getStyleByGear(String $gearLevel)

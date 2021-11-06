@@ -28,6 +28,19 @@ class GuildRepository extends ServiceEntityRepository
             ->getOneOrNullResult();
     }
 
+    public function deleteOldMembers(Guild $guild, array $actuelMembers)
+    {
+        return $this->createQueryBuilder('g')
+            ->delete('p')
+            ->join('App\Entity\Player','p','WITH','p.guild = g')
+            ->where('p.name not in :array')
+            ->andWhere('g.id = :g')
+            ->setParameter(':g',$guild)
+            ->setParameter(':array',$actuelMembers,\Doctrine\DBAL\Connection::PARAM_STR_ARRAY)
+            ->getQuery()
+            ->getResult();
+    }
+
     // /**
     //  * @return Guild[] Returns an array of Guild objects
     //  */

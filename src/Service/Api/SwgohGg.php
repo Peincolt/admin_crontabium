@@ -31,15 +31,7 @@ class SwgohGg {
     {
         try {
             $guild = $this->client->request("GET",$this->baseUrl."guild/".$id)->toArray();
-            if (!empty($guild)) {
-                $guildCache = $this->cache->getItem('guild'.$id);
-                if (!$guildCache->isHit()) {
-                    $guildCache->set($guild);
-                    $guildCache->expiresAfter(3600);
-                }
-                return $guild;
-            }
-            return null;
+            return $guild;
         } catch (Exception $e) {
             $arrayReturn['error_code'] = $e->getCode();
             $arrayReturn['error_message'] = $e->getMessage();

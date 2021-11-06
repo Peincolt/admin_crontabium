@@ -2,11 +2,12 @@
 
 namespace App\Service\Entity;
 
-use App\Entity\Guild as EntityGuild;
+use Exception;
+use App\Entity\Player;
 use App\Service\Api\SwgohGg;
 use App\Service\Data\Helper;
+use App\Entity\Guild as EntityGuild;
 use Doctrine\ORM\EntityManagerInterface;
-use Exception;
 
 class Guild
 {
@@ -49,10 +50,13 @@ class Guild
 
     public function updateGuildPlayers(array $dataGuild, bool $characters = false, bool $ships = false)
     {
+        $arrayActualMembers = array();
         $guild = $this->entityManagerInterface->getRepository(EntityGuild::class)->findOneBy(['id_swgoh' => $dataGuild['data']['id']]);
         foreach ($dataGuild['players'] as $playerData) {
-            $this->playerHelper->updatePlayerGuild($guild,$playerData,$characters,$ships);
+            array_push($arrayActualMembers,$playerData['data']['name']);
+            //$this->playerHelper->updatePlayerGuild($guild,$playerData,$characters,$ships);
         }
+        $playersOut = $this->entityManagerInterface->getRepository(EntityGuild::class)->deleteOldMembers($arrayActualMembers);
         return 200;
     }
 
