@@ -41,10 +41,16 @@ class Hero
      */
     private $squads;
 
+    /**
+     * @ORM\OneToMany(targetEntity=SquadUnit::class, mappedBy="hero")
+     */
+    private $squadUnits;
+
     public function __construct()
     {
         $this->heroPlayers = new ArrayCollection();
         $this->squads = new ArrayCollection();
+        $this->squadUnits = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -130,6 +136,36 @@ class Hero
         if ($this->squads->contains($squad)) {
             $this->squads->removeElement($squad);
             $squad->removeHero($this);
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection|SquadUnit[]
+     */
+    public function getSquadUnits(): Collection
+    {
+        return $this->squadUnits;
+    }
+
+    public function addSquadUnit(SquadUnit $squadUnit): self
+    {
+        if (!$this->squadUnits->contains($squadUnit)) {
+            $this->squadUnits[] = $squadUnit;
+            $squadUnit->setHero($this);
+        }
+
+        return $this;
+    }
+
+    public function removeSquadUnit(SquadUnit $squadUnit): self
+    {
+        if ($this->squadUnits->removeElement($squadUnit)) {
+            // set the owning side to null (unless already changed)
+            if ($squadUnit->getHero() === $this) {
+                $squadUnit->setHero(null);
+            }
         }
 
         return $this;

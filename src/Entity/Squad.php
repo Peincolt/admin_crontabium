@@ -39,10 +39,21 @@ class Squad
      */
     private $type;
 
+    /**
+     * @ORM\Column(type="string", length=255)
+     */
+    private $used;
+
+    /**
+     * @ORM\OneToMany(targetEntity=SquadUnit::class, mappedBy="squad", orphanRemoval=true)
+     */
+    private $squadUnits;
+
     public function __construct()
     {
         $this->Hero = new ArrayCollection();
         $this->Ship = new ArrayCollection();
+        $this->squadUnits = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -122,6 +133,48 @@ class Squad
     public function setType(string $type): self
     {
         $this->type = $type;
+
+        return $this;
+    }
+
+    public function getUsed(): ?string
+    {
+        return $this->used;
+    }
+
+    public function setUsed(string $used): self
+    {
+        $this->used = $used;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection|SquadUnit[]
+     */
+    public function getSquadUnits(): Collection
+    {
+        return $this->squadUnits;
+    }
+
+    public function addSquadUnit(SquadUnit $squadUnit): self
+    {
+        if (!$this->squadUnits->contains($squadUnit)) {
+            $this->squadUnits[] = $squadUnit;
+            $squadUnit->setSquad($this);
+        }
+
+        return $this;
+    }
+
+    public function removeSquadUnit(SquadUnit $squadUnit): self
+    {
+        if ($this->squadUnits->removeElement($squadUnit)) {
+            // set the owning side to null (unless already changed)
+            if ($squadUnit->getSquad() === $this) {
+                $squadUnit->setSquad(null);
+            }
+        }
 
         return $this;
     }

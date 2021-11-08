@@ -136,6 +136,8 @@ class Squad
         
     }
 
+    // RAJOUTER ICI L'ID DE LA GUILDE POUR MODIFIER LA FCT QUI VA CHERCHER LES INFOS DES JOUEURS EN BDD
+    // MODIFIER LA FONCTION QUI PERMET DE RECUPERER LES PERSOS D'UNE SQUAD AFIN D'UTILISER LES NEWS SQUAD
     public function getPlayerSquadInformation($id)
     {
         $arrayReturn = array();

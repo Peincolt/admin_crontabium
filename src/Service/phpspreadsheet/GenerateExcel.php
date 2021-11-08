@@ -21,16 +21,15 @@ class GenerateExcel
         $this->guildRepository = $guildRepository;
     }
 
-    public function constructSpreadShit($idGuild)
+    public function constructSpreadShit($guild,$folder,$type)
     {
         $spreadSheet = new Spreadsheet();
         $arrayColumnStart = array("B","D","F","H","J","L","N","P","R","T","V","X","Z");
         $arrayColumnEnd = array("C","E","G","I","K","M","O","Q","S","U","W","Y","AB");
         $arrayInformationHero = array ("Etoile Gear Relic (Speed)","Protection/Vie");
         $arrayInformationShip = array ("Protection/Vie (Speed)");
-        $squads = $this->squadRepository->findAll();
-        $numberPlayers = $this->guildRepository->countMembers($idGuild)[1];
-
+        $squads = $this->squadRepository->findSquadsByType($this->translateType($type));
+        $numberPlayers = $this->guildRepository->countMembers($guild->getId())[1];
         $spreadSheet->removeSheetByIndex(0);
         foreach ($squads as $squad)
         {
@@ -68,7 +67,7 @@ class GenerateExcel
                 $sheet->setCellValue('A'.$NbSiFormulaStart,'Nombre de G13 :');
             }
             
-            $squadData = $this->squadService->getPlayerSquadInformation($squad->getId());
+            $squadData = $this->squadService->getPlayerSquadInformation($squad->getId(),$guild->getId());
             foreach($squadData as $player => $data) {
                 $sheet->setCellValue('A'.$startData,$player);
                 $startLetter = "B";
@@ -89,7 +88,7 @@ class GenerateExcel
             }
         }
         $writer = new Xlsx($spreadSheet);
-        $writer->save('D:\Code\admin_crontabium\public\heroesTest.xlsx');
+        $writer->save($folder.'/'.$guild->getName().' - '.$type.'.xlsx');
     }
 
     public function getStyleByGear(String $gearLevel)
@@ -115,5 +114,22 @@ class GenerateExcel
                 'color' => array('rgb' => $color)
             ]
         );
+    }
+
+    private function translateType(string $type)
+    {
+        switch ($type) {
+            case "attaque":
+                return "attack";
+                break;
+
+            case "défense":
+                return "defense";
+                break;
+
+            default:
+                return "all";
+                break;
+        }
     }
 }

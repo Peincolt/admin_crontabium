@@ -19,6 +19,17 @@ class SquadRepository extends ServiceEntityRepository
         parent::__construct($registry, Squad::class);
     }
 
+    public function findSquadsByType($type)
+    {
+        $qb = $this->createQueryBuilder('s');
+        if ($type != "all") {
+            $qb->where('s.used = :type')
+                ->setParameter(':type',$type);
+        }
+        return $qb->getQuery()
+            ->getResult();
+    }
+
     // /**
     //  * @return Squad[] Returns an array of Squad objects
     //  */
