@@ -46,6 +46,7 @@ class Squad
 
     /**
      * @ORM\OneToMany(targetEntity=SquadUnit::class, mappedBy="squad", orphanRemoval=true)
+     * @ORM\OrderBy({"showOrder" = "ASC"})
      */
     private $squadUnits;
 

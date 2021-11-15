@@ -90,4 +90,13 @@ class SquadUnit
 
         return $this;
     }
+
+    public function getUnitByType(string $type)
+    {
+        if ($type == "hero") {
+            return $this->hero;
+        } else {
+            return $this->ship;
+        }
+    }
 }

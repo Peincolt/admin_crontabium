@@ -156,14 +156,13 @@ class Squad
             ->find($id);
 
         if ($squad->getType() == "hero") {
-            $list = $squad->getHero();
             $repo = $this->heroRepository;
         } else {
-            $list = $squad->getShip();
             $repo = $this->shipRepository;
         }
 
-        foreach ($list as $unit) {
+        foreach ($squad->getSquadUnits() as $squadUnit) {
+            $unit = $squadUnit->getUnitByType($squad->getType());
             $playerUnit = $repo
                 ->getPlayerInformations($unit->getId());
             foreach($arrayPlayersName as $playerName) {

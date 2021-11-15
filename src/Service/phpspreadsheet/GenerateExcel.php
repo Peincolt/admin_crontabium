@@ -4,6 +4,7 @@ namespace App\Service\phpspreadsheet;
 
 use App\Repository\GuildRepository;
 use App\Repository\SquadRepository;
+use App\Repository\SquadUnitRepository;
 use PhpOffice\PhpSpreadsheet\Spreadsheet;
 use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
 use App\Service\Entity\Squad as SquadService;
@@ -11,14 +12,21 @@ use App\Service\Entity\Squad as SquadService;
 class GenerateExcel
 {
     private $squadRepository;
+    private $squadUnitRepository;
     private $squadService;
     private $guildRepository;
 
-    public function __construct(SquadRepository $squadRepository, SquadService $squadService, GuildRepository $guildRepository)
+    public function __construct(
+        SquadRepository $squadRepository, 
+        SquadService $squadService, 
+        GuildRepository $guildRepository,
+        SquadUnitRepository $squadUnitRepository
+    )
     {
         $this->squadRepository = $squadRepository;
         $this->squadService = $squadService;
         $this->guildRepository = $guildRepository;
+        $this->squadUnitRepository = $squadUnitRepository;
     }
 
     public function constructSpreadShit($guild,$folder,$type)
@@ -37,10 +45,10 @@ class GenerateExcel
             $startData = 4;
             $NbSiFormulaStart = $startData + $numberPlayers;
             if ($squad->getType() == "hero") {
-                $list = $squad->getHero();
+                //$list = $squad->getHero();
                 $arrayInformations = $arrayInformationHero;
             } else {
-                $list = $squad->getShip();
+                //$list = $squad->getShip();
                 $arrayInformations = $arrayInformationShip;
             }
 
@@ -51,8 +59,8 @@ class GenerateExcel
             $sheet->mergeCells('B1:U1');
             $sheet->mergeCells('A2:A3');
 
-            foreach ($list as $squadUnit) {
-                $sheet->setCellValue($arrayColumnStart[$compteur]."2",$squadUnit->getName());
+            foreach ($squad->getSquadUnits() as $squadUnit) {
+                $sheet->setCellValue($arrayColumnStart[$compteur]."2",$squadUnit->getUnitByType($squad->getType())->getName());
                 //$sheet->setCellValue($arrayHeroColumnStart[$compteur].($NbSiFormulaStart),'=NB.SI('.$arrayHeroColumnStart[$compteur].'4:'.$arrayHeroColumnStart[$compteur].($NbSiFormulaStart-1).',"*G13*")');
                 if ($squad->getType() == "hero") {
                     $sheet->setCellValue($arrayColumnStart[$compteur].($NbSiFormulaStart),"=COUNTIF(".$arrayColumnStart[$compteur]."4:".$arrayColumnStart[$compteur].($NbSiFormulaStart-1).",\"*G13*\")");
