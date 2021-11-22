@@ -27,14 +27,18 @@ class Unit {
     {
         $entityName = "\App\Entity\\".$this->dataHelper->convertTypeToEntityName($type);
         $data = $this->swgohGg->fetchHeroOrShip($type);
-        foreach($data as $key => $value) {
-            if (!($unit = $this->dataHelper->getDatabaseData($entityName,array('base_id' => $data[$key]['base_id'])))) {
-                $unit = new $entityName;
-                $this->entityManagerInterface->persist($unit);
+        if (is_array($data)) {
+            foreach($data as $key => $value) {
+                if (!($unit = $this->dataHelper->getDatabaseData($entityName,array('base_id' => $data[$key]['base_id'])))) {
+                    $unit = new $entityName;
+                    $this->entityManagerInterface->persist($unit);
+                }
+                $this->dataHelper->fillObject($data[$key],$type,$unit);
+                $this->entityManagerInterface->flush();
             }
-            $this->dataHelper->fillObject($data[$key],$type,$unit);
-            $this->entityManagerInterface->flush();
+            return true;
         }
+        return false;
     }
 
     public function getEntityByRoute(string $route)

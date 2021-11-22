@@ -14,7 +14,6 @@ class UnitCommand extends Command
 
     protected static $defaultName = 'synchro-unit';
     private $unit;
-    private $dataHelper;
 
     public function __construct(Unit $unit, DataHelper $dataHelper)
     {
@@ -26,7 +25,7 @@ class UnitCommand extends Command
     protected function configure()
     {
         $this->setDescription('Commande qui permet de récupérer les héros/vaisseaux du jeu grâce à l\'api de swgoh.gg')
-            ->addArgument('type', InputArgument::REQUIRED, 'Que souhaitez-vous synchroniser ? (Valeurs possibles : heros, vaisseaux, tout');
+            ->addArgument('type', InputArgument::REQUIRED, 'Que souhaitez-vous synchroniser ? (Valeurs possibles : héros, vaisseaux, tout');
     }
 
     protected function execute(InputInterface $input, OutputInterface $output)
@@ -37,26 +36,13 @@ class UnitCommand extends Command
         ]);
 
         switch ($input->getArgument('type')) {
-            case 'heros':
+            case 'héros':
                 $output->writeln([
                     'Vous avez choisi de synchroniser les héros',
                     '===========================',
                     'Début de la synchronisation des héros ...',
                 ]);
-                try {
-                    $this->unit->updateUnit('characters');
-                    $output->writeln([
-                        'Fin de la synchronisation des héros',
-                        'Fin de la commande',
-                    ]);
-                } catch (\Exception $e) {
-                    $output->writeln([
-                        'Une erreur est survenue lors de la synchronisation. Voilà le message d\'erreur :',
-                        $e->getMessage(),
-                        '===========================',
-                        'Fin de la commande',
-                    ]);
-                }
+                $result = $this->unit->updateUnit('characters');
             break;
 
             case 'vaisseaux':
@@ -65,20 +51,7 @@ class UnitCommand extends Command
                     '===========================',
                     'Début de la synchronisation des vaisseaux ...',
                 ]);
-                try {
-                    $this->unit->updateUnit('ships');
-                    $output->writeln([
-                        'Fin de la synchronisation des vaisseaux',
-                        'Fin de la commande',
-                    ]);
-                } catch (\Exception $e) {
-                    $output->writeln([
-                        'Une erreur est survenue lors de la synchronisation. Voilà le message d\'erreur :',
-                        $e->getMessage(),
-                        '===========================',
-                        'Fin de la commande',
-                    ]);
-                }
+                $result = $this->unit->updateUnit('ships');
             break;
 
             case 'tout':
@@ -87,36 +60,40 @@ class UnitCommand extends Command
                     '===========================',
                     'Début de la synchronisation des héros ...',
                 ]);
-                try {
-                    $this->unit->updateUnit('characters');
+                $result = $this->unit->updateUnit('characters');
+                if ($result) {
                     $output->writeln([
                         'Fin de la synchronisation des héros',
-                        'Début de la synchronisation des vaisseaux ...'
+                        'Début de la synchronisation des vaisseaux ...',
                     ]);
-                    $this->unit->updateUnit('ships');
-                    $output->writeln([
-                        'Fin de la synchronisation des vaisseaux',
-                        '===========================',
-                        'Fin de la commande',
-                    ]);
-                } catch (\Exception $e) {
-                    $output->writeln([
-                        'Une erreur est survenue lors de la synchronisation. Voilà le message d\'erreur :',
-                        $e->getMessage(),
-                        '===========================',
-                        'Fin de la commande',
-                    ]);
+                    $result = $this->unit->updateUnit('ships');
                 }
             break;
             
             default:
                 $output->writeln([
-                    'L\'option type ne peut prendre que les valeurs suivantes : heros, vaisseaux, tout',
+                    'Veuillez renseigner une valeur valide',
                     '===========================',
                     'Fin de la commande'
                 ]);
                 return 500;
             break;
+        }
+
+        if ($result) {
+            $output->writeln([
+                'Fin de la synchronisation',
+                '===========================',
+                'Fin de la commande'
+            ]);
+            return 500;
+        } else {
+            $output->writeln([
+                'Erreur lors de la synchronisation',
+                '===========================',
+                'Fin de la commande'
+            ]);
+            return 200;
         }
     }
 }

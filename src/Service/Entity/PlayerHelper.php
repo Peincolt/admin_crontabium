@@ -2,7 +2,6 @@
 
 namespace App\Service\Entity;
 
-use Exception;
 use App\Entity\Guild;
 use App\Entity\Player;
 use App\Service\Api\SwgohGg;
@@ -28,16 +27,6 @@ class PlayerHelper {
         $this->dataHelper = $dataHelper;
         $this->entityManager = $entityManager;
         $this->playerUnit = $playerUnit;
-    }
-
-    public function updatePlayers(array $dataGuild, bool $characters = false, bool $ships = false)
-    {
-        $guild = $this->entityManager->getRepository(Guild::class)->findOneBy(['id_swgoh' => $dataGuild['id']]);
-        $players = $dataGuild['players'];
-        foreach ($players as $arrayDataPlayer)
-        {
-            $this->updatePlayerByJson($arrayDataPlayer['data']['ally_code'],$characters,$ships,$guild);
-        }
     }
 
     public function updatePlayer(array $arrayDataPlayer, bool $characters = false, bool $ships = false)
@@ -79,7 +68,11 @@ class PlayerHelper {
     public function updatePlayerByApi(int $allyCode, bool $characters = false, bool $ships = false)
     {
         $playerDatas = $this->swgoh->fetchPlayer($allyCode);
-        $this->updatePlayer($playerDatas,$characters,$ships);
+        if (is_array($playerDatas)) {
+            $this->updatePlayer($playerDatas,$characters,$ships);
+            return true;
+        }
+        return false;
     }
 
     public function getFields()

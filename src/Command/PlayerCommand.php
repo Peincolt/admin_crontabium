@@ -29,7 +29,7 @@ class PlayerCommand extends Command
         $this->setDescription('Commande qui permet de récupérer les informatiosn d\'un joueur grâce à l\'api de swgoh.gg')
             ->addArgument('code', InputArgument::REQUIRED, 'Le code allié du joueur (retirez les - du code joueur)')
             /* Arguments when the user wants to synchronize hero or ships */
-            ->addOption('data',null,InputOption::VALUE_REQUIRED, 'Que souhaitez-vous synchroniser ? (tout = heros + vaisseaux, heros, vaisseaux)');
+            ->addOption('data',null,InputOption::VALUE_REQUIRED, 'Que souhaitez-vous synchroniser ? (tout = héros + vaisseaux, héros, vaisseaux)');
     }
 
     protected function execute(InputInterface $input, OutputInterface $output)
@@ -49,6 +49,7 @@ class PlayerCommand extends Command
 
         switch ($input->getOption('data')) {
             case 'tout':
+            default:
                 $ships = $heroes = true;
                 $output->writeln([
                     'Vous souhaitez synchroniser toutes les données du joueur.'
@@ -62,12 +63,13 @@ class PlayerCommand extends Command
                 ]);
             break;
 
-            case 'heros':
+            case 'héros':
                 $heroes = true;
                 $output->writeln([
                     'Vous souhaitez synchroniser les données du joueur ainsi que celles de ses héros.',
                 ]);
             break;
+
         }
 
         $output->writeln([
@@ -75,31 +77,20 @@ class PlayerCommand extends Command
             'Début de la synchronisation'
         ]);
 
-        try {
-            $this->playerHelper->updatePlayerByApi($input->getArgument('code'),$heroes,$ships,null);
-            $output->writeln([
-                'La synchronisation des données du joueur est terminée',
-                'Fin de la commande'
-            ]);
-        } catch (\Exception $e) {
+        $result = $this->playerHelper->updatePlayerByApi($input->getArgument('code'),$heroes,$ships,null);
+
+        if (!$result) {
             $output->writeln([
                 'Une erreur est survenue lors de la synchronisation des données du joueur',
-                'Fin de la commande'
-            ]);
-        }
-        
-        if (isset($result['error_message'])) {
-            $output->writeln([
                 '===========================',
-                'The synchronization stopped because we encounter an error',
-                'There is the message : ',
-                $result['error_message']
+                'Fin de la commande'
             ]);
             return 404;
         } else {
             $output->writeln([
+                'La synchronisation des données du joueur est terminée',
                 '===========================',
-                'The synchronization is over and everything is fine',
+                'Fin de la commande'
             ]);
             return 200;
         }

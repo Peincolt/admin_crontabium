@@ -36,7 +36,7 @@ class GuildCommand extends Command
     {
         $this->setDescription('Commande qui permet de récupérer les informatiosn d\'une guilde grâce à l\'api de swgoh.gg')
             ->addArgument('id', InputArgument::REQUIRED, 'Id de la guilde ')
-            ->addOption('all',null,InputOption::VALUE_NONE, 'Voulez-vous récupérer toutes les informations de la guilde (guilde + joueurs + unités des joueurs) ?')
+            ->addOption('tout',null,InputOption::VALUE_NONE, 'Voulez-vous récupérer toutes les informations de la guilde (guilde + joueurs + unités des joueurs) ?')
             ->addOption('joueurs', null, InputOption::VALUE_OPTIONAL, 'Voulez vous synchroniser toutes les données des joueurs ?');
     }
 
@@ -53,7 +53,7 @@ class GuildCommand extends Command
             '===========================',
         ]);
 
-        if ($input->getOption('all')) {
+        if ($input->getOption('tout')) {
             $ships = $heroes = $all = true;
             $output->writeln([
                 'Vous avez décidé de tout synchroniser (guilde, joueurs, données des joueurs)',
@@ -82,14 +82,13 @@ class GuildCommand extends Command
 
         $dataGuild = $this->serviceGuild->updateGuild($input->getArgument('id'),$guild);
         
-        if (isset($dataGuild['error_message'])) {
+        if (!is_array($dataGuild)) {
             $output->writeln([
                 'Erreur lors de la synchronisation des informations de la guilde',
-                'L\'erreur est la suivante : '.$dataGuild['error_message'],
                 '===========================',
                 'Fin de la commande'
             ]);
-            exit();
+            return 500;
         }
 
         $output->writeln([
@@ -136,20 +135,12 @@ class GuildCommand extends Command
             ]);
         }
 
-        try {
-            $this->serviceGuild->updateGuildPlayers($dataGuild,$ships,$heroes);
-            $output->writeln([
-                'Synchronisation terminée',
-                '===========================',
-                'Fin de la commande'
-            ]);
-        } catch (\Exception $e) {
-            $output->writeln([
-                'Une erreur est survenue lors de la synchronisation. Voilà le message d\'erreur :',
-                $e->getMessage(),
-                '===========================',
-                'Fin de la commande'
-            ]);
-        }
+        $this->serviceGuild->updateGuildPlayers($dataGuild,$ships,$heroes);
+
+        $output->writeln([
+            'Synchronisation terminée',
+            '===========================',
+            'Fin de la commande'
+        ]);
     }
 }
