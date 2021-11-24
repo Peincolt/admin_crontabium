@@ -3,8 +3,8 @@
 namespace App\Repository;
 
 use App\Entity\SquadUnit;
+use Doctrine\Common\Persistence\ManagerRegistry;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
-use Doctrine\Persistence\ManagerRegistry;
 
 /**
  * @method SquadUnit|null find($id, $lockMode = null, $lockVersion = null)
