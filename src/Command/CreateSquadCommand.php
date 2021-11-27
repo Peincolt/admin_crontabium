@@ -2,8 +2,13 @@
 
 namespace App\Command;
 
+use App\Entity\Hero;
+use App\Entity\Ship;
 use App\Entity\Squad;
+use App\Entity\SquadUnit;
 use Doctrine\ORM\EntityManagerInterface;
+use App\Service\Entity\Hero as HeroService;
+use App\Service\Entity\Ship as ShipService;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Question\Question;
 use Symfony\Component\Console\Input\InputInterface;
@@ -14,11 +19,20 @@ class CreateSquadCommand extends Command
 {
 
     protected static $defaultName = 'create-squad';
+    private $entityManagerInterface;
+    private $heroService;
+    private $shipService;
 
-    public function __construct(EntityManagerInterface $entityManagerInterface)
+    public function __construct(
+        EntityManagerInterface $entityManagerInterface,
+        HeroService $heroService,
+        ShipService $shipService
+    )
     {
         parent::__construct();
         $this->entityManagerInterface = $entityManagerInterface;
+        $this->heroService = $heroService;
+        $this->shipService = $shipService;
     }
 
     protected function configure()
@@ -34,6 +48,8 @@ class CreateSquadCommand extends Command
         $arrayTeamPosition = array('attaque' => 'attack','défense' => 'defense');
         $arrayTeamType = array('héros' => 'hero','vaisseaux' => 'ship');
         $arraySquadChoice = array('Ajouter une unité','Sauvegarder mon escouade');
+        $arrayListHero = $this->heroService->getHerosSquadCommand(null,array('id','name'));
+        $arrayListShip = $this->shipService->getShipsSquadCommand(null,array('id','name'));
         $entityManagerInterface = $this->entityManagerInterface;
 
         while (!$exit) {
@@ -45,8 +61,6 @@ class CreateSquadCommand extends Command
             );
 
             $userChoice = $helper->ask($input, $output, $question);
-
-            var_dump($userChoice);
 
             $output->writeln('Vous avez décidé de '.lcfirst($userChoice));
             
@@ -101,8 +115,63 @@ class CreateSquadCommand extends Command
 
                 $userSquadChoice = $helper->ask($input, $output, $questionSquadChoice);
 
-                if ($userSquadChoice == $arrayUserChoice[1]) {
-                    return 200;
+                if ($userSquadChoice == 1) {
+                    $this->entityManagerInterface->flush($squad);
+                    $output->writeln('L\'escouade a bien été sauvegardée');
+                    $complete = true;
+                } else {
+                    if ($squad->getType() == "hero") {
+                        $listUnit = array_keys($arrayListHero);
+                        $repo = $this->entityManagerInterface->getRepository(Hero::class);
+                    } else {
+                        $listUnit = array_keys($arrayListShip);
+                        $repo = $this->entityManagerInterface->getRepository(Ship::class);
+                    }
+                    
+                    $questionSquadAddUnit = new Question('Veuillez entrer le nom de l\'unité à ajouter dans l\'escouade : ');
+                    $questionSquadAddUnit->setAutocompleterValues($listUnit);
+                    $questionSquadAddUnit->setValidator(function ($answer) use ($squad,$repo) {
+                        $unit = $repo->findOneBy(['name' => $answer]);
+                        if (!isset($unit)) {
+                            throw new \RuntimeException(
+                                'L\'unité que vous essayez d\'ajouter à l\'escouade n\'esxiste pas.'
+                            );
+                        }
+
+                        if (count($squad->getSquadUnits()) > 0) {
+                            foreach($squad->getSquadUnits() as $unitSquad) {
+                                if ($unitSquad->getHero() == $unit || $unitSquad->getShip() == $unit) {
+                                    throw new \RuntimeException(
+                                        'L\'unité que vous essayez d\'ajouter à l\'escouade est déjà présente dans l\'escouade'
+                                    );
+                                }
+                            }
+                        }
+                        return $answer;
+                    });
+
+                    $squadUnit = new SquadUnit();
+                    $squadUnit->setSquad($squad);
+                    $this->entityManagerInterface->persist($squadUnit);
+                    if ($squad->getType() == 'hero') {
+                        $squadUnit->setHero($repo->find($arrayListHero[$helper->ask($input, $output, $questionSquadAddUnit)]));
+                    } else {
+                        $squadUnit->setShip($repo->find($arrayListShip[$helper->ask($input, $output, $questionSquadAddUnit)]));
+                    }
+
+                    $questionSquadAddUnitPosition = new Question('Veuillez indiquer la position de l\'unité dans l\'escouade : ');
+                    $questionSquadAddUnitPosition->setValidator(function ($answer) use ($squadUnit) {
+                        if (!is_numeric($answer)) {
+                            throw new \RuntimeException(
+                                'La position doit être un nombre'
+                            );
+                        }
+                        return $answer;
+                    });
+
+                    $squadUnit->setShowOrder($helper->ask($input,$output,$questionSquadAddUnitPosition));
+                    $this->entityManagerInterface->flush();
+                    $squad->addSquadUnit($squadUnit);
                 }
             }
         }

@@ -46,6 +46,19 @@ class ShipRepository extends ServiceEntityRepository
         return $arrayReturn;
     }
 
+    public function getShipsListByFilter(?array $filters, ?array $select)
+    {
+        // Partie filtre à faire plus tard si besoin
+        $alias = 's';
+        $query = $this->createQueryBuilder($alias);
+        if (is_array($select) && count($select) > 0) {
+            array_walk($select,function(&$value) use ($alias){
+                $value = $alias.'.'.$value;
+            });
+            $query->select(implode(',',$select));
+        }
+        return $query->getQuery()->getResult();
+    }
     // /**
     //  * @return Ship[] Returns an array of Ship objects
     //  */

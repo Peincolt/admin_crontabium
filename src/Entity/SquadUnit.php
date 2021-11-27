@@ -18,7 +18,7 @@ class SquadUnit
     private $id;
 
     /**
-     * @ORM\ManyToOne(targetEntity=Squad::class, inversedBy="squadUnits")
+     * @ORM\ManyToOne(targetEntity=Squad::class, inversedBy="squadUnits", cascade={"persist"})
      * @ORM\JoinColumn(nullable=false)
      */
     private $squad;

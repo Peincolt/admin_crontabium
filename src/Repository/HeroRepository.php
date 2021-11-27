@@ -48,6 +48,20 @@ class HeroRepository extends ServiceEntityRepository
         return $arrayReturn;
     }
 
+    public function getHerosListByFilter(?array $filters, ?array $select)
+    {
+        // Partie filtre à faire plus tard si besoin
+        $alias = 'h';
+        $query = $this->createQueryBuilder($alias);
+        if (is_array($select) && count($select) > 0) {
+            array_walk($select,function(&$value) use ($alias){
+                $value = $alias.'.'.$value;
+            });
+            $query->select(implode(',',$select));
+        }
+        return $query->getQuery()->getResult();
+    }
+
     /*SELECT p.name FROM `hero` as h LEFT JOIN hero_player as hp ON hp.hero_id = h.id LEFT JOIN player as p ON p.id = hp.player_id WHERE hp.hero_id = 1*/
 
     // /**
