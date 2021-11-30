@@ -32,9 +32,7 @@ class GenerateExcel
     public function constructSpreadShit($guild,$folder,$type)
     {
         $spreadSheet = new Spreadsheet();
-        $arrayColumnStart = array("B","D","F","H","J","L","N","P","R","T","V","X","Z");
-        $arrayColumnEnd = array("C","E","G","I","K","M","O","Q","S","U","W","Y","AB");
-        $arrayInformationHero = array ("Etoile Gear Relic (Speed)","Protection/Vie");
+        $arrayInformationHero = array ("Etoile Gear Relic (Speed)");
         $arrayInformationShip = array ("Protection/Vie (Speed)");
         $squads = $this->squadRepository->findSquadsByType($this->translateType($type));
         $numberPlayers = $this->guildRepository->countMembers($guild->getId())[1];
@@ -43,12 +41,11 @@ class GenerateExcel
         {
             $compteur = 0;
             $startData = 4;
-            $NbSiFormulaStart = $startData + $numberPlayers;
+            $numberLineStatUnit = $startData + $numberPlayers;
+            $startLetter = "B";
             if ($squad->getType() == "hero") {
-                //$list = $squad->getHero();
                 $arrayInformations = $arrayInformationHero;
             } else {
-                //$list = $squad->getShip();
                 $arrayInformations = $arrayInformationShip;
             }
 
@@ -59,32 +56,46 @@ class GenerateExcel
             $sheet->mergeCells('B1:U1');
             $sheet->mergeCells('A2:A3');
 
+            // Affichage du nom des unités, des stats gear et de la première colonne du tableau (Protection/Vie (Speed))
             foreach ($squad->getSquadUnits() as $squadUnit) {
-                $sheet->setCellValue($arrayColumnStart[$compteur]."2",$squadUnit->getUnitByType($squad->getType())->getName());
-                //$sheet->setCellValue($arrayHeroColumnStart[$compteur].($NbSiFormulaStart),'=NB.SI('.$arrayHeroColumnStart[$compteur].'4:'.$arrayHeroColumnStart[$compteur].($NbSiFormulaStart-1).',"*G13*")');
+                $sheet->setCellValue($startLetter."2",$squadUnit->getUnitByType($squad->getType())->getName());
                 if ($squad->getType() == "hero") {
-                    $sheet->setCellValue($arrayColumnStart[$compteur].($NbSiFormulaStart),"=COUNTIF(".$arrayColumnStart[$compteur]."4:".$arrayColumnStart[$compteur].($NbSiFormulaStart-1).",\"*G13*\")");
+                    $sheet->setCellValue($startLetter.($numberLineStatUnit),"=COUNTIF(".$startLetter."4:".$startLetter.($numberLineStatUnit-1).",\"*G13*\")");
                 }
-                $sheet->getCell($arrayColumnStart[$compteur].($NbSiFormulaStart))->getStyle()->setQuotePrefix(true);
-                $sheet->mergeCells($arrayColumnStart[$compteur]."2:".$arrayColumnEnd[$compteur]."2");
-                $sheet->fromArray($arrayInformations,null,$arrayColumnStart[$compteur]."3");
+                $sheet->getCell($startLetter.($numberLineStatUnit))->getStyle()->setQuotePrefix(true);
+                $sheet->fromArray($arrayInformations,null,$startLetter."3");
                 $compteur++;
+                $startLetter++;
             }
 
+            $startLetter++;
+
+            // Affichage du tableau stats des joueurs
+            $sheet->setCellValue($startLetter."2","Stats des persos du joueur");
+            $sheet->setCellValue($startLetter."3","Nombre de gear 13");
+            $startLetter++;
+            $sheet->setCellValue($startLetter."3","Nombre de gear 12");
+            $startLetter++;
+            $sheet->setCellValue($startLetter."3","Nombre de gear <= 11");
+
+            /*$sheet->setCellValue($startLetter[$compteur].($NbSiFormulaStart),"=COUNTIF(B4:".$startLetter.($NbSiFormulaStart-1).",\"*G13*\")");
+            $sheet->setCellValue($startLetter[$compteur].($NbSiFormulaStart),"=COUNTIF(".$startLetter."4:".$startLetter.($NbSiFormulaStart-1).",\"*G13*\")");*/
+
             if ($squad->getType() == "hero") {
-                $sheet->setCellValue('A'.$NbSiFormulaStart,'Nombre de G13 :');
+                $sheet->setCellValue('A'.$numberLineStatUnit,'Nombre de G13 :');
             }
             
             $squadData = $this->squadService->getPlayerSquadInformation($squad->getId(),$guild->getId());
             foreach($squadData as $player => $data) {
                 $sheet->setCellValue('A'.$startData,$player);
                 $startLetter = "B";
+                $sheet->setCellValue($this->incrementLetter($startLetter,count($squad->getSquadUnits()) + 1).($startData),"=COUNTIF(".$startLetter.$startData.":".$this->incrementLetter($startLetter,count($squad->getSquadUnits())).($startData).",\"*G13*\")");
+                $sheet->setCellValue($this->incrementLetter($startLetter,count($squad->getSquadUnits()) + 2).($startData),"=COUNTIF(".$startLetter.$startData.":".$this->incrementLetter($startLetter,count($squad->getSquadUnits())).($startData).",\"*G12*\")");
+                $sheet->setCellValue($this->incrementLetter($startLetter,count($squad->getSquadUnits()) + 3).($startData),"=".count($squad->getSquadUnits())."-".$this->incrementLetter($startLetter,count($squad->getSquadUnits()) + 2).($startData)."-".$this->incrementLetter($startLetter,count($squad->getSquadUnits()) + 1).($startData));
                 foreach ($data as $arrayValueUnit) {
                     if ($squad->getType() == "hero") {
                         $sheet->setCellValue($startLetter.$startData,$arrayValueUnit['rarity'].'* G'.$arrayValueUnit['gear_level'].' R'.$arrayValueUnit['relic_level'].' ('.$arrayValueUnit['speed'].')');
                         $sheet->getStyle($startLetter.$startData)->applyFromArray($this->getStyleByGear($arrayValueUnit['gear_level']));
-                        $startLetter++;
-                        $sheet->setCellValue($startLetter.$startData,$arrayValueUnit['protection'].'/'.$arrayValueUnit['life']);
                         $startLetter++;
                     } else {
                         $sheet->setCellValue($startLetter.$startData,$arrayValueUnit['protection'].'/'.$arrayValueUnit['life'].' ('.$arrayValueUnit['speed'].')');
@@ -139,5 +150,13 @@ class GenerateExcel
                 return "all";
                 break;
         }
+    }
+
+    public function incrementLetter(string $letter, int $number)
+    {
+        for($i=1;$i<=$number;$i++) {
+            $letter++;
+        }
+        return $letter;
     }
 }
