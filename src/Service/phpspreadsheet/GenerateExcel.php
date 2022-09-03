@@ -112,19 +112,18 @@ class GenerateExcel
 
     public function getStyleByGear(String $gearLevel)
     {
-        switch ($gearLevel)
-        {
+        switch ($gearLevel) {
             case 13:
                 $color = 'FF0000';
-            break;
+                break;
 
             case 12:
                 $color = 'FFC90E';
-            break;
+                break;
 
             default:
                 $color = '800080';
-            break;
+                break;
         }
 
         return array(
@@ -141,20 +140,26 @@ class GenerateExcel
             case "attaque":
                 return "attack";
                 break;
-
             case "défense":
                 return "defense";
                 break;
-
             default:
                 return "all";
                 break;
         }
     }
 
+    /**
+     * Fonction qui permet d'incrémenter les lettres pour les tableaux Excel
+     * 
+     * @param string $letter Lettre à incrémenter
+     * @param int    $number Nombre qui va servir dans la boucle for
+     * 
+     * @return $letter
+     */
     public function incrementLetter(string $letter, int $number)
     {
-        for($i=1;$i<=$number;$i++) {
+        for ($i = 1; $i <= $number; $i++) {
             $letter++;
         }
         return $letter;

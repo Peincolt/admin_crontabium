@@ -12,11 +12,11 @@ use Doctrine\ORM\EntityManagerInterface;
 
 class Guild
 {
-    private $swgohGg;
-    private $playerHelper;
-    private $dataHelper;
-    private $entityManagerInterface;
-    private $playerRepository;
+    private $_swgohGg;
+    private $_playerHelper;
+    private $_dataHelper;
+    private $_entityManagerInterface;
+    private $_playerRepository;
 
     public function __construct(
         SwgohGg $swgohGg, 
@@ -26,26 +26,28 @@ class Guild
         PlayerRepository $playerRepository
     )
     {
-        $this->swgohGg = $swgohGg;
-        $this->playerHelper = $playerHelper;
-        $this->dataHelper = $dataHelper;
-        $this->entityManagerInterface = $entityManagerInterface;
-        $this->playerRepository = $playerRepository;
+        $this->_swgohGg = $swgohGg;
+        $this->_playerHelper = $playerHelper;
+        $this->_dataHelper = $dataHelper;
+        $this->_entityManagerInterface = $entityManagerInterface;
+        $this->_playerRepository = $playerRepository;
     }
 
     public function updateGuild(string $idGuild,EntityGuild $guild = null)
     {
         if (empty($guild)) {
             $guild = new EntityGuild();
-            $this->entityManagerInterface->persist($guild);
+            $this->_entityManagerInterface->persist($guild);
         }
 
         try {
-            $dataGuild = $this->swgohGg->fetchGuild($idGuild);
-            $this->dataHelper->fillObject($dataGuild['data'],'guild',$guild);
-            $this->entityManagerInterface->flush();
+            $dataGuild = $this->_swgohGg->fetchGuild($idGuild);
+            $this->_dataHelper->fillObject($dataGuild['data'], 'guild', $guild);
+            $this->_entityManagerInterface->flush();
             return $dataGuild;
         } catch (Exception $e) {
+            var_dump($e->getMessage());
+            die('gzgqegq');
             return false;
         }
     }
@@ -53,27 +55,44 @@ class Guild
     public function updateGuildPlayers(array $dataGuild, bool $characters = false, bool $ships = false)
     {
         $arrayActualMembers = array();
-        $guild = $this->entityManagerInterface->getRepository(EntityGuild::class)->findOneBy(['id_swgoh' => $dataGuild['data']['id']]);
-        foreach ($dataGuild['players'] as $playerData) {
-            array_push($arrayActualMembers,$playerData['data']['name']);
-            $this->playerHelper->updatePlayerGuild($guild,$playerData,$characters,$ships);
+        $guild = $this->_entityManagerInterface
+            ->getRepository(EntityGuild::class)
+            ->findOneBy(
+                [
+                    'id_swgoh' => $dataGuild['data']['guild_id']
+                ]
+            );
+        foreach ($dataGuild['data']['members'] as $guildPlayerData) {
+            array_push($arrayActualMembers, $guildPlayerData['player_name']);
+            $playerData = $this->_swgohGg->fetchPlayer(
+                $guildPlayerData['ally_code']
+            );
+            $this->_playerHelper->updatePlayerGuild(
+                $guild,
+                $playerData,
+                $characters,
+                $ships
+            );
         }
-        $playersOut = $this->playerRepository->getOldMembers($guild,$arrayActualMembers);
-        foreach($playersOut as $player) {
-            $this->entityManagerInterface->remove($player);
+        $playersOut = $this->_playerRepository->getOldMembers(
+            $guild,
+            $arrayActualMembers
+        );
+        foreach ($playersOut as $player) {
+            $this->_entityManagerInterface->remove($player);
         }
-        $this->entityManagerInterface->flush();
+        $this->_entityManagerInterface->flush();
         return 200;
     }
 
     public function getFormGuild()
     {
         $arrayReturn = array();
-        $guilds = $this->entityManagerInterface
+        $guilds = $this->_entityManagerInterface
             ->getRepository('App\Entity\Guild')
             ->findAll();
 
-        foreach($guilds as $guild) {
+        foreach ($guilds as $guild) {
             $arrayReturn[$guild->getName()] = $guild->getId();
         }
 

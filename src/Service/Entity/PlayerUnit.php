@@ -10,13 +10,13 @@ use Exception;
 class PlayerUnit 
 {
 
-    private $entityManagerInterface;
-    private $dataHelper;
+    private $_entityManagerInterface;
+    private $_dataHelper;
 
     public function __construct(EntityManagerInterface $entityManagerInterface, Helper $dataHelper)
     {
-        $this->entityManagerInterface = $entityManagerInterface;
-        $this->dataHelper = $dataHelper;
+        $this->_entityManagerInterface = $entityManagerInterface;
+        $this->_dataHelper = $dataHelper;
     }
 
     public function createPlayerUnit(array $data, Player $player, string $type)
@@ -25,15 +25,18 @@ class PlayerUnit
             $baseUnitEntityName = "\App\Entity\\".ucfirst($type);
             $entityName = $baseUnitEntityName."Player";
             $fonctionName = 'set'.ucfirst($type);
-            if ($baseUnit = $this->dataHelper->getDatabaseData($baseUnitEntityName, array('base_id' => $data['base_id']))) {
-                if (!$playerUnit = $this->dataHelper->getDatabaseData($entityName, array('player' => $player, $type => $baseUnit))) {
+            if ($baseUnit = $this->_dataHelper->getDatabaseData($baseUnitEntityName, array('base_id' => $data['base_id']))) {
+                if (!$playerUnit = $this->_dataHelper->getDatabaseData($entityName, array('player' => $player, $type => $baseUnit))) {
                     $playerUnit = new $entityName;
                 }
-                $this->dataHelper->fillObject($data,'player_'.$type,$playerUnit);
+                $this->_dataHelper->fillObject($data, 'player_'.$type, $playerUnit);
+                if ($type == 'hero') {
+                    //$this->_dataHelper->fillHeroAbility
+                }
                 $playerUnit->setPlayer($player);
                 $playerUnit->$fonctionName($baseUnit);
-                $this->entityManagerInterface->persist($playerUnit);
-                $this->entityManagerInterface->flush();
+                $this->_entityManagerInterface->persist($playerUnit);
+                $this->_entityManagerInterface->flush();
             }
         } catch (Exception $e) {
             $arrayReturn['error_message'] = $e->getMessage();
@@ -44,15 +47,16 @@ class PlayerUnit
 
     public function createPlayerShip(array $data, Player $player)
     {
-        return $this->createPlayerUnit($data,$player,'ship');
+        return $this->createPlayerUnit($data, $player, 'ship');
     }
 
     public function createPlayerHero(array $data, Player $player)
     {
-        return $this->createPlayerUnit($data,$player,'hero');
+        return $this->createPlayerUnit($data, $player, 'hero');
     }
 
-    public function getNumberUnit($type) {
+    public function getNumberUnit($type)
+    {
         $numberHeroes = $this->entityManagerInterface
             ->getRepository($type)
             ->findAll();

@@ -10,7 +10,7 @@ trait InformationTrait
     private $name;
 
     /**
-     * @ORM\Column(type="integer")
+     * @ORM\Column(type="string")
      */
     private $id_swgoh;
 
@@ -26,12 +26,12 @@ trait InformationTrait
         return $this;
     }
 
-    public function getIdSwgoh(): ?int
+    public function getIdSwgoh(): ?string
     {
         return $this->id_swgoh;
     }
 
-    public function setIdSwgoh(int $id_swgoh): self
+    public function setIdSwgoh(string $id_swgoh): self
     {
         $this->id_swgoh = $id_swgoh;
 

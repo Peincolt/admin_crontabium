@@ -5,7 +5,7 @@
 # https://symfony.com/doc/current/best_practices/configuration.html#application-related-configuration
 parameters:
     #Variable pour la première API    
-    base_url: 'https://swgoh.gg/api/'
+    base_url: 'http://api.swgoh.gg/api/'
     guild_id: 7303
 
     #Variable pour la deuxieme API

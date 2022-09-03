@@ -24,10 +24,19 @@ class Helper {
 
         switch ($entityName) {
 
+            case 'ability':
+                $arrayReturn['BaseId'] = $data['base_id'];
+                $arrayReturn['Name'] = $data['name'];
+                $arrayReturn['IsZeta'] = $data['is_zeta'];
+                $arrayReturn['IsOmega'] = $data['is_omega'];
+                $arrayReturn['IsOmicron'] = $data['is_omicron'];
+                $arrayReturn['Description'] = $data['description'];
+                $arrayReturn['OmicronMode'] = $data['omicron_mode'];
+            break;
             case 'guild':
                 $arrayReturn['Name'] = $data['name'];
                 $arrayReturn['Members'] = $data['member_count'];
-                $arrayReturn['IdSwgoh'] = $data['id'];
+                $arrayReturn['IdSwgoh'] = $data['guild_id'];
                 $arrayReturn['GalacticalPuissance'] = $data['galactic_power'];
             break;
 

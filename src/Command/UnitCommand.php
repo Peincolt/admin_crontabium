@@ -2,7 +2,6 @@
 
 namespace App\Command;
 
-use App\Service\Data\Helper as DataHelper;
 use App\Service\Entity\Unit;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
@@ -13,13 +12,10 @@ class UnitCommand extends Command
 {
 
     protected static $defaultName = 'synchro-unit';
-    private $unit;
 
-    public function __construct(Unit $unit, DataHelper $dataHelper)
+    public function __construct(Unit $unit)
     {
         parent::__construct();
-        $this->unit = $unit;
-        $this->dataHelper = $dataHelper;
     }
 
     protected function configure()
