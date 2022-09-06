@@ -2,9 +2,11 @@
 
 namespace App\Repository;
 
+use App\Entity\Ship;
+use App\Entity\Player;
 use App\Entity\ShipPlayer;
-use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Common\Persistence\ManagerRegistry;
+use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 
 /**
  * @method Ship|null find($id, $lockMode = null, $lockVersion = null)
@@ -17,6 +19,17 @@ class ShipPlayerRepository extends ServiceEntityRepository
     public function __construct(ManagerRegistry $registry)
     {
         parent::__construct($registry, ShipPlayer::class);
+    }
+
+    public function getPlayerInformations(Ship $ship, Player $player)
+    {
+        return $this->createQueryBuilder('hp')
+            ->andWhere('hp.ship = :ship')
+            ->andWhere('hp.player = :player')
+            ->setParameter('ship', $ship)
+            ->setParameter('player', $player)
+            ->getQuery()
+            ->getResult();
     }
 
     // /**

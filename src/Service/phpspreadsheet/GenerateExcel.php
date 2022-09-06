@@ -34,11 +34,11 @@ class GenerateExcel
         $spreadSheet = new Spreadsheet();
         $arrayInformationHero = array ("Etoile Gear Relic (Speed)");
         $arrayInformationShip = array ("Protection/Vie (Speed)");
-        $squads = $this->squadRepository->findSquadsByType($this->translateType($type));
+        $squads = $this->squadRepository
+            ->findSquadsByType($this->translateType($type));
         $numberPlayers = $this->guildRepository->countMembers($guild->getId())[1];
         $spreadSheet->removeSheetByIndex(0);
-        foreach ($squads as $squad)
-        {
+        foreach ($squads as $squad) {
             $compteur = 0;
             $startData = 4;
             $numberLineStatUnit = $startData + $numberPlayers;
@@ -51,19 +51,30 @@ class GenerateExcel
 
             $sheet = $spreadSheet->createSheet();
             $sheet->setTitle($squad->getName());
-            $sheet->setCellValue('A1','Joueur');
-            $sheet->setCellValue('B1','Unités');
+            $sheet->setCellValue('A1', 'Joueur');
+            $sheet->setCellValue('B1', 'Unités');
             $sheet->mergeCells('B1:U1');
             $sheet->mergeCells('A2:A3');
 
             // Affichage du nom des unités, des stats gear et de la première colonne du tableau (Protection/Vie (Speed))
             foreach ($squad->getSquadUnits() as $squadUnit) {
-                $sheet->setCellValue($startLetter."2",$squadUnit->getUnitByType($squad->getType())->getName());
+                $sheet->setCellValue(
+                    $startLetter."2",
+                    $squadUnit->getUnitByType($squad->getType())->getName()
+                );
                 if ($squad->getType() == "hero") {
-                    $sheet->setCellValue($startLetter.($numberLineStatUnit),"=COUNTIF(".$startLetter."4:".$startLetter.($numberLineStatUnit-1).",\"*G13*\")");
+                    $sheet->setCellValue(
+                        $startLetter.($numberLineStatUnit),
+                        "=COUNTIF(".
+                        $startLetter.
+                        "4:".
+                        $startLetter.
+                        ($numberLineStatUnit-1).",\"*G13*\")"
+                    );
                 }
-                $sheet->getCell($startLetter.($numberLineStatUnit))->getStyle()->setQuotePrefix(true);
-                $sheet->fromArray($arrayInformations,null,$startLetter."3");
+                $sheet->getCell($startLetter.($numberLineStatUnit))
+                    ->getStyle()->setQuotePrefix(true);
+                $sheet->fromArray($arrayInformations, null, $startLetter."3");
                 $compteur++;
                 $startLetter++;
             }
@@ -71,30 +82,42 @@ class GenerateExcel
             $startLetter++;
 
             // Affichage du tableau stats des joueurs
-            $sheet->setCellValue($startLetter."2","Stats des persos du joueur");
-            $sheet->setCellValue($startLetter."3","Nombre de gear 13");
+            /*$sheet->setCellValue($startLetter."2", "Stats des persos du joueur");
+            $sheet->setCellValue($startLetter."3", "Nombre de gear 13");
             $startLetter++;
-            $sheet->setCellValue($startLetter."3","Nombre de gear 12");
+            $sheet->setCellValue($startLetter."3", "Nombre de gear 12");
             $startLetter++;
-            $sheet->setCellValue($startLetter."3","Nombre de gear <= 11");
+            $sheet->setCellValue($startLetter."3", "Nombre de gear <= 11");
 
-            /*$sheet->setCellValue($startLetter[$compteur].($NbSiFormulaStart),"=COUNTIF(B4:".$startLetter.($NbSiFormulaStart-1).",\"*G13*\")");
+            $sheet->setCellValue($startLetter[$compteur].($NbSiFormulaStart),"=COUNTIF(B4:".$startLetter.($NbSiFormulaStart-1).",\"*G13*\")");
             $sheet->setCellValue($startLetter[$compteur].($NbSiFormulaStart),"=COUNTIF(".$startLetter."4:".$startLetter.($NbSiFormulaStart-1).",\"*G13*\")");*/
 
             if ($squad->getType() == "hero") {
-                $sheet->setCellValue('A'.$numberLineStatUnit,'Nombre de G13 :');
+                $sheet->setCellValue('A'.$numberLineStatUnit, 'Nombre de G13 :');
             }
             
-            $squadData = $this->squadService->getPlayerSquadInformation($squad->getId(),$guild->getId());
-            foreach($squadData as $player => $data) {
-                $sheet->setCellValue('A'.$startData,$player);
+            $squadData = $this->squadService
+                ->getPlayerSquadInformation($squad, $guild);
+            foreach ($squadData as $player => $data) {
+                $sheet->setCellValue('A'.$startData, $player);
                 $startLetter = "B";
                 $sheet->setCellValue($this->incrementLetter($startLetter,count($squad->getSquadUnits()) + 1).($startData),"=COUNTIF(".$startLetter.$startData.":".$this->incrementLetter($startLetter,count($squad->getSquadUnits())).($startData).",\"*G13*\")");
                 $sheet->setCellValue($this->incrementLetter($startLetter,count($squad->getSquadUnits()) + 2).($startData),"=COUNTIF(".$startLetter.$startData.":".$this->incrementLetter($startLetter,count($squad->getSquadUnits())).($startData).",\"*G12*\")");
                 $sheet->setCellValue($this->incrementLetter($startLetter,count($squad->getSquadUnits()) + 3).($startData),"=".count($squad->getSquadUnits())."-".$this->incrementLetter($startLetter,count($squad->getSquadUnits()) + 2).($startData)."-".$this->incrementLetter($startLetter,count($squad->getSquadUnits()) + 1).($startData));
                 foreach ($data as $arrayValueUnit) {
                     if ($squad->getType() == "hero") {
-                        $sheet->setCellValue($startLetter.$startData,$arrayValueUnit['rarity'].'* G'.$arrayValueUnit['gear_level'].' R'.$arrayValueUnit['relic_level'].' ('.$arrayValueUnit['speed'].')');
+                        $chain = $arrayValueUnit['rarity'].'* G'.$arrayValueUnit['gear_level'].' R'.$arrayValueUnit['relic_level'].' ('.$arrayValueUnit['speed'].')';
+                        if (!empty($arrayValueUnit['omicrons'])) {
+                            $chain.=' omicron(s): ';
+                            for ($i = 0; $i < count($arrayValueUnit['omicrons']); $i++) {
+                                if ($i == count($arrayValueUnit['omicrons']) - 1) {
+                                    $chain.=$arrayValueUnit['omicrons'][$i];
+                                } else {
+                                    $chain.=$arrayValueUnit['omicrons'][$i].',';
+                                }
+                            }
+                        }
+                        $sheet->setCellValue($startLetter.$startData, $chain);
                         $sheet->getStyle($startLetter.$startData)->applyFromArray($this->getStyleByGear($arrayValueUnit['gear_level']));
                         $startLetter++;
                     } else {

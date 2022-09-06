@@ -3,10 +3,11 @@
 namespace App\Repository;
 
 use App\Entity\Hero;
-use App\Entity\HeroPlayer;
+use App\Entity\Squad;
 use App\Entity\Player;
-use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
+use App\Entity\HeroPlayer;
 use Doctrine\Common\Persistence\ManagerRegistry;
+use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 
 /**
  * @method Character|null find($id, $lockMode = null, $lockVersion = null)
@@ -19,6 +20,18 @@ class HeroRepository extends ServiceEntityRepository
     public function __construct(ManagerRegistry $registry)
     {
         parent::__construct($registry, Hero::class);
+    }
+
+    public function getHeroPlayerInformationsByHero(Hero $hero)
+    {
+        return $this->createQueryBuilder('h')
+            ->leftjoin('h.heroPlayers','hp','WITH','hp.hero = h.id')
+            ->leftjoin('hp.player','p','WITH','hp.player = p.id')
+            ->where('h = :hero')
+            ->setParameter('hero', $hero)
+            ->select('p.name, hp.gear_level, hp.level, hp.number_stars as rarity, hp.protection, hp.life, hp.speed, hp.relic_level')
+            ->getQuery()
+            ->getResult();
     }
 
     public function getPlayerInformations($id)

@@ -34,11 +34,11 @@ class HeroPlayer
     /**
      * @ORM\OneToMany(targetEntity="App\Entity\HeroPlayerAbility", mappedBy="heroPlayer", orphanRemoval=true)
      */
-    private $abilites;
+    private $abilities;
 
     public function __construct()
     {
-        $this->abilites = new ArrayCollection();
+        $this->abilities = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -75,25 +75,25 @@ class HeroPlayer
     /**
      * @return Collection|HeroPlayerAbility[]
      */
-    public function getabilites(): Collection
+    public function getAbilites(): Collection
     {
-        return $this->abilites;
+        return $this->abilities;
     }
 
     public function addAbility(HeroPlayerAbility $ability): self
     {
-        if (!$this->abilites->contains($ability)) {
-            $this->abilites[] = $ability;
+        if (!$this->abilities->contains($ability)) {
+            $this->abilities[] = $ability;
             $ability->setHeroPlayer($this);
         }
 
         return $this;
     }
 
-    public function removeabilites(HeroPlayerAbility $ability): self
+    public function removAability(HeroPlayerAbility $ability): self
     {
-        if ($this->abilites->contains($ability)) {
-            $this->abilites->removeElement($ability);
+        if ($this->abilities->contains($ability)) {
+            $this->abilities->removeElement($ability);
             // set the owning side to null (unless already changed)
             if ($ability->getHeroPlayer() === $this) {
                 $ability->setHeroPlayer(null);

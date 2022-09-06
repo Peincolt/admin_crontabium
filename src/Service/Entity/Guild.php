@@ -46,8 +46,6 @@ class Guild
             $this->_entityManagerInterface->flush();
             return $dataGuild;
         } catch (Exception $e) {
-            var_dump($e->getMessage());
-            die('gzgqegq');
             return false;
         }
     }

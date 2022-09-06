@@ -2,7 +2,11 @@
 
 namespace App\Service\Data;
 
+use App\Entity\HeroPlayer;
+use App\Entity\HeroPlayerAbility;
 use App\Entity\User;
+use App\Repository\AbilityRepository;
+use App\Repository\HeroPlayerAbilityRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface;
 
@@ -10,12 +14,19 @@ class Helper {
 
     private $entityManagerInterface;
     private $passwordEncoder;
+    private $_abilityRepository;
+    private $_heroPlayerAvilityRepository;
 
     public function __construct(EntityManagerInterface $entityManagerInterface,
-        UserPasswordEncoderInterface $passwordEncoder)
+        UserPasswordEncoderInterface $passwordEncoder,
+        AbilityRepository $abilityRepository,
+        HeroPlayerAbilityRepository $heroPlayerAbilityRepository
+    )
     {
         $this->entityManagerInterface = $entityManagerInterface;
         $this->passwordEncoder = $passwordEncoder;
+        $this->_abilityRepository = $abilityRepository;
+        $this->_heroPlayerAvilityRepository = $heroPlayerAbilityRepository;
     }
 
     public function matchEntityField($entityName, $data)
@@ -142,5 +153,56 @@ class Helper {
             $object->$function($value);
         }
         return $object;
+    }
+
+    public function fillHeroOmicronAbility(
+        HeroPlayer $heroPlayer,
+        array $heroPlayerOmicronAbilities,
+        array $arrayAbilityData
+    ) {
+        foreach ($heroPlayerOmicronAbilities as $heroPlayerOmicronAbility) {
+            $omicronAbility = $this->_abilityRepository->findOneBy(
+                [
+                    'hero' => $heroPlayer->getHero(),
+                    'baseId' => $heroPlayerOmicronAbility
+                ]
+            );
+
+            if (!empty($heroPlayer->getId())) {
+                $dataHeroPlayerOmicronAbility = $this->_heroPlayerAvilityRepository
+                    ->findOneBy(
+                        [
+                            'ability' => $omicronAbility,
+                            'heroPlayer' => $heroPlayer
+                        ]
+                    );
+                if (!empty($dataHeroPlayerOmicronAbility)) {
+                    return false;
+                }
+            }
+
+            $databaseHeroPlayerOmicronAbility = new HeroPlayerAbility();
+            $this->entityManagerInterface
+                ->persist($databaseHeroPlayerOmicronAbility);
+            $databaseHeroPlayerOmicronAbility->setAbility($omicronAbility);
+            $databaseHeroPlayerOmicronAbility->setHeroPlayer($heroPlayer);
+            $databaseHeroPlayerOmicronAbility->setHasOmicronLearned(true);
+            $databaseHeroPlayerOmicronAbility->setHasOmicronLearned(true);
+            $databaseHeroPlayerOmicronAbility->setHasZetaLearned(
+                $this->isAbilityZeta(
+                    $heroPlayerOmicronAbility,
+                    $arrayAbilityData
+                )
+            );
+        }
+    }
+
+    public function isAbilityZeta(string $abilityId, array $abilities)
+    {
+        foreach ($abilities as $ability) {
+            if ($ability['id'] == $abilityId) {
+                return ($ability['is_zeta'] == 'true' ? true : false);
+            }
+        }
     }
 }

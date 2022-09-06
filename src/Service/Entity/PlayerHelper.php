@@ -31,6 +31,7 @@ class PlayerHelper {
 
     public function updatePlayer(array $arrayDataPlayer, bool $characters = false, bool $ships = false)
     {
+        $count = 0;
         if (!($player = $this->_entityManager->getRepository(Player::class)->findOneBy(['id_swgoh' => $arrayDataPlayer['data']['ally_code']]))) {
             $player = new Player();
             $this->_entityManager->persist($player);
@@ -46,6 +47,7 @@ class PlayerHelper {
                                 $unit['data'],
                                 $player
                             );
+                            $count++;
                         }
                     break;
                     case 2:
@@ -54,8 +56,14 @@ class PlayerHelper {
                                 $unit['data'],
                                 $player
                             );
+                            $count++;
                         }
                     break;
+                }
+
+                if ($count > 500) {
+                    $this->_entityManager->flush();
+                    $count = 0;
                 }
             }
         }

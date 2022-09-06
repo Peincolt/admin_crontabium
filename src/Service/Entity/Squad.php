@@ -3,29 +3,30 @@
 namespace App\Service\Entity;
 
 use Exception;
+use App\Entity\Guild;
+use App\Entity\HeroPlayer;
 use App\Entity\Player;
-use App\Entity\Squad as SquadEntity;
+use App\Entity\ShipPlayer;
 use App\Repository\HeroRepository;
 use App\Repository\ShipRepository;
+use App\Entity\Squad as SquadEntity;
 use Doctrine\ORM\EntityManagerInterface;
 use App\Service\Entity\Unit as UnitHelper;
+use App\Service\Entity\PlayerUnit as PlayerUnitService;
 
 class Squad
 {
     private $entityManagerInterface;
     private $unitHelper;
-    private $heroRepository;
-    private $shipRepository;
+    private $playerUnitService;
 
     public function __construct(EntityManagerInterface $entityManagerInterface,
         UnitHelper $unitHelper,
-        HeroRepository $heroRepository,
-        ShipRepository $shipRepository)
-    {
+        PlayerUnitService $playerUnitService
+    ) {
         $this->entityManagerInterface = $entityManagerInterface;
         $this->unitHelper = $unitHelper;
-        $this->heroRepository = $heroRepository;
-        $this->shipRepository = $shipRepository;
+        $this->playerUnitService = $playerUnitService;
     }
 
     public function createSquad($squad, $data)
@@ -138,35 +139,40 @@ class Squad
 
     // RAJOUTER ICI L'ID DE LA GUILDE POUR MODIFIER LA FCT QUI VA CHERCHER LES INFOS DES JOUEURS EN BDD
     // MODIFIER LA FONCTION QUI PERMET DE RECUPERER LES PERSOS D'UNE SQUAD AFIN D'UTILISER LES NEWS SQUAD
-    public function getPlayerSquadInformation($id)
+    public function getPlayerSquadInformation(SquadEntity $squad, Guild $guild)
     {
         $arrayReturn = array();
         $arrayPlayersName = array();
 
-        $players = $this->entityManagerInterface
-            ->getRepository(Player::class)
-            ->findAll();
+        $players = $guild->getPlayers();
 
-        foreach($players as $player) {
-            array_push($arrayPlayersName,$player->getName());
+        foreach ($players as $player) {
+            array_push($arrayPlayersName, $player->getName());
         }
 
-        $squad = $this->entityManagerInterface
-            ->getRepository(SquadEntity::class)
-            ->find($id);
-
+        // Ici prendre hero play repo ou ship player. Via le repo, faire une requête qui ressort les hero player ou ship player de la guilde
+        // Regarde si pour le HP player, des omicrons TW sont de sortis (requête via repo). Si oui, ajout au tableau avec traduction
+        // Fill le tableau avec les infos demandées
         if ($squad->getType() == "hero") {
-            $repo = $this->heroRepository;
+            $repo = $this->entityManagerInterface->getRepository(HeroPlayer::class);
         } else {
-            $repo = $this->shipRepository;
+            $repo = $this->entityManagerInterface->getRepository(ShipPlayer::class);
         }
 
         foreach ($squad->getSquadUnits() as $squadUnit) {
             $unit = $squadUnit->getUnitByType($squad->getType());
+            foreach ($guild->getPlayers() as $player) {
+                $arrayReturn[$player->getName()][$unit->getName()] = $this->playerUnitService
+                    ->getPlayerUnitInformation($player, $squad->getType(), $unit);
+            }
+        /*foreach ($squad->getSquadUnits() as $squadUnit) {
+            $unit = $squadUnit->getUnitByType($squad->getType());
+            //$player
             $playerUnit = $repo
                 ->getPlayerInformations($unit->getId());
-            foreach($arrayPlayersName as $playerName) {
-                if (array_key_exists($playerName,$playerUnit)) {
+            foreach ($arrayPlayersName as $playerName) {
+                $playerUnit = $repo->getPlayerInformations($unit, $player);
+                if (array_key_exists($playerName, $playerUnit)) {
                     $arrayReturn[$playerName][$unit->getName()] = $playerUnit[$playerName];
                 } else {
                     $arrayReturn[$playerName][$unit->getName()]['gear_level'] = 0;
@@ -178,7 +184,7 @@ class Squad
                 }
             }
 
-        }
+        }*/
 
         /*foreach ($squad->getShip() as $ship) {
             $playerShip = $this->shipRepository
@@ -196,8 +202,7 @@ class Squad
                 }
             }
         }*/
-
+        }
         return $arrayReturn;
     }
-
 }
