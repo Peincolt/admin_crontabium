@@ -50,11 +50,17 @@ class Squad
      */
     private $squadUnits;
 
+    /**
+     * @ORM\ManyToMany(targetEntity="App\Entity\Guild", inversedBy="squads")
+     */
+    private $guilds;
+
     public function __construct()
     {
         $this->Hero = new ArrayCollection();
         $this->Ship = new ArrayCollection();
         $this->squadUnits = new ArrayCollection();
+        $this->guilds = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -175,6 +181,32 @@ class Squad
             if ($squadUnit->getSquad() === $this) {
                 $squadUnit->setSquad(null);
             }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection|guild[]
+     */
+    public function getGuilds(): Collection
+    {
+        return $this->guilds;
+    }
+
+    public function addGuild(guild $guild): self
+    {
+        if (!$this->guilds->contains($guild)) {
+            $this->guilds[] = $guild;
+        }
+
+        return $this;
+    }
+
+    public function removeGuild(guild $guild): self
+    {
+        if ($this->guilds->contains($guild)) {
+            $this->guilds->removeElement($guild);
         }
 
         return $this;

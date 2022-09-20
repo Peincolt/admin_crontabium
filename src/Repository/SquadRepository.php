@@ -2,9 +2,10 @@
 
 namespace App\Repository;
 
+use App\Entity\Guild;
 use App\Entity\Squad;
-use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Common\Persistence\ManagerRegistry;
+use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 
 /**
  * @method Squad|null find($id, $lockMode = null, $lockVersion = null)
@@ -19,11 +20,13 @@ class SquadRepository extends ServiceEntityRepository
         parent::__construct($registry, Squad::class);
     }
 
-    public function findSquadsByType($type)
+    public function findSquadsByType($type, Guild $guild)
     {
-        $qb = $this->createQueryBuilder('s');
+        $qb = $this->createQueryBuilder('s')
+            ->andWhere(':guild MEMBER OF s.guilds')
+            ->setParameter(':guild', $guild);
         if ($type != "all") {
-            $qb->where('s.used = :type')
+            $qb->andWhere('s.used = :type')
                 ->setParameter(':type',$type);
         }
         return $qb->getQuery()

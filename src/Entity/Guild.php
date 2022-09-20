@@ -36,10 +36,16 @@ class Guild
      */
     private $players;
 
+    /**
+     * @ORM\ManyToMany(targetEntity="App\Entity\Squad", mappedBy="guilds")
+     */
+    private $squads;
+
     public function __construct()
     {
         $this->players = new ArrayCollection();
         $this->users = new ArrayCollection();
+        $this->squads = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -108,5 +114,33 @@ class Guild
     public function getUsers(): Collection
     {
         return $this->users;
+    }
+
+    /**
+     * @return Collection|Squad[]
+     */
+    public function getSquads(): Collection
+    {
+        return $this->squads;
+    }
+
+    public function addSquad(Squad $squad): self
+    {
+        if (!$this->squads->contains($squad)) {
+            $this->squads[] = $squad;
+            $squad->addGuild($this);
+        }
+
+        return $this;
+    }
+
+    public function removeSquad(Squad $squad): self
+    {
+        if ($this->squads->contains($squad)) {
+            $this->squads->removeElement($squad);
+            $squad->removeGuild($this);
+        }
+
+        return $this;
     }
 }

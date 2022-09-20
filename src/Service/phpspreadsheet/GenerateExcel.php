@@ -35,7 +35,7 @@ class GenerateExcel
         $arrayInformationHero = array ("Etoile Gear Relic (Speed)");
         $arrayInformationShip = array ("Protection/Vie (Speed)");
         $squads = $this->squadRepository
-            ->findSquadsByType($this->translateType($type));
+            ->findSquadsByType($this->translateType($type), $guild);
         $numberPlayers = $this->guildRepository->countMembers($guild->getId())[1];
         $spreadSheet->removeSheetByIndex(0);
         foreach ($squads as $squad) {
